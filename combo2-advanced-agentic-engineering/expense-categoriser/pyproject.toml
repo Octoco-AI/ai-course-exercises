@@ -1,0 +1,39 @@
+[project]
+name = "expense-categoriser"
+version = "0.1.0"
+description = "Workshop reference: AI expense categoriser with three-layer testing (unit / integration / evals) and CI that blocks on eval regression."
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.110",
+    "uvicorn[standard]>=0.30",
+    "google-genai>=1.0.0",
+    "python-dotenv>=1.0.0",
+    "pydantic>=2.13",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+    "httpx>=0.27",
+    "deepeval>=3.9",
+]
+
+[project.scripts]
+expense-api = "expense_categoriser.api:dev_main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/expense_categoriser"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+asyncio_mode = "auto"
+# Unit tests run by default; evals are opt-in via the "evals" marker.
+markers = [
+    "evals: integration-style evals that call a real LLM (opt in with `-m evals`)",
+]

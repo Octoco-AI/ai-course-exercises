@@ -1,0 +1,134 @@
+[
+  {
+    "description": "Starbucks Coffee",
+    "amount": 5.45,
+    "acceptable": ["Food & Dining"],
+    "unacceptable": ["Transportation", "Healthcare", "Utilities", "Income"]
+  },
+  {
+    "description": "Whole Foods Market",
+    "amount": 78.23,
+    "acceptable": ["Food & Dining", "Shopping"],
+    "unacceptable": ["Transportation", "Healthcare", "Utilities", "Income", "Travel"]
+  },
+  {
+    "description": "Uber to airport",
+    "amount": 34.50,
+    "acceptable": ["Transportation", "Travel"],
+    "unacceptable": ["Food & Dining", "Entertainment", "Healthcare", "Utilities"]
+  },
+  {
+    "description": "Shell gas station",
+    "amount": 52.00,
+    "acceptable": ["Transportation"],
+    "unacceptable": ["Food & Dining", "Utilities", "Healthcare", "Income"]
+  },
+  {
+    "description": "Netflix monthly",
+    "amount": 15.99,
+    "acceptable": ["Subscriptions", "Entertainment"],
+    "unacceptable": ["Utilities", "Healthcare", "Income", "Transportation"]
+  },
+  {
+    "description": "Electricity bill - City Power",
+    "amount": 124.50,
+    "acceptable": ["Utilities"],
+    "unacceptable": ["Food & Dining", "Entertainment", "Healthcare", "Income"]
+  },
+  {
+    "description": "Monthly rent - 123 Main St",
+    "amount": 1850.00,
+    "acceptable": ["Housing"],
+    "unacceptable": ["Food & Dining", "Entertainment", "Healthcare", "Income", "Travel"]
+  },
+  {
+    "description": "CVS Pharmacy prescription",
+    "amount": 24.99,
+    "acceptable": ["Healthcare"],
+    "unacceptable": ["Food & Dining", "Entertainment", "Transportation", "Income"]
+  },
+  {
+    "description": "Payroll deposit - Acme Corp",
+    "amount": -3250.00,
+    "acceptable": ["Income"],
+    "unacceptable": ["Food & Dining", "Entertainment", "Healthcare", "Utilities", "Housing"]
+  },
+  {
+    "description": "Amazon - household items",
+    "amount": 42.15,
+    "acceptable": ["Shopping"],
+    "unacceptable": ["Income", "Healthcare", "Utilities", "Housing"]
+  },
+  {
+    "description": "United Airlines - flight to LAX",
+    "amount": 289.40,
+    "acceptable": ["Travel", "Transportation"],
+    "unacceptable": ["Food & Dining", "Entertainment", "Healthcare", "Income"]
+  },
+  {
+    "description": "AMC Movie Theater tickets",
+    "amount": 32.00,
+    "acceptable": ["Entertainment"],
+    "unacceptable": ["Healthcare", "Utilities", "Income", "Transportation"]
+  },
+  {
+    "description": "Coursera - annual subscription",
+    "amount": 399.00,
+    "acceptable": ["Education", "Subscriptions"],
+    "unacceptable": ["Healthcare", "Utilities", "Income", "Transportation", "Food & Dining"]
+  },
+  {
+    "description": "Supercuts haircut",
+    "amount": 28.00,
+    "acceptable": ["Personal Care"],
+    "unacceptable": ["Healthcare", "Utilities", "Income", "Transportation"]
+  },
+  {
+    "description": "Red Cross donation",
+    "amount": 50.00,
+    "acceptable": ["Gifts & Donations"],
+    "unacceptable": ["Income", "Shopping", "Food & Dining", "Transportation"]
+  },
+  {
+    "description": "Trader Joe's",
+    "amount": 64.12,
+    "acceptable": ["Food & Dining", "Shopping"],
+    "unacceptable": ["Transportation", "Healthcare", "Utilities", "Income"]
+  },
+  {
+    "description": "Lyft ride home",
+    "amount": 18.50,
+    "acceptable": ["Transportation"],
+    "unacceptable": ["Food & Dining", "Healthcare", "Utilities", "Income"]
+  },
+  {
+    "description": "Spotify Premium",
+    "amount": 9.99,
+    "acceptable": ["Subscriptions", "Entertainment"],
+    "unacceptable": ["Utilities", "Healthcare", "Income", "Transportation"]
+  },
+  {
+    "description": "Home Depot - garden supplies",
+    "amount": 67.40,
+    "acceptable": ["Shopping", "Housing"],
+    "unacceptable": ["Food & Dining", "Entertainment", "Healthcare", "Income", "Transportation"]
+  },
+  {
+    "description": "AT&T monthly bill",
+    "amount": 89.00,
+    "acceptable": ["Utilities", "Subscriptions"],
+    "unacceptable": ["Food & Dining", "Entertainment", "Healthcare", "Income"]
+  },
+  {
+    "description": "Dr. Kim dental cleaning",
+    "amount": 180.00,
+    "acceptable": ["Healthcare"],
+    "unacceptable": ["Food & Dining", "Entertainment", "Utilities", "Income"]
+  },
+  {
+    "description": "Cash withdrawal ATM",
+    "amount": 200.00,
+    "acceptable": ["Other"],
+    "unacceptable": ["Income", "Healthcare", "Utilities", "Housing"]
+  }
+]
