@@ -1,0 +1,15 @@
+{
+  "//": "Example Claude Code MCP config. Save as `.claude/mcp.json` in any project to add this server.",
+  "//1": "Adjust the 'command' and 'cwd' paths to where you cloned this workshop repo.",
+
+  "mcpServers": {
+    "workshop-filesystem": {
+      "command": "python",
+      "args": ["-m", "mcp_filesystem_server.server"],
+      "cwd": "/ABSOLUTE/PATH/TO/mcp-server/sample_repo",
+      "env": {
+        "PYTHONPATH": "/ABSOLUTE/PATH/TO/mcp-server"
+      }
+    }
+  }
+}

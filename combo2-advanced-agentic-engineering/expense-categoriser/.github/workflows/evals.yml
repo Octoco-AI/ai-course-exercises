@@ -1,0 +1,44 @@
+name: evals
+
+# Eval suite runs on every PR. Requires the GOOGLE_API_KEY secret to be
+# configured in the repo (Settings → Secrets and variables → Actions).
+#
+# A failing eval blocks the merge — Combo 2 M5's core lesson is that a
+# regression in AI quality should stop a PR the same way a failing unit
+# test does.
+
+on:
+  pull_request:
+  workflow_dispatch:  # let maintainers trigger on demand
+
+jobs:
+  evals:
+    runs-on: ubuntu-latest
+    # Guard: if GOOGLE_API_KEY isn't configured, skip the whole job with a
+    # clear message instead of failing with a confusing auth error.
+    if: ${{ github.event_name == 'workflow_dispatch' || secrets.GOOGLE_API_KEY != '' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e '.[dev]'
+      - name: Run eval suite
+        env:
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+        run: |
+          # -m evals selects the DeepEval-style suite. -s streams the summary print.
+          pytest -v -s -m evals tests/evals/
+
+      - name: Post summary if something failed
+        if: failure()
+        run: |
+          echo "::warning::Eval suite failed. This usually means one of:"
+          echo "  1. Accuracy dropped below 85% — see the failing assertion for which cases."
+          echo "  2. A catastrophic-failure case was categorised wrongly (zero tolerance)."
+          echo "  3. p95 latency exceeded the ceiling (model may be overloaded)."
+          echo "See tests/evals/test_categorisation_quality.py for thresholds."
