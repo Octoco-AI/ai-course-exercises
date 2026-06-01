@@ -75,10 +75,66 @@ def run_agent(
       - Termination: the candidate has no `.function_call` parts.
     """
     load_dotenv()
-    # TODO: Step 1 — write the loop.
-    #       Start with the simplest version that works on the exploration prompts
-    #       (TODO.md items 1 and 2), then test with the bug-fix prompt (item 3).
-    raise NotImplementedError("Implement run_agent for step 1.")
+
+    client = genai.Client(api_key=os.environ["GOOGLE_API_KEY"])
+    model = model or "gemini-2.5-flash"
+
+    contents: list[types.Content] = [
+        types.Content(role="user", parts=[types.Part(text=user_prompt)])
+    ]
+
+    config = types.GenerateContentConfig(
+        system_instruction=SYSTEM_INSTRUCTION,
+        tools=TOOLS,
+        automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True),
+    )
+
+    for _ in range(max_turns):
+        response = client.models.generate_content(
+            model=model,
+            contents=contents,
+            config=config,
+        )
+
+        candidate = response.candidates[0]
+        contents.append(candidate.content)
+
+        function_calls = [
+            part.function_call
+            for part in (candidate.content.parts or [])
+            if part.function_call
+        ]
+
+        if not function_calls:
+            return response.text or ""
+
+        tool_response_parts: list[types.Part] = []
+        for call in function_calls:
+            name = call.name
+            args = dict(call.args or {})
+
+            if on_event:
+                on_event({"type": "tool_call", "name": name, "args": args})
+
+            fn = TOOL_FUNCTIONS.get(name)
+            if fn is None:
+                result = f"ERROR: unknown tool {name!r}"
+            else:
+                try:
+                    result = fn(**args)
+                except Exception as exc:
+                    result = f"ERROR: {type(exc).__name__}: {exc}"
+
+            if on_event:
+                on_event({"type": "tool_result", "name": name, "result": result})
+
+            tool_response_parts.append(
+                types.Part.from_function_response(name=name, response={"result": result})
+            )
+
+        contents.append(types.Content(role="user", parts=tool_response_parts))
+
+    return f"Stopped after {max_turns} turns without a final answer."
 
 
 # ---- CLI entrypoint (given — no changes needed) ------------------------------

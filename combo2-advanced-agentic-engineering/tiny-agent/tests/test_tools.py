@@ -19,7 +19,7 @@ import pytest
 #     from starter.tools import edit_file, list_files, read_file
 # (note: the sandbox root is captured at import time, so tests still need to
 # be run from a directory that contains the files they look for).
-from reference.tools import edit_file, list_files, read_file
+from starter.tools import edit_file, list_files, read_file
 
 
 @pytest.fixture
@@ -29,7 +29,7 @@ def sandbox(tmp_path, monkeypatch):
     Tools compute the sandbox root at import time, so we monkey-patch it on
     the module for the duration of the test.
     """
-    import reference.tools as tools_module
+    import starter.tools as tools_module
 
     monkeypatch.setattr(tools_module, "_SANDBOX_ROOT", tmp_path.resolve())
 
