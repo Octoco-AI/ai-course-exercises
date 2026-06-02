@@ -54,7 +54,7 @@ The agent **loops**: ask Gemini, run any tools it wants to call, feed the result
 ```bash
 pytest tests/
 ```
-(The tests import from `reference.tools` by default. To run them against your starter implementation, edit the import at the top of `tests/test_tools.py`.)
+(The tests import the bundled `reference/` implementation by default, so they pass out of the box. To check *your* code, change the import block at the top of `tests/test_tools.py` to point at `starter.tools` instead of `reference.tools` — they'll go red until you've implemented all three, then green again.)
 
 **Step 3 — Drive the agent (10 min).**
 ```bash
@@ -80,11 +80,13 @@ The facilitator live-codes the reference implementation over ~40 minutes. You fo
 
 ## Running the reference implementation
 
-If you want to compare behaviours, or if something in your starter version is stuck:
+The complete `reference/` implementation ships in this repo — peek at it if you
+get stuck, or run it to compare behaviour with your own `starter/` version:
 
 ```bash
 cd sample_repo
 python -m reference.agent "Look through math_utils.py for bugs. If you find one, fix it."
+# swap `reference` for `starter` to drive your own implementation
 ```
 
 ---
@@ -106,7 +108,7 @@ tiny-agent/
 ├── starter/                  ← YOU WORK HERE
 │   ├── tools.py              (with TODOs)
 │   └── agent.py              (with TODOs)
-├── reference/                ← complete implementation for comparison
+├── reference/                ← complete worked solution (peek if you get stuck)
 │   ├── tools.py
 │   └── agent.py
 └── tests/

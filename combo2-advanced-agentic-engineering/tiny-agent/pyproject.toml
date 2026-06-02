@@ -24,6 +24,3 @@ packages = ["reference", "starter"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
-markers = [
-    "evals: slow tests that hit the real LLM; opt-in via -m evals",
-]

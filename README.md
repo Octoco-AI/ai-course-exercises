@@ -10,6 +10,7 @@ course repo on every push to main; do not edit directly.
 ## combo2-advanced-agentic-engineering
 
 - [`claude-code-skills`](combo2-advanced-agentic-engineering/claude-code-skills)
+- [`cross-tool-skills`](combo2-advanced-agentic-engineering/cross-tool-skills)
 - [`expense-categoriser`](combo2-advanced-agentic-engineering/expense-categoriser)
 - [`tiny-agent`](combo2-advanced-agentic-engineering/tiny-agent)
 

@@ -1,7 +1,11 @@
 """Smoke tests for the three tools.
 
-Runs against the REFERENCE implementation so attendees can use these as a
-contract when they implement their own (in `starter/`).
+These are the contract your tool implementations must satisfy.
+
+Import strategy: prefer the facilitator's `reference/` implementation if it is
+present (it isn't shipped to the attendee exercises repo), otherwise fall back
+to your own `starter/` implementation. So in your repo these tests run against
+`starter.tools` automatically — implement the three tools until they go green.
 
 Run from the tiny-agent/ directory:
     pytest
@@ -14,12 +18,15 @@ from pathlib import Path
 
 import pytest
 
-# We test the reference implementation. To run the tests against your own
-# starter code, replace this import with:
-#     from starter.tools import edit_file, list_files, read_file
-# (note: the sandbox root is captured at import time, so tests still need to
-# be run from a directory that contains the files they look for).
-from starter.tools import edit_file, list_files, read_file
+# Prefer reference (facilitator-only); fall back to the starter code you write.
+try:
+    import reference.tools as tools_module
+except ModuleNotFoundError:
+    import starter.tools as tools_module
+
+edit_file = tools_module.edit_file
+list_files = tools_module.list_files
+read_file = tools_module.read_file
 
 
 @pytest.fixture
@@ -29,8 +36,6 @@ def sandbox(tmp_path, monkeypatch):
     Tools compute the sandbox root at import time, so we monkey-patch it on
     the module for the duration of the test.
     """
-    import starter.tools as tools_module
-
     monkeypatch.setattr(tools_module, "_SANDBOX_ROOT", tmp_path.resolve())
 
     (tmp_path / "hello.txt").write_text("hello world\n")

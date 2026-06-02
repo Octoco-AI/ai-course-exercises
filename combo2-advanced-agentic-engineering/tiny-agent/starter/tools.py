@@ -51,17 +51,11 @@ def read_file(path: str) -> str:
     Returns:
         The file's contents, or a string starting with "ERROR:" on failure.
     """
-    resolved = _resolve(path)
-    if isinstance(resolved, str):
-        return resolved
-    if not resolved.exists():
-        return f"ERROR: path {path!r} does not exist"
-    if not resolved.is_file():
-        return f"ERROR: path {path!r} is not a file"
-    try:
-        return resolved.read_text(encoding="utf-8")
-    except UnicodeDecodeError as exc:
-        return f"ERROR: could not decode {path!r} as UTF-8: {exc}"
+    # TODO: call _resolve(path). If it returns a str (error), return it.
+    # TODO: check the resolved path exists and is a file.
+    # TODO: read the file as UTF-8 text and return the string.
+    #       On UnicodeDecodeError, return an informative ERROR string.
+    raise NotImplementedError("Implement read_file for step 2a.")
 
 
 # -----------------------------------------------------------------------------
@@ -77,18 +71,9 @@ def list_files(path: str = ".") -> list[str]:
         A sorted list of entries. Directories should end with "/". On failure,
         return a single-element list whose first element starts with "ERROR:".
     """
-    resolved = _resolve(path)
-    if isinstance(resolved, str):
-        return [resolved]
-    if not resolved.exists():
-        return [f"ERROR: path {path!r} does not exist"]
-    if not resolved.is_dir():
-        return [f"ERROR: path {path!r} is not a directory"]
-    entries = [
-        f"{entry.name}/" if entry.is_dir() else entry.name
-        for entry in resolved.iterdir()
-    ]
-    return sorted(entries)
+    # TODO: resolve + validate (exists, is_dir).
+    # TODO: iterate entries, append "/" to directory names, sort, return.
+    raise NotImplementedError("Implement list_files for step 2b.")
 
 
 # -----------------------------------------------------------------------------
@@ -108,26 +93,11 @@ def edit_file(path: str, old_str: str, new_str: str) -> str:
     Returns:
         "OK: edited {path}" on success, or a string starting with "ERROR:".
     """
-    resolved = _resolve(path)
-    if isinstance(resolved, str):
-        return resolved
-    if not resolved.exists():
-        return f"ERROR: path {path!r} does not exist"
-    if not resolved.is_file():
-        return f"ERROR: path {path!r} is not a file"
-    try:
-        content = resolved.read_text(encoding="utf-8")
-    except UnicodeDecodeError as exc:
-        return f"ERROR: could not decode {path!r} as UTF-8: {exc}"
-
-    count = content.count(old_str)
-    if count == 0:
-        return f"ERROR: old_str not found in {path!r}"
-    if count > 1:
-        return f"ERROR: old_str appears {count} times in {path!r}; needs to be unique"
-
-    resolved.write_text(content.replace(old_str, new_str), encoding="utf-8")
-    return f"OK: edited {path}"
+    # TODO: resolve + validate (exists, is_file).
+    # TODO: read the current content.
+    # TODO: count occurrences of old_str; error if 0 or > 1.
+    # TODO: write the replaced content and return an OK message.
+    raise NotImplementedError("Implement edit_file for step 2c.")
 
 
 # The list of tool callables passed to Gemini. Once you've implemented all
