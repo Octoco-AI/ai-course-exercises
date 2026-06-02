@@ -1,0 +1,21 @@
+{
+  "constitution": {
+    "architecture": "(Stack, frameworks, deployment targets.)",
+    "ai_principles": [
+      "Confidence indicators visible where AI output drives a decision",
+      "Graceful degradation when the model is unavailable",
+      "Audit log every AI call (prompt hash, model + version, latency, cost)",
+      "Feedback mechanisms on every AI surface"
+    ],
+    "never_do": [
+      "Medical / legal / financial advice without a licensed reviewer",
+      "Destructive operations without explicit user confirmation",
+      "PII to a third-party model without a DPA"
+    ],
+    "delegation": {
+      "bucket_1": "chores, docs, scoped refactors",
+      "bucket_2": "features with a spec",
+      "bucket_3": "architectural / security decisions"
+    }
+  }
+}

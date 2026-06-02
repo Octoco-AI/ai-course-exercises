@@ -1,0 +1,81 @@
+# Synced from _shared/python-project.gitignore.template
+# Update that file first, then copy here.
+
+# --- environment & secrets --------------------------------------------------
+.env
+.env.*
+!.env.example
+.venv/
+venv/
+env/
+ENV/
+
+# --- Python runtime ---------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# --- build / packaging ------------------------------------------------------
+build/
+dist/
+wheels/
+*.egg-info/
+*.egg
+.eggs/
+
+# --- tooling caches ---------------------------------------------------------
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+
+# --- editors / IDEs ---------------------------------------------------------
+.vscode/
+.idea/
+*.swp
+*~
+.ropeproject/
+
+# --- operating system -------------------------------------------------------
+.DS_Store
+Thumbs.db
+
+# --- eval / observability tools (workshop-specific) -------------------------
+# Chroma persistent clients default to creating these locally.
+.chroma/
+chroma/
+chroma.sqlite3
+*.sqlite3
+# Embedding model cache is in ~/.cache/chroma/, not here; nothing to add.
+
+# Inspect AI writes logs to ./logs/ by default.
+logs/
+
+# DeepEval local state and telemetry opt-out file.
+.deepeval/
+.deepeval_telemetry.txt
+
+# Opik self-host Docker volumes (if used in this project).
+opik_data/
+
+# --- Jupyter (used occasionally for scratch work) ---------------------------
+.ipynb_checkpoints/
+
+# --- misc -------------------------------------------------------------------
+# Node tooling in case a Python project grows a small JS companion later.
+node_modules/
+.next/
+
+# --- track-a-codebase-qa specific ---------------------------------------
+ui/dist/
+ui/node_modules/
+workspace/*
+!workspace/.gitkeep
+patches/*
+!patches/.gitkeep

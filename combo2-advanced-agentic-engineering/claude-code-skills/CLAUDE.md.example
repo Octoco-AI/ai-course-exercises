@@ -1,0 +1,91 @@
+# Example project CLAUDE.md
+
+*This is what a project CLAUDE.md looks like AFTER Phase 1 of the `/spec-driven` skill has run. Drop this file at your project root as `./CLAUDE.md` or `./.claude/CLAUDE.md` and Claude Code will read it at session start.*
+
+---
+
+## Project context
+
+This is a family-health platform supporting parents of neurodivergent children. The app is Flutter (mobile) + React (clinician web) + Python/FastAPI (backend). We use Supabase for Postgres + PowerSync for offline-first data, Opik for LLM tracing, DeepEval for CI evals.
+
+## Constitution
+
+Rules every AI-touching feature in this project must follow.
+
+### AI feature principles
+
+- Every AI output shown to a user must include a visible confidence indicator or uncertainty signal.
+- When the AI isn't confident or the provider is unavailable, fall back to a manual or non-AI alternative — never a blank screen.
+- Every AI decision that touches a user account, payment, or medical field must be logged with model id, prompt hash, response, and confidence. Retention: 90 days.
+- Every AI feature includes explicit (thumbs up/down) or implicit (click-through, completion-rate) feedback collection from day one.
+- Destructive actions (delete data, send payment, contact clinician) require explicit human confirmation. No autonomous destructive operations.
+
+### Never-do items
+
+- Never make medical claims without a licensed practitioner's review.
+- Never commit a change that fails the eval baseline on `main`.
+- Never push directly to `main`; always open a PR.
+- Never log full prompts or responses containing PII (child name, diagnosis codes, therapist notes).
+- Never call a model tool with `tool_choice: "any"` when extended thinking is enabled (silent degradation on Anthropic).
+
+### Delegation norms
+
+- **Fully delegated to the agent**: boilerplate, language ports, repetitive refactors, first-draft documentation, test scaffolding.
+- **Delegated with review**: new feature work, API changes, tests for new code, spec drafts.
+- **Owned by a human**: architecture, security-sensitive code, ambiguous requirements, novel algorithms, anything touching clinical or payment flows.
+
+### Review expectations
+
+"I reviewed this AI-generated code" means:
+
+- Read every line, not just the diff summary.
+- Run the tests locally; don't just trust CI.
+- Spot-check for common AI mistakes: fabricated imports, silently-swallowed exceptions, over-broad type hints, string-based logic where an enum is right there.
+- If the change is non-trivial, ask the agent to explain its reasoning before merge.
+
+### Evaluation norms
+
+- Every AI feature ships with a pre-deployment DeepEval suite that runs in CI.
+- Every AI feature has production monitoring for accuracy, latency, and fallback rate via Opik.
+- Eval sets grow from production failures. If an issue is reported, a corresponding eval case is added before closing.
+- When an LLM provider updates a model, rerun the full eval suite before accepting the new model into production.
+
+## Stack specifics
+
+### Python
+
+- Python 3.12+, `uv` for dependency management.
+- FastAPI for HTTP, async throughout.
+- Pytest for tests, DeepEval for AI evals.
+- Types: `from __future__ import annotations`, `mypy --strict`.
+- Style: ruff with the project's `pyproject.toml` config. Format before commit.
+- Imports: stdlib → third-party → first-party, each alphabetised, blank line between groups.
+
+### Flutter
+
+- MVVM pattern — see `docs/architecture/mvvm.md`.
+- PowerSync for offline-first data; no custom sync code.
+- Repositories encapsulate DB reads; ViewModels encapsulate state; Views are pure widgets.
+
+### Testing
+
+- Unit tests colocated with source (same package).
+- Integration tests under `tests/integration/`.
+- Evals under `tests/evals/`, run with `deepeval test run tests/evals/`.
+- Run `just check` before pushing — runs ruff, mypy, pytest, and a sampled eval suite.
+
+## File organisation
+
+- `src/api/` — FastAPI routes.
+- `src/ai/` — model clients, prompt templates, tool implementations.
+- `src/evals/` — eval-specific helpers; **not** eval test files (those live in `tests/evals/`).
+- `src/repositories/` — data access. No business logic.
+- `src/services/` — business logic. Calls repositories and AI.
+- `prompts/` — prompt templates as markdown files. One prompt per file.
+
+## Workflow preferences
+
+- For any new AI feature, run `/spec-driven <feature-name>` first. No code before Phase 5 tasks exist.
+- Code review uses `/review-pr` (a separate skill) which runs the project's review checklist.
+- Commits: conventional-commits style. `feat: add confidence threshold` or `fix: handle empty candidate list`.
+- PR descriptions: link to the spec, the plan, and the task list. If missing any, the PR is blocked.

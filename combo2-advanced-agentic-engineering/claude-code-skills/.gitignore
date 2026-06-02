@@ -1,0 +1,29 @@
+# claude-code-skills/ is a markdown-only reference directory (no Python, no
+# Node). This .gitignore is intentionally short — it just catches the things
+# attendees or facilitators might accidentally generate while testing the
+# skill inside this directory.
+
+# --- operating system -------------------------------------------------------
+.DS_Store
+Thumbs.db
+
+# --- editors / IDEs ---------------------------------------------------------
+.vscode/
+.idea/
+*.swp
+*~
+
+# --- secrets in case someone drops a .env in here while experimenting ------
+.env
+.env.*
+!.env.example
+
+# --- Claude Code local state ------------------------------------------------
+# If a facilitator runs `claude` from inside this directory while demoing, it
+# may create a project-scoped .claude/ hierarchy. The skill files themselves
+# (spec-driven/, CLAUDE.md.example) are tracked above; the state files below
+# are not.
+.claude/memory/
+.claude/local/
+.claude/sessions/
+.claude/cache/

@@ -1,0 +1,32 @@
+# Local Docker sandbox for the Track A codebase-Q&A agent.
+#
+# What it mounts:
+#   - ./workspace   → /app/workspace   (what the agent reads + drafts patches for)
+#   - ./patches     → /app/patches     (draft_patch output; survives restarts)
+#   - ../chroma-corpora/track-a-codebase/.chroma → /app/chroma-index  (read-only)
+#
+# Usage:
+#   docker compose up --build
+#
+# Then open http://localhost:8000
+
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - ANTHROPIC_MODEL=${ANTHROPIC_MODEL:-claude-sonnet-4-6}
+      - MAX_AGENT_TURNS=${MAX_AGENT_TURNS:-20}
+    volumes:
+      - ./workspace:/app/workspace
+      - ./patches:/app/patches
+      - ../chroma-corpora/track-a-codebase/.chroma:/app/chroma-index:ro
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
