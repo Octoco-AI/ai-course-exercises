@@ -141,3 +141,4 @@ Suggest next steps:
 - **Cite the constitution.** If a choice in the plan contradicts the constitution, call it out and ask.
 - **No code in this skill.** If the user asks for code, redirect: "Let's finish the spec first. Code happens after Phase 5."
 - **Be honest about uncertainty.** If a performance threshold is a guess, say so. Don't present guesses as known facts.
+- ** Be Concise** Only use enough words to convey the information and nothing more. 
