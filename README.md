@@ -12,6 +12,7 @@ course repo on every push to main; do not edit directly.
 - [`claude-code-skills`](combo2-advanced-agentic-engineering/claude-code-skills)
 - [`cross-tool-skills`](combo2-advanced-agentic-engineering/cross-tool-skills)
 - [`expense-categoriser`](combo2-advanced-agentic-engineering/expense-categoriser)
+- [`plan-execute-split`](combo2-advanced-agentic-engineering/plan-execute-split)
 - [`tiny-agent`](combo2-advanced-agentic-engineering/tiny-agent)
 
 ## combo3-building-agents

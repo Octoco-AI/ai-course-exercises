@@ -1,0 +1,20 @@
+[project]
+name = "plan-execute-split"
+version = "0.1.0"
+description = "Combo 2 M7 — runnable plan/execute-split cost comparison on Google Gemini. Edit task.md, run three scripts, read the dollar numbers."
+requires-python = ">=3.12"
+dependencies = [
+    "google-genai>=1.0.0",
+    "python-dotenv>=1.0.0",
+]
+
+# Flat layout: the run_*.py scripts and the shared helpers (agent.py, tools.py,
+# pricing.py) all live at the top level. You do NOT need to `pip install` this
+# project — `pip install google-genai python-dotenv` is enough to run the
+# scripts. This file just pins the two dependencies for reference.
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+py-modules = ["agent", "tools", "pricing"]
