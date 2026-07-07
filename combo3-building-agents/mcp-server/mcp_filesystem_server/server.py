@@ -20,7 +20,7 @@ Usage:
   python -m mcp_filesystem_server.server
 
   # Via Claude Code:
-  add this server to .claude/mcp.json (see claude-code-mcp-config.json.example)
+  add this server to .mcp.json (see claude-code-mcp-config.json.example)
 
   # Via Claude Desktop:
   add to ~/Library/Application Support/Claude/claude_desktop_config.json

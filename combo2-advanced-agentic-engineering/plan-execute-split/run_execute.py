@@ -1,13 +1,14 @@
 """Partner B, step 2 — Flash executes.
 
-Reads plan.md (produced by run_plan.py) and runs Gemini 2.5 Flash (budget tier,
+Reads plan.md (produced by run_plan.py) and runs Gemini 3.1 Flash-Lite (budget tier,
 thinking OFF) to implement it, with the same three file tools the monolithic run
 used. Run run_plan.py first.
 
     python run_execute.py
 
-Want a wider price gap? Set EXECUTOR_MODEL=gemini-2.5-flash-lite in .env — the
-ultra-budget tier — and the report will price it accordingly.
+Flash-Lite is already the budget tier. If it's too weak to follow the plan, set
+EXECUTOR_MODEL=gemini-3.5-flash in .env for a stronger mid-tier executor — the
+report prices all three tiers.
 """
 
 from __future__ import annotations
@@ -22,7 +23,7 @@ from pricing import report
 from tools import workspace_root
 
 load_dotenv()
-MODEL = os.environ.get("EXECUTOR_MODEL", "gemini-2.5-flash")
+MODEL = os.environ.get("EXECUTOR_MODEL", "gemini-3.1-flash-lite")
 
 EXECUTOR_PROMPT = """You are an implementation engineer. A senior engineer has
 produced this plan. Execute each sub-task in order. For each:

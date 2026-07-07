@@ -49,7 +49,7 @@ This is the "consume an MCP server" experience attendees go through in M5 Part A
 
 ## Adding the server to Claude Code
 
-1. Copy `claude-code-mcp-config.json.example` to `.claude/mcp.json` in any project where you want the server available.
+1. Copy `claude-code-mcp-config.json.example` to `.mcp.json` in any project where you want the server available.
 2. Edit the two `/ABSOLUTE/PATH/TO/` placeholders to point at this repo's `sample_repo/` and `mcp-server/` directories.
 3. Start Claude Code in that project. Ask it to *"list the files in the workshop-filesystem sandbox"* — it should delegate to the MCP server.
 
@@ -101,7 +101,7 @@ python -m mcp_filesystem_server.elicitation_demo
 
 Then ask the client (Inspector / Claude Desktop / Claude Code) to *"delete hello.py"*. If the client supports elicitation, it prompts you to confirm; on confirmation the file is deleted, on decline it's preserved.
 
-⚠️ **The exact elicitation API is evolving.** The `elicitation_demo.py` module is written against the MCP spec 2025-11-25 and mcp-python-sdk v1.x (fetched 2026-04-21). If the SDK has moved since, the call signature inside `delete_file` may need a small adjustment. See `https://github.com/modelcontextprotocol/python-sdk` for the current shape.
+⚠️ **The exact elicitation API can drift.** `elicitation_demo.py` targets the MCP Python SDK's typed-schema `ctx.elicit()` (schema = a Pydantic model; the result carries `.action` / `.data`), current as of mcp 1.28 (2026-06). If the SDK has moved since, the call inside `delete_file` may need a small adjustment. See `https://github.com/modelcontextprotocol/python-sdk` for the current shape.
 
 ---
 

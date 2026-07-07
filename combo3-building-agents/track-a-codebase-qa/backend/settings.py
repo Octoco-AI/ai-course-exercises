@@ -47,7 +47,7 @@ def load_settings() -> Settings:
 
     return Settings(
         anthropic_api_key=api_key,
-        model=os.environ.get("ANTHROPIC_MODEL", "claude-sonnet-4-6"),
+        model=os.environ.get("ANTHROPIC_MODEL", "claude-sonnet-5"),
         workspace_root=workspace,
         chroma_persist_root=chroma_root,
         chroma_collection_name=os.environ.get("CHROMA_COLLECTION_NAME", "track-a-codebase"),

@@ -1,6 +1,6 @@
 ---
 description: Walk through the five-phase spec-driven flow (constitution → specify → clarify → plan → tasks) for a new AI-touching feature. Pauses between phases for user review.
-model: gemini-2.5-pro
+model: gemini-3.1-pro
 tools:
   - read_file
   - write_file

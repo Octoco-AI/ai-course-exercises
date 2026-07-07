@@ -1,7 +1,7 @@
 """Token-usage accounting + cost reporting.
 
 Keeps the dollar maths in one place so the run scripts stay short. Prices are
-Gemini 2.5 list prices (USD per 1M tokens) as used in the M7 exercise. Thinking
+Gemini 3.x list prices (USD per 1M tokens) as used in the M7 exercise. Thinking
 tokens are billed at the OUTPUT rate. Update the table if Google changes prices.
 
 You should not need to edit this file to do the exercise — but the PRICES table
@@ -16,9 +16,9 @@ from pathlib import Path
 
 # model id -> (input $/1M, output $/1M). Thinking billed at the output rate.
 PRICES: dict[str, tuple[float, float]] = {
-    "gemini-2.5-pro": (1.25, 10.0),
-    "gemini-2.5-flash": (0.30, 2.50),
-    "gemini-2.5-flash-lite": (0.10, 0.40),
+    "gemini-3.1-pro": (2.00, 12.0),        # premium / planner (Preview as of 2026-07)
+    "gemini-3.5-flash": (1.50, 9.0),       # mid tier (GA)
+    "gemini-3.1-flash-lite": (0.25, 1.50),  # budget / executor + monolithic (GA)
 }
 
 COMPARISON_FILE = Path("COMPARISON.md")

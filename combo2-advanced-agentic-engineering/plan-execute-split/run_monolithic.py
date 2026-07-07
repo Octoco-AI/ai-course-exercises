@@ -1,6 +1,6 @@
 """Partner A — Flash monolithic.
 
-Runs the whole task in one agent loop with Gemini 2.5 Flash (budget tier,
+Runs the whole task in one agent loop with Gemini 3.1 Flash-Lite (budget tier,
 thinking OFF). This is the baseline the plan/execute split is measured against.
 
     python run_monolithic.py
@@ -21,7 +21,7 @@ from pricing import report
 from tools import workspace_root
 
 load_dotenv()
-MODEL = os.environ.get("MONOLITHIC_MODEL", "gemini-2.5-flash")
+MODEL = os.environ.get("MONOLITHIC_MODEL", "gemini-3.1-flash-lite")
 
 
 def main() -> int:

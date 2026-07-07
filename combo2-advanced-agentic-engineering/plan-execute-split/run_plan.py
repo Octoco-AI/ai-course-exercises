@@ -1,6 +1,6 @@
 """Partner B, step 1 — Pro plans.
 
-Runs Gemini 2.5 Pro (premium tier, thinking ON) to produce a plan ONLY — no
+Runs Gemini 3.1 Pro (premium tier, thinking ON) to produce a plan ONLY — no
 implementation. Writes the plan to plan.md, which run_execute.py then executes.
 
     python run_plan.py
@@ -22,7 +22,7 @@ from google.genai import types
 from pricing import Usage, report
 
 load_dotenv()
-MODEL = os.environ.get("PLANNER_MODEL", "gemini-2.5-pro")
+MODEL = os.environ.get("PLANNER_MODEL", "gemini-3.1-pro")
 
 PLANNER_PROMPT = """You are a senior engineering planner. Given this task:
 

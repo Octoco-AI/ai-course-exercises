@@ -131,7 +131,7 @@ class GeminiClient:
 
     def __init__(self, *, api_key: str | None = None, model: str | None = None) -> None:
         self._api_key = api_key or os.environ.get("GOOGLE_API_KEY")
-        self._model = model or os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
+        self._model = model or os.environ.get("GEMINI_MODEL", "gemini-3.1-flash-lite")
         self._client = None  # lazy
 
     def _ensure_client(self):

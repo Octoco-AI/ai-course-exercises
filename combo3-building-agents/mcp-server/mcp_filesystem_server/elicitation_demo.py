@@ -22,8 +22,15 @@ from __future__ import annotations
 from pathlib import Path
 
 from mcp.server.fastmcp import Context, FastMCP
+from pydantic import BaseModel, Field
 
 from .tools import _resolve
+
+
+class ConfirmDelete(BaseModel):
+    """Schema for the elicitation prompt shown to the user before a delete."""
+
+    confirm: bool = Field(default=False, description="Set to true to delete this file.")
 
 
 mcp = FastMCP(
@@ -52,39 +59,28 @@ async def delete_file(path: str, ctx: Context) -> str:
 
     # --- Elicitation: ask the user to confirm before we delete. ---
     #
-    # The exact API is evolving. As of the MCP 2025-11-25 spec and the
-    # mcp python SDK v1.x, the server calls `ctx.elicit()` with a message and
-    # a schema describing the expected response. The client presents a form
-    # to the user and returns the submitted value.
-    #
-    # If this signature drifts in a newer SDK, adjust to match. The concept
-    # stays the same: server pauses, user responds, server continues.
+    # Current MCP Python SDK (>=1.16; latest 1.28 as of 2026-06): call
+    # `ctx.elicit(message=..., schema=<a Pydantic model>)`. The client presents a
+    # form and returns a result whose `.action` is "accept" | "decline" | "cancel";
+    # on "accept", `.data` is an instance of the schema. If this drifts in a newer
+    # SDK, adjust to match — verify against
+    # https://github.com/modelcontextprotocol/python-sdk. The concept stays the
+    # same: server pauses, user responds, server continues.
     try:
-        response = await ctx.elicit(
+        result = await ctx.elicit(
             message=f"Really delete {path!r}?",
-            schema={
-                "type": "object",
-                "properties": {
-                    "confirm": {
-                        "type": "boolean",
-                        "title": "Confirm deletion",
-                        "description": "Set to true to delete this file.",
-                    }
-                },
-                "required": ["confirm"],
-            },
+            schema=ConfirmDelete,
         )
     except AttributeError:
-        # Older SDKs don't expose ctx.elicit.
+        # Very old SDKs don't expose ctx.elicit at all.
         return (
             "ERROR: this server was built against an MCP SDK version that does "
-            "not yet support elicitation. Update mcp to >=1.0 and retry."
+            "not support elicitation. Update mcp to a recent release and retry."
         )
     except Exception as exc:  # noqa: BLE001
         return f"ERROR: elicitation failed: {type(exc).__name__}: {exc}"
 
-    confirm = bool(getattr(response, "confirm", False) or (response or {}).get("confirm"))
-    if not confirm:
+    if result.action != "accept" or result.data is None or not result.data.confirm:
         return "Aborted: user did not confirm deletion."
 
     resolved.unlink()

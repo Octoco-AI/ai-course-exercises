@@ -19,6 +19,6 @@ amp/
 
 ## Notes
 
-- Amp's `smart` mode (Opus 4.7) handles the spec drafting well. `deep` is overkill here.
+- Amp's `smart` mode (Opus 4.8) handles the spec drafting well. `deep` is overkill here.
 - `disallowed-tools` is honoured by Amp's permission system as of v0.x.
 - The `SKILL.md` body is intentionally minimal — the full reference at `../../claude-code-skills/spec-driven/` has templates and richer state-detection prose.

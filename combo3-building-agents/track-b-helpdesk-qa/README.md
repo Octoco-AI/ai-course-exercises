@@ -12,7 +12,7 @@ A streaming agent that answers Streakly support questions using the KB, drafts r
 |---|---|---|
 | Corpus | TodoMagic codebase docs | Streakly KB articles |
 | Chroma collection | `track-a-codebase` | `track-b-helpdesk` |
-| Default model | Sonnet 4.6 (more reasoning for code) | Haiku 4.5 (classify + retrieve + paraphrase) |
+| Default model | Sonnet 5 (more reasoning for code) | Haiku 4.5 (classify + retrieve + paraphrase) |
 | Tool 1 | `search_docs` | `search_kb` |
 | Tool 2 | `read_file` | `read_article` |
 | Tool 3 | `list_files` | — *(removed; agent uses search)* |
