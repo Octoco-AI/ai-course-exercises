@@ -1,0 +1,443 @@
+db ready at orderbase.db
+OrderBase v1.4.2 listening on 0.0.0.0:5057 (debug=True)
+2026-06-29 00:09:09 INFO legacy_service.app GET /orders/00000007 200 status=CANCELLED
+2026-06-29 00:16:20 INFO legacy_service.app GET /orders/00000028 200 status=CANCELLED
+2026-06-29 00:21:41 INFO legacy_service.app GET /orders/00000007 200 status=CANCELLED
+2026-06-29 00:24:59 INFO legacy_service.app GET /orders/00000033 200 status=PAID
+2026-06-29 00:33:34 INFO legacy_service.app GET /orders/00000033 200 status=PAID
+2026-06-29 00:38:46 INFO legacy_service.app GET /orders/00000038 200 status=NEW
+2026-06-29 00:47:55 INFO legacy_service.app GET /orders/00000018 200 status=NEW
+DEBUG: POST /orders payload={'customer': 'Acme Ltd', 'items': [{'sku': 'SKU-0008', 'qty': 3, 'unit_price': 12.5}]}
+2026-06-29 00:57:13 INFO legacy_service.orders order 00000040 created customer=Acme Ltd items=1 total=37.50
+created order 00000040 total=37.5
+2026-06-29 00:57:13 INFO legacy_service.app POST /orders 201 id=00000040 total=37.50
+DEBUG: POST /orders payload={'customer': 'Soylent Foods', 'items': [{'sku': 'SKU-0003', 'qty': 1, 'unit_price': 12.5}]}
+2026-06-29 01:03:43 INFO legacy_service.orders order 00000041 created customer=Soylent Foods items=1 total=12.50
+created order 00000041 total=12.5
+2026-06-29 01:03:43 INFO legacy_service.app POST /orders 201 id=00000041 total=12.50
+2026-06-29 01:06:08 INFO legacy_service.app GET /report 200 date=2026-06-29 orders=8 total=778.47
+DEBUG: POST /orders payload={'customer': 'Northwind Traders', 'items': [{'sku': 'SKU-0002', 'qty': 3, 'unit_price': 7.25}, {'sku': 'SKU-0006', 'qty': 4, 'unit_price': 19.99}, {'sku': 'SKU-0008', 'qty': 4, 'unit_price': 8.8}]}
+2026-06-29 01:09:43 INFO legacy_service.orders order 00000042 created customer=Northwind Traders items=3 total=136.91
+created order 00000042 total=136.91
+2026-06-29 01:09:43 INFO legacy_service.app POST /orders 201 id=00000042 total=136.91
+2026-06-29 01:18:19 INFO legacy_service.app GET /orders/00000009 200 status=PAID
+DEBUG: POST /orders payload={'customer': 'Northwind Traders', 'items': [{'sku': 'SKU-0009', 'qty': 4, 'unit_price': 7.25}, {'sku': 'SKU-0001', 'qty': 2, 'unit_price': 19.99}, {'sku': 'SKU-0002', 'qty': 1, 'unit_price': 4.95}]}
+2026-06-29 01:25:12 INFO legacy_service.orders order 00000043 created customer=Northwind Traders items=3 total=73.93
+created order 00000043 total=73.93
+2026-06-29 01:25:12 INFO legacy_service.app POST /orders 201 id=00000043 total=73.93
+2026-06-29 01:33:28 INFO legacy_service.app GET /orders/00000022 200 status=CANCELLED
+2026-06-29 01:37:40 WARNING legacy_service.orders rejected order: discount_pct out of range
+2026-06-29 01:37:40 INFO legacy_service.app POST /orders 400 error="discount_pct out of range"
+2026-06-29 01:43:33 INFO legacy_service.app GET /report 200 date=2026-06-29 orders=10 total=413.29
+2026-06-29 01:45:50 INFO legacy_service.app GET /orders/00000014 200 status=CANCELLED
+DEBUG: POST /orders payload={'customer': 'Vandelay', 'items': [{'sku': 'SKU-0005', 'qty': 4, 'unit_price': 12.5}, {'sku': 'SKU-0007', 'qty': 3, 'unit_price': 19.99}]}
+2026-06-29 01:49:29 INFO legacy_service.orders order 00000044 created customer=Vandelay items=2 total=109.97
+created order 00000044 total=109.97
+2026-06-29 01:49:29 INFO legacy_service.app POST /orders 201 id=00000044 total=109.97
+2026-06-29 01:53:04 INFO legacy_service.app GET /orders 200 count=13
+DEBUG: POST /orders payload={'customer': 'Acme Ltd', 'items': [{'sku': 'SKU-0004', 'qty': 3, 'unit_price': 4.95}, {'sku': 'SKU-0006', 'qty': 2, 'unit_price': 4.95}, {'sku': 'SKU-0007', 'qty': 4, 'unit_price': 4.95}]}
+2026-06-29 02:01:05 INFO legacy_service.orders order 00000045 created customer=Acme Ltd items=3 total=44.55
+created order 00000045 total=44.55
+2026-06-29 02:01:05 INFO legacy_service.app POST /orders 201 id=00000045 total=44.55
+2026-06-29 02:03:36 INFO legacy_service.app GET /orders 200 count=4
+2026-06-29 02:06:25 INFO legacy_service.app GET /orders/00000035 200 status=NEW
+2026-06-29 02:13:21 INFO legacy_service.app GET /orders/00000015 200 status=CANCELLED
+2026-06-29 02:16:40 INFO legacy_service.app GET /orders/00000007 200 status=NEW
+DEBUG: POST /orders payload={'customer': 'Initech', 'items': [{'sku': 'SKU-0007', 'qty': 1, 'unit_price': 19.99}, {'sku': 'SKU-0003', 'qty': 4, 'unit_price': 19.99}]}
+2026-06-29 02:23:29 INFO legacy_service.orders order 00000046 created customer=Initech items=2 total=99.95
+created order 00000046 total=99.95
+2026-06-29 02:23:29 INFO legacy_service.app POST /orders 201 id=00000046 total=99.95
+2026-06-29 02:28:17 INFO legacy_service.app GET /orders/00000035 200 status=PAID
+2026-06-29 02:36:11 INFO legacy_service.app GET /orders/00000016 404
+2026-06-29 02:40:28 INFO legacy_service.app GET /orders 200 count=18
+DEBUG: POST /orders payload={'customer': 'Northwind Traders', 'items': [{'sku': 'SKU-0006', 'qty': 2, 'unit_price': 12.5}, {'sku': 'SKU-0004', 'qty': 1, 'unit_price': 4.95}]}
+2026-06-29 02:49:36 INFO legacy_service.orders order 00000047 created customer=Northwind Traders items=2 total=29.95
+created order 00000047 total=29.95
+2026-06-29 02:49:36 INFO legacy_service.app POST /orders 201 id=00000047 total=29.95
+2026-06-29 02:55:39 WARNING legacy_service.orders rejected order: customer is required
+2026-06-29 02:55:39 INFO legacy_service.app POST /orders 400 error="customer is required"
+2026-06-29 03:00:05 INFO legacy_service.app GET /orders 200 count=29
+DEBUG: POST /orders payload={'customer': 'Soylent Foods', 'items': [{'sku': 'SKU-0009', 'qty': 4, 'unit_price': 8.8}, {'sku': 'SKU-0007', 'qty': 4, 'unit_price': 8.8}]}
+2026-06-29 03:04:38 INFO legacy_service.orders order 00000048 created customer=Soylent Foods items=2 total=70.40
+created order 00000048 total=70.4
+2026-06-29 03:04:38 INFO legacy_service.app POST /orders 201 id=00000048 total=70.40
+2026-06-29 03:13:35 INFO legacy_service.app GET /orders 200 count=14
+2026-06-29 03:20:49 WARNING legacy_service.orders rejected order: discount_pct out of range
+2026-06-29 03:20:49 INFO legacy_service.app POST /orders 400 error="discount_pct out of range"
+DEBUG: POST /orders payload={'customer': 'Vandelay', 'items': [{'sku': 'SKU-0001', 'qty': 1, 'unit_price': 19.99}, {'sku': 'SKU-0004', 'qty': 2, 'unit_price': 4.95}, {'sku': 'SKU-0009', 'qty': 1, 'unit_price': 12.5}]}
+2026-06-29 03:29:00 INFO legacy_service.orders order 00000049 created customer=Vandelay items=3 total=42.39
+created order 00000049 total=42.39
+2026-06-29 03:29:00 INFO legacy_service.app POST /orders 201 id=00000049 total=42.39
+2026-06-29 03:32:26 INFO legacy_service.app GET /orders 200 count=30
+2026-06-29 03:38:00 INFO legacy_service.app GET /orders/00000022 200 status=SHIPPED
+2026-06-29 03:44:15 INFO legacy_service.app GET /orders/00000021 200 status=SHIPPED
+DEBUG: POST /orders payload={'customer': 'Soylent Foods', 'items': [{'sku': 'SKU-0005', 'qty': 2, 'unit_price': 4.95}, {'sku': 'SKU-0008', 'qty': 2, 'unit_price': 12.5}]}
+2026-06-29 03:47:06 INFO legacy_service.orders order 00000050 created customer=Soylent Foods items=2 total=34.90
+created order 00000050 total=34.9
+2026-06-29 03:47:06 INFO legacy_service.app POST /orders 201 id=00000050 total=34.90
+2026-06-29 03:51:40 WARNING legacy_service.orders rejected order: customer is required
+2026-06-29 03:51:40 INFO legacy_service.app POST /orders 400 error="customer is required"
+2026-06-29 04:00:44 INFO legacy_service.app GET /orders 200 count=34
+2026-06-29 04:08:10 INFO legacy_service.app GET /orders/00000012 200 status=PAID
+2026-06-29 04:16:53 INFO legacy_service.app GET /orders/00000009 200 status=PAID
+2026-06-29 04:21:06 INFO legacy_service.app GET /report 200 date=2026-06-29 orders=10 total=1487.85
+2026-06-29 04:24:41 WARNING legacy_service.orders rejected order: customer is required
+2026-06-29 04:24:41 INFO legacy_service.app POST /orders 400 error="customer is required"
+DEBUG: POST /orders payload={'customer': 'Stark Supplies', 'items': [{'sku': 'SKU-0002', 'qty': 4, 'unit_price': 12.5}]}
+2026-06-29 04:33:51 INFO legacy_service.orders order 00000051 created customer=Stark Supplies items=1 total=50.00
+created order 00000051 total=50.0
+2026-06-29 04:33:51 INFO legacy_service.app POST /orders 201 id=00000051 total=50.00
+DEBUG: POST /orders payload={'customer': 'Umbrella Co', 'items': [{'sku': 'SKU-0003', 'qty': 4, 'unit_price': 19.99}]}
+2026-06-29 04:40:07 INFO legacy_service.orders order 00000052 created customer=Umbrella Co items=1 total=79.96
+created order 00000052 total=79.96
+2026-06-29 04:40:07 INFO legacy_service.app POST /orders 201 id=00000052 total=79.96
+2026-06-29 04:45:19 INFO legacy_service.app GET /orders 200 count=41
+2026-06-29 04:51:14 INFO legacy_service.app GET /orders 200 count=35
+2026-06-29 04:58:45 WARNING legacy_service.orders rejected order: customer is required
+2026-06-29 04:58:45 INFO legacy_service.app POST /orders 400 error="customer is required"
+DEBUG: POST /orders payload={'customer': 'Soylent Foods', 'items': [{'sku': 'SKU-0005', 'qty': 1, 'unit_price': 4.95}]}
+2026-06-29 05:06:30 INFO legacy_service.orders order 00000053 created customer=Soylent Foods items=1 total=4.95
+created order 00000053 total=4.95
+2026-06-29 05:06:30 INFO legacy_service.app POST /orders 201 id=00000053 total=4.95
+DEBUG: POST /orders payload={'customer': 'Hooli', 'items': [{'sku': 'SKU-0008', 'qty': 2, 'unit_price': 4.95}, {'sku': 'SKU-0006', 'qty': 1, 'unit_price': 19.99}]}
+2026-06-29 05:12:19 INFO legacy_service.orders order 00000054 created customer=Hooli items=2 total=29.89
+created order 00000054 total=29.89
+2026-06-29 05:12:19 INFO legacy_service.app POST /orders 201 id=00000054 total=29.89
+2026-06-29 05:16:34 INFO legacy_service.app GET /orders/00000003 200 status=SHIPPED
+2026-06-29 05:20:08 INFO legacy_service.app GET /orders/00000023 200 status=NEW
+2026-06-29 05:25:40 INFO legacy_service.app GET /orders 200 count=1
+db ready at orderbase.db
+2026-06-29 05:31:10 INFO legacy_service.orders order 00000007 status -> SHIPPED
+DEBUG: POST /orders payload={'customer': 'Initech', 'items': [{'sku': 'SKU-0004', 'qty': 2, 'unit_price': 4.95}]}
+2026-06-29 05:33:04 INFO legacy_service.orders order 00000055 created customer=Initech items=1 total=9.90
+created order 00000055 total=9.9
+2026-06-29 05:33:04 INFO legacy_service.app POST /orders 201 id=00000055 total=9.90
+DEBUG: POST /orders payload={'customer': 'Acme Ltd', 'items': [{'sku': 'SKU-0002', 'qty': 3, 'unit_price': 19.99}]}
+2026-06-29 05:35:25 INFO legacy_service.orders order 00000056 created customer=Acme Ltd items=1 total=59.97
+created order 00000056 total=59.97
+2026-06-29 05:35:25 INFO legacy_service.app POST /orders 201 id=00000056 total=59.97
+DEBUG: POST /orders payload={'customer': 'Hooli', 'items': [{'sku': 'SKU-0004', 'qty': 3, 'unit_price': 12.5}, {'sku': 'SKU-0007', 'qty': 2, 'unit_price': 4.95}, {'sku': 'SKU-0006', 'qty': 4, 'unit_price': 8.8}]}
+2026-06-29 05:38:01 INFO legacy_service.orders order 00000057 created customer=Hooli items=3 total=82.60
+created order 00000057 total=82.6
+2026-06-29 05:38:01 INFO legacy_service.app POST /orders 201 id=00000057 total=82.60
+2026-06-29 05:43:31 WARNING legacy_service.orders rejected order: discount_pct out of range
+2026-06-29 05:43:31 INFO legacy_service.app POST /orders 400 error="discount_pct out of range"
+2026-06-29 05:52:46 INFO legacy_service.app GET /orders/00000022 200 status=PAID
+2026-06-29 05:58:32 INFO legacy_service.app GET /orders 200 count=32
+2026-06-29 06:07:34 INFO legacy_service.app GET /orders/00000053 200 status=CANCELLED
+2026-06-29 06:09:50 INFO legacy_service.app GET /report 200 date=2026-06-29 orders=6 total=1298.48
+2026-06-29 06:12:47 INFO legacy_service.app GET /orders/00000005 200 status=NEW
+DEBUG: POST /orders payload={'customer': 'Umbrella Co', 'items': [{'sku': 'SKU-0009', 'qty': 4, 'unit_price': 4.95}, {'sku': 'SKU-0008', 'qty': 1, 'unit_price': 4.95}, {'sku': 'SKU-0006', 'qty': 3, 'unit_price': 19.99}]}
+2026-06-29 06:14:57 INFO legacy_service.orders order 00000058 created customer=Umbrella Co items=3 total=84.72
+created order 00000058 total=84.72
+2026-06-29 06:14:57 INFO legacy_service.app POST /orders 201 id=00000058 total=84.72
+2026-06-29 06:20:17 INFO legacy_service.app GET /orders/00000001 200 status=NEW
+2026-06-29 06:27:52 INFO legacy_service.app GET /orders/00000028 404
+2026-06-29 06:30:24 INFO legacy_service.app GET /orders/00000043 200 status=CANCELLED
+2026-06-29 06:39:18 INFO legacy_service.app GET /orders 200 count=2
+DEBUG: POST /orders payload={'customer': 'Vandelay', 'items': [{'sku': 'SKU-0006', 'qty': 3, 'unit_price': 7.25}, {'sku': 'SKU-0009', 'qty': 1, 'unit_price': 7.25}]}
+2026-06-29 06:44:20 INFO legacy_service.orders order 00000059 created customer=Vandelay items=2 total=29.00
+created order 00000059 total=29.0
+2026-06-29 06:44:20 INFO legacy_service.app POST /orders 201 id=00000059 total=29.00
+DEBUG: POST /orders payload={'customer': 'Acme Ltd', 'items': [{'sku': 'SKU-0001', 'qty': 1, 'unit_price': 19.99}, {'sku': 'SKU-0007', 'qty': 3, 'unit_price': 12.5}, {'sku': 'SKU-0009', 'qty': 3, 'unit_price': 19.99}]}
+2026-06-29 06:52:30 INFO legacy_service.orders order 00000060 created customer=Acme Ltd items=3 total=117.46
+created order 00000060 total=117.46
+2026-06-29 06:52:30 INFO legacy_service.app POST /orders 201 id=00000060 total=117.46
+2026-06-29 06:57:32 INFO legacy_service.app GET /orders 200 count=3
+2026-06-29 07:00:35 WARNING legacy_service.orders rejected order: at least one item is required
+2026-06-29 07:00:35 INFO legacy_service.app POST /orders 400 error="at least one item is required"
+DEBUG: POST /orders payload={'customer': 'Stark Supplies', 'items': [{'sku': 'SKU-0006', 'qty': 1, 'unit_price': 4.95}]}
+2026-06-29 07:01:28 INFO legacy_service.orders order 00000061 created customer=Stark Supplies items=1 total=4.95
+created order 00000061 total=4.95
+2026-06-29 07:01:28 INFO legacy_service.app POST /orders 201 id=00000061 total=4.95
+2026-06-29 07:02:52 INFO legacy_service.app GET /orders/00000022 200 status=CANCELLED
+2026-06-29 07:03:43 WARNING legacy_service.orders rejected order: at least one item is required
+2026-06-29 07:03:43 INFO legacy_service.app POST /orders 400 error="at least one item is required"
+2026-06-29 07:04:43 INFO legacy_service.app GET /orders 200 count=12
+2026-06-29 07:05:11 INFO legacy_service.app GET /orders 200 count=28
+2026-06-29 07:06:27 INFO legacy_service.app GET /orders/00000043 200 status=SHIPPED
+2026-06-29 07:07:15 INFO legacy_service.app GET /orders 200 count=27
+2026-06-29 07:07:43 WARNING legacy_service.orders rejected order: at least one item is required
+2026-06-29 07:07:43 INFO legacy_service.app POST /orders 400 error="at least one item is required"
+2026-06-29 07:08:34 INFO legacy_service.app GET /orders/00000061 200 status=CANCELLED
+2026-06-29 07:09:59 INFO legacy_service.app GET /report 200 date=2026-06-29 orders=8 total=1310.16
+DEBUG: POST /orders payload={'customer': 'Acme Ltd', 'items': [{'sku': 'SKU-0001', 'qty': 2, 'unit_price': 12.5}]}
+2026-06-29 07:11:03 INFO legacy_service.orders order 00000062 created customer=Acme Ltd items=1 total=25.00
+created order 00000062 total=25.0
+2026-06-29 07:11:03 INFO legacy_service.app POST /orders 201 id=00000062 total=25.00
+DEBUG: POST /orders payload={'customer': 'Vandelay', 'items': [{'sku': 'SKU-0006', 'qty': 2, 'unit_price': 8.8}, {'sku': 'SKU-0009', 'qty': 4, 'unit_price': 7.25}, {'sku': 'SKU-0001', 'qty': 3, 'unit_price': 4.95}]}
+2026-06-29 07:11:42 INFO legacy_service.orders order 00000063 created customer=Vandelay items=3 total=61.45
+created order 00000063 total=61.45
+2026-06-29 07:11:42 INFO legacy_service.app POST /orders 201 id=00000063 total=61.45
+2026-06-29 07:13:08 INFO legacy_service.app GET /orders/00000040 200 status=NEW
+2026-06-29 07:14:35 WARNING legacy_service.orders rejected order: customer is required
+2026-06-29 07:14:35 INFO legacy_service.app POST /orders 400 error="customer is required"
+2026-06-29 07:14:57 INFO legacy_service.app GET /orders/00000056 200 status=NEW
+2026-06-29 07:16:09 WARNING legacy_service.orders rejected order: at least one item is required
+2026-06-29 07:16:09 INFO legacy_service.app POST /orders 400 error="at least one item is required"
+2026-06-29 07:16:56 INFO legacy_service.app GET /orders/00000015 404
+2026-06-29 07:17:22 INFO legacy_service.app GET /orders/00000012 200 status=NEW
+2026-06-29 07:17:58 INFO legacy_service.app GET /orders/00000020 200 status=PAID
+2026-06-29 07:19:20 INFO legacy_service.app GET /report 200 date=2026-06-29 orders=9 total=1279.72
+2026-06-29 07:19:43 INFO legacy_service.app GET /orders/00000029 200 status=NEW
+2026-06-29 07:20:59 INFO legacy_service.app GET /orders 200 count=49
+2026-06-29 07:21:28 INFO legacy_service.app GET /orders/00000032 200 status=SHIPPED
+2026-06-29 07:22:17 INFO legacy_service.app GET /orders/00000010 200 status=CANCELLED
+2026-06-29 07:23:47 INFO legacy_service.app GET /report 200 date=2026-06-29 orders=13 total=1562.37
+2026-06-29 07:24:46 INFO legacy_service.app GET /orders/00000060 200 status=NEW
+DEBUG: POST /orders payload={'customer': 'Globex', 'items': [{'sku': 'SKU-0006', 'qty': 1, 'unit_price': 8.8}, {'sku': 'SKU-0008', 'qty': 1, 'unit_price': 7.25}, {'sku': 'SKU-0006', 'qty': 3, 'unit_price': 8.8}]}
+2026-06-29 07:25:20 INFO legacy_service.orders order 00000064 created customer=Globex items=3 total=42.45
+created order 00000064 total=42.45
+2026-06-29 07:25:20 INFO legacy_service.app POST /orders 201 id=00000064 total=42.45
+2026-06-29 07:25:55 INFO legacy_service.app GET /orders/00000055 200 status=CANCELLED
+2026-06-29 07:26:52 INFO legacy_service.app GET /orders/00000031 200 status=CANCELLED
+2026-06-29 07:27:17 INFO legacy_service.app GET /orders/00000015 200 status=SHIPPED
+2026-06-29 07:27:47 INFO legacy_service.app GET /orders/00000004 200 status=SHIPPED
+2026-06-29 07:28:29 INFO legacy_service.app GET /orders/00000050 200 status=NEW
+2026-06-29 07:29:57 INFO legacy_service.app GET /orders/00000008 404
+2026-06-29 07:31:03 INFO legacy_service.app GET /report 200 date=2026-06-29 orders=7 total=1177.83
+2026-06-29 07:31:25 WARNING legacy_service.orders rejected order: discount_pct out of range
+2026-06-29 07:31:25 INFO legacy_service.app POST /orders 400 error="discount_pct out of range"
+2026-06-29 07:32:52 INFO legacy_service.app GET /orders 200 count=23
+2026-06-29 07:33:17 WARNING legacy_service.orders rejected order: customer is required
+2026-06-29 07:33:17 INFO legacy_service.app POST /orders 400 error="customer is required"
+DEBUG: POST /orders payload={'customer': 'Acme Ltd', 'items': [{'sku': 'SKU-0002', 'qty': 2, 'unit_price': 12.5}, {'sku': 'SKU-0008', 'qty': 4, 'unit_price': 8.8}]}
+2026-06-29 07:33:47 INFO legacy_service.orders order 00000065 created customer=Acme Ltd items=2 total=60.20
+created order 00000065 total=60.2
+2026-06-29 07:33:47 INFO legacy_service.app POST /orders 201 id=00000065 total=60.20
+DEBUG: POST /orders payload={'customer': 'Northwind Traders', 'items': [{'sku': 'SKU-0005', 'qty': 2, 'unit_price': 12.5}, {'sku': 'SKU-0007', 'qty': 4, 'unit_price': 8.8}]}
+2026-06-29 07:34:47 INFO legacy_service.orders order 00000066 created customer=Northwind Traders items=2 total=60.20
+created order 00000066 total=60.2
+2026-06-29 07:34:47 INFO legacy_service.app POST /orders 201 id=00000066 total=60.20
+DEBUG: POST /orders payload={'customer': 'Vandelay', 'items': [{'sku': 'SKU-0004', 'qty': 1, 'unit_price': 7.25}]}
+2026-06-29 07:35:13 INFO legacy_service.orders order 00000067 created customer=Vandelay items=1 total=7.25
+created order 00000067 total=7.25
+2026-06-29 07:35:13 INFO legacy_service.app POST /orders 201 id=00000067 total=7.25
+2026-06-29 07:36:05 INFO legacy_service.app GET /orders/00000059 200 status=PAID
+DEBUG: POST /orders payload={'customer': 'Stark Supplies', 'items': [{'sku': 'SKU-0003', 'qty': 1, 'unit_price': 7.25}, {'sku': 'SKU-0004', 'qty': 1, 'unit_price': 8.8}, {'sku': 'SKU-0006', 'qty': 4, 'unit_price': 12.5}]}
+2026-06-29 07:37:25 INFO legacy_service.orders order 00000068 created customer=Stark Supplies items=3 total=66.05
+created order 00000068 total=66.05
+2026-06-29 07:37:25 INFO legacy_service.app POST /orders 201 id=00000068 total=66.05
+2026-06-29 07:38:01 INFO legacy_service.app GET /orders 200 count=12
+2026-06-29 07:39:15 INFO legacy_service.app GET /orders 200 count=8
+DEBUG: POST /orders payload={'customer': 'Acme Ltd', 'items': [{'sku': 'SKU-0001', 'qty': 3, 'unit_price': 8.8}, {'sku': 'SKU-0008', 'qty': 3, 'unit_price': 4.95}]}
+2026-06-29 07:40:28 INFO legacy_service.orders order 00000069 created customer=Acme Ltd items=2 total=41.25
+created order 00000069 total=41.25
+2026-06-29 07:40:28 INFO legacy_service.app POST /orders 201 id=00000069 total=41.25
+2026-06-29 07:41:25 INFO legacy_service.app GET /orders/00000050 200 status=SHIPPED
+2026-06-29 07:42:47 INFO legacy_service.app GET /report 200 date=2026-06-29 orders=10 total=431.62
+2026-06-29 07:43:38 WARNING legacy_service.orders rejected order: at least one item is required
+2026-06-29 07:43:38 INFO legacy_service.app POST /orders 400 error="at least one item is required"
+2026-06-29 07:44:09 INFO legacy_service.app GET /orders/00000060 200 status=NEW
+2026-06-29 07:45:36 INFO legacy_service.app GET /orders/00000004 200 status=NEW
+2026-06-29 07:45:54 INFO legacy_service.app GET /orders 200 count=8
+2026-06-29 07:46:29 INFO legacy_service.app GET /orders 200 count=25
+2026-06-29 07:47:11 INFO legacy_service.app GET /orders/00000065 200 status=PAID
+2026-06-29 07:48:22 INFO legacy_service.app GET /orders 200 count=6
+2026-06-29 07:48:59 INFO legacy_service.app GET /orders/00000034 200 status=NEW
+2026-06-29 07:49:36 INFO legacy_service.app GET /report 200 date=2026-06-29 orders=8 total=643.76
+2026-06-29 07:50:53 INFO legacy_service.app GET /orders/00000002 200 status=NEW
+2026-06-29 07:51:52 INFO legacy_service.app GET /orders/00000016 404
+DEBUG: POST /orders payload={'customer': 'Vandelay', 'items': [{'sku': 'SKU-0005', 'qty': 1, 'unit_price': 12.5}]}
+2026-06-29 07:52:45 INFO legacy_service.orders order 00000070 created customer=Vandelay items=1 total=12.50
+created order 00000070 total=12.5
+2026-06-29 07:52:45 INFO legacy_service.app POST /orders 201 id=00000070 total=12.50
+2026-06-29 07:53:52 WARNING legacy_service.orders rejected order: customer is required
+2026-06-29 07:53:52 INFO legacy_service.app POST /orders 400 error="customer is required"
+2026-06-29 07:54:10 INFO legacy_service.app GET /orders/00000028 200 status=CANCELLED
+2026-06-29 07:54:50 INFO legacy_service.app GET /orders 200 count=22
+2026-06-29 07:55:10 INFO legacy_service.app GET /orders/00000064 200 status=PAID
+2026-06-29 07:56:07 WARNING legacy_service.orders rejected order: customer is required
+2026-06-29 07:56:07 INFO legacy_service.app POST /orders 400 error="customer is required"
+2026-06-29 07:56:57 INFO legacy_service.app GET /orders/00000049 200 status=CANCELLED
+2026-06-29 07:57:16 INFO legacy_service.app GET /report 200 date=2026-06-29 orders=11 total=642.35
+DEBUG: POST /orders payload={'customer': 'Northwind Traders', 'items': [{'sku': 'SKU-0008', 'qty': 4, 'unit_price': 12.5}]}
+2026-06-29 07:57:46 INFO legacy_service.orders order 00000071 created customer=Northwind Traders items=1 total=50.00
+created order 00000071 total=50.0
+2026-06-29 07:57:46 INFO legacy_service.app POST /orders 201 id=00000071 total=50.00
+2026-06-29 07:58:26 WARNING legacy_service.orders rejected order: customer is required
+2026-06-29 07:58:26 INFO legacy_service.app POST /orders 400 error="customer is required"
+2026-06-29 07:59:32 INFO legacy_service.app GET /orders 200 count=8
+2026-06-29 08:01:02 INFO legacy_service.app GET /orders/00000048 200 status=PAID
+2026-06-29 08:01:20 INFO legacy_service.app GET /orders/00000015 200 status=NEW
+2026-06-29 08:02:50 INFO legacy_service.app GET /orders/00000048 200 status=PAID
+2026-06-29 08:03:34 INFO legacy_service.app GET /orders/00000049 200 status=SHIPPED
+DEBUG: POST /orders payload={'customer': 'Initech', 'items': [{'sku': 'SKU-0003', 'qty': 3, 'unit_price': 4.95}, {'sku': 'SKU-0008', 'qty': 1, 'unit_price': 19.99}, {'sku': 'SKU-0005', 'qty': 4, 'unit_price': 19.99}]}
+2026-06-29 08:04:37 INFO legacy_service.orders order 00000072 created customer=Initech items=3 total=114.80
+created order 00000072 total=114.8
+2026-06-29 08:04:37 INFO legacy_service.app POST /orders 201 id=00000072 total=114.80
+2026-06-29 08:04:53 INFO legacy_service.app GET /orders/00000028 200 status=SHIPPED
+2026-06-29 08:06:18 INFO legacy_service.app GET /orders 200 count=33
+2026-06-29 08:06:35 INFO legacy_service.app GET /orders 200 count=46
+2026-06-29 08:07:54 INFO legacy_service.app GET /orders/00000049 200 status=SHIPPED
+2026-06-29 08:08:18 INFO legacy_service.app GET /report 200 date=2026-06-29 orders=8 total=1359.05
+2026-06-29 08:09:01 INFO legacy_service.app GET /report 200 date=2026-06-29 orders=9 total=924.46
+2026-06-29 08:10:11 INFO legacy_service.app GET /orders/00000004 200 status=NEW
+2026-06-29 08:10:42 INFO legacy_service.app GET /orders 200 count=17
+2026-06-29 08:12:01 INFO legacy_service.app GET /report 200 date=2026-06-29 orders=9 total=1277.27
+2026-06-29 08:13:05 INFO legacy_service.app GET /orders 200 count=27
+2026-06-29 08:13:57 INFO legacy_service.app GET /orders/00000063 200 status=NEW
+DEBUG: POST /orders payload={'customer': 'Vandelay', 'items': [{'sku': 'SKU-0001', 'qty': 1, 'unit_price': 19.99}, {'sku': 'SKU-0003', 'qty': 3, 'unit_price': 7.25}, {'sku': 'SKU-0006', 'qty': 2, 'unit_price': 4.95}]}
+2026-06-29 08:15:26 INFO legacy_service.orders order 00000073 created customer=Vandelay items=3 total=51.64
+created order 00000073 total=51.64
+2026-06-29 08:15:26 INFO legacy_service.app POST /orders 201 id=00000073 total=51.64
+2026-06-29 08:15:51 INFO legacy_service.app GET /orders 200 count=49
+2026-06-29 08:16:50 INFO legacy_service.app GET /orders/00000011 200 status=NEW
+2026-06-29 08:17:08 INFO legacy_service.app GET /report 200 date=2026-06-29 orders=11 total=751.19
+DEBUG: POST /orders payload={'customer': 'Hooli', 'items': [{'sku': 'SKU-0003', 'qty': 3, 'unit_price': 19.99}, {'sku': 'SKU-0001', 'qty': 1, 'unit_price': 19.99}, {'sku': 'SKU-0003', 'qty': 3, 'unit_price': 8.8}]}
+2026-06-29 08:17:43 INFO legacy_service.orders order 00000074 created customer=Hooli items=3 total=106.36
+created order 00000074 total=106.36
+2026-06-29 08:17:43 INFO legacy_service.app POST /orders 201 id=00000074 total=106.36
+2026-06-29 08:19:05 INFO legacy_service.app GET /orders/00000012 200 status=SHIPPED
+DEBUG: POST /orders payload={'customer': 'Globex', 'items': [{'sku': 'SKU-0002', 'qty': 1, 'unit_price': 8.8}, {'sku': 'SKU-0009', 'qty': 4, 'unit_price': 8.8}, {'sku': 'SKU-0004', 'qty': 3, 'unit_price': 19.99}]}
+2026-06-29 08:19:46 INFO legacy_service.orders order 00000075 created customer=Globex items=3 total=103.97
+created order 00000075 total=103.97
+2026-06-29 08:19:46 INFO legacy_service.app POST /orders 201 id=00000075 total=103.97
+DEBUG: POST /orders payload={'customer': 'Umbrella Co', 'items': [{'sku': 'SKU-0002', 'qty': 4, 'unit_price': 7.25}, {'sku': 'SKU-0003', 'qty': 1, 'unit_price': 19.99}, {'sku': 'SKU-0002', 'qty': 4, 'unit_price': 4.95}]}
+2026-06-29 08:20:44 INFO legacy_service.orders order 00000076 created customer=Umbrella Co items=3 total=68.79
+created order 00000076 total=68.79
+2026-06-29 08:20:44 INFO legacy_service.app POST /orders 201 id=00000076 total=68.79
+2026-06-29 08:21:14 INFO legacy_service.app GET /orders 200 count=34
+2026-06-29 08:21:35 INFO legacy_service.app GET /orders 200 count=6
+DEBUG: POST /orders payload={'customer': 'Northwind Traders', 'items': [{'sku': 'SKU-0001', 'qty': 4, 'unit_price': 4.95}]}
+2026-06-29 08:22:20 INFO legacy_service.orders order 00000077 created customer=Northwind Traders items=1 total=19.80
+created order 00000077 total=19.8
+2026-06-29 08:22:20 INFO legacy_service.app POST /orders 201 id=00000077 total=19.80
+2026-06-29 08:22:41 INFO legacy_service.app GET /orders/00000024 200 status=SHIPPED
+2026-06-29 08:23:23 INFO legacy_service.app GET /orders/00000032 200 status=SHIPPED
+DEBUG: POST /orders payload={'customer': 'Hooli', 'items': [{'sku': 'SKU-0007', 'qty': 4, 'unit_price': 19.99}]}
+2026-06-29 08:24:46 INFO legacy_service.orders order 00000078 created customer=Hooli items=1 total=79.96
+created order 00000078 total=79.96
+2026-06-29 08:24:46 INFO legacy_service.app POST /orders 201 id=00000078 total=79.96
+2026-06-29 08:25:45 INFO legacy_service.app GET /orders/00000076 200 status=SHIPPED
+DEBUG: POST /orders payload={'customer': 'Umbrella Co', 'items': [{'sku': 'SKU-0002', 'qty': 1, 'unit_price': 4.95}, {'sku': 'SKU-0008', 'qty': 3, 'unit_price': 19.99}]}
+2026-06-29 08:26:51 INFO legacy_service.orders order 00000079 created customer=Umbrella Co items=2 total=64.92
+created order 00000079 total=64.92
+2026-06-29 08:26:51 INFO legacy_service.app POST /orders 201 id=00000079 total=64.92
+2026-06-29 08:27:20 INFO legacy_service.app GET /orders 200 count=23
+2026-06-29 08:27:39 INFO legacy_service.app GET /orders 200 count=38
+2026-06-29 08:27:58 INFO legacy_service.app GET /orders 200 count=29
+2026-06-29 08:29:00 INFO legacy_service.app GET /orders/00000070 200 status=PAID
+2026-06-29 08:30:09 INFO legacy_service.app GET /orders/00000037 200 status=NEW
+2026-06-29 08:31:05 INFO legacy_service.app GET /orders/00000038 200 status=NEW
+2026-06-29 08:31:45 INFO legacy_service.app GET /orders 200 count=2
+2026-06-29 08:33:13 INFO legacy_service.app GET /report 200 date=2026-06-29 orders=10 total=736.09
+2026-06-29 08:33:29 INFO legacy_service.app GET /orders/00000028 404
+DEBUG: POST /orders payload={'customer': 'Acme Ltd', 'items': [{'sku': 'SKU-0009', 'qty': 2, 'unit_price': 7.25}, {'sku': 'SKU-0001', 'qty': 4, 'unit_price': 7.25}, {'sku': 'SKU-0004', 'qty': 1, 'unit_price': 12.5}]}
+2026-06-29 08:33:58 INFO legacy_service.orders order 00000080 created customer=Acme Ltd items=3 total=56.00
+created order 00000080 total=56.0
+2026-06-29 08:33:58 INFO legacy_service.app POST /orders 201 id=00000080 total=56.00
+2026-06-29 08:35:28 INFO legacy_service.app GET /report 200 date=2026-06-29 orders=8 total=711.13
+DEBUG: POST /orders payload={'customer': 'Acme Ltd', 'items': [{'sku': 'SKU-0005', 'qty': 1, 'unit_price': 12.5}, {'sku': 'SKU-0002', 'qty': 3, 'unit_price': 19.99}]}
+2026-06-29 08:35:53 INFO legacy_service.orders order 00000081 created customer=Acme Ltd items=2 total=72.47
+created order 00000081 total=72.47
+2026-06-29 08:35:53 INFO legacy_service.app POST /orders 201 id=00000081 total=72.47
+2026-06-29 08:37:03 INFO legacy_service.app GET /report 200 date=2026-06-29 orders=8 total=718.20
+DEBUG: POST /orders payload={'customer': 'Soylent Foods', 'items': [{'sku': 'SKU-0005', 'qty': 3, 'unit_price': 7.25}, {'sku': 'SKU-0002', 'qty': 3, 'unit_price': 4.95}]}
+2026-06-29 08:38:12 INFO legacy_service.orders order 00000082 created customer=Soylent Foods items=2 total=36.60
+created order 00000082 total=36.6
+2026-06-29 08:38:12 INFO legacy_service.app POST /orders 201 id=00000082 total=36.60
+DEBUG: POST /orders payload={'customer': 'Umbrella Co', 'items': [{'sku': 'SKU-0001', 'qty': 4, 'unit_price': 4.95}, {'sku': 'SKU-0004', 'qty': 2, 'unit_price': 4.95}]}
+2026-06-29 08:39:09 INFO legacy_service.orders order 00000083 created customer=Umbrella Co items=2 total=29.70
+created order 00000083 total=29.7
+2026-06-29 08:39:09 INFO legacy_service.app POST /orders 201 id=00000083 total=29.70
+2026-06-29 08:40:12 INFO legacy_service.app GET /report 200 date=2026-06-29 orders=12 total=715.31
+2026-06-29 08:41:19 INFO legacy_service.app GET /orders/00000014 200 status=CANCELLED
+2026-06-29 08:41:57 INFO legacy_service.app GET /orders/00000058 200 status=SHIPPED
+DEBUG: POST /orders payload={'customer': 'Stark Supplies', 'items': [{'sku': 'SKU-0007', 'qty': 2, 'unit_price': 12.5}, {'sku': 'SKU-0004', 'qty': 2, 'unit_price': 7.25}]}
+2026-06-29 08:42:59 INFO legacy_service.orders order 00000084 created customer=Stark Supplies items=2 total=39.50
+created order 00000084 total=39.5
+2026-06-29 08:42:59 INFO legacy_service.app POST /orders 201 id=00000084 total=39.50
+2026-06-29 08:44:02 INFO legacy_service.app GET /orders 200 count=34
+2026-06-29 08:45:23 INFO legacy_service.app GET /orders 200 count=27
+2026-06-29 08:46:11 INFO legacy_service.app GET /orders 200 count=5
+2026-06-29 08:46:59 INFO legacy_service.app GET /orders 200 count=35
+2026-06-29 08:48:15 INFO legacy_service.app GET /orders/00000001 404
+2026-06-29 08:49:09 INFO legacy_service.app GET /orders/00000015 200 status=CANCELLED
+2026-06-29 08:49:36 INFO legacy_service.app GET /report 200 date=2026-06-29 orders=11 total=631.90
+DEBUG: POST /orders payload={'customer': 'Initech', 'items': [{'sku': 'SKU-0006', 'qty': 4, 'unit_price': 12.5}, {'sku': 'SKU-0008', 'qty': 4, 'unit_price': 19.99}]}
+2026-06-29 08:50:06 INFO legacy_service.orders order 00000085 created customer=Initech items=2 total=129.96
+created order 00000085 total=129.96
+2026-06-29 08:50:06 INFO legacy_service.app POST /orders 201 id=00000085 total=129.96
+2026-06-29 08:50:31 INFO legacy_service.app GET /orders 200 count=38
+2026-06-29 08:51:38 INFO legacy_service.app GET /orders/00000046 200 status=SHIPPED
+DEBUG: POST /orders payload={'customer': 'Northwind Traders', 'items': [{'sku': 'SKU-0003', 'qty': 1, 'unit_price': 7.25}]}
+2026-06-29 08:51:53 INFO legacy_service.orders order 00000086 created customer=Northwind Traders items=1 total=7.25
+created order 00000086 total=7.25
+2026-06-29 08:51:53 INFO legacy_service.app POST /orders 201 id=00000086 total=7.25
+2026-06-29 08:52:57 INFO legacy_service.app GET /orders/00000078 200 status=CANCELLED
+DEBUG: POST /orders payload={'customer': 'Globex', 'items': [{'sku': 'SKU-0003', 'qty': 3, 'unit_price': 12.5}, {'sku': 'SKU-0006', 'qty': 2, 'unit_price': 12.5}]}
+2026-06-29 08:53:22 INFO legacy_service.orders order 00000087 created customer=Globex items=2 total=62.50
+created order 00000087 total=62.5
+2026-06-29 08:53:22 INFO legacy_service.app POST /orders 201 id=00000087 total=62.50
+DEBUG: POST /orders payload={'customer': 'Hooli', 'items': [{'sku': 'SKU-0003', 'qty': 2, 'unit_price': 4.95}]}
+2026-06-29 08:54:19 INFO legacy_service.orders order 00000088 created customer=Hooli items=1 total=9.90
+created order 00000088 total=9.9
+2026-06-29 08:54:19 INFO legacy_service.app POST /orders 201 id=00000088 total=9.90
+DEBUG: POST /orders payload={'customer': 'Stark Supplies', 'items': [{'sku': 'SKU-0001', 'qty': 1, 'unit_price': 19.99}]}
+2026-06-29 08:55:14 INFO legacy_service.orders order 00000089 created customer=Stark Supplies items=1 total=19.99
+created order 00000089 total=19.99
+2026-06-29 08:55:14 INFO legacy_service.app POST /orders 201 id=00000089 total=19.99
+2026-06-29 08:56:27 WARNING legacy_service.orders rejected order: customer is required
+2026-06-29 08:56:27 INFO legacy_service.app POST /orders 400 error="customer is required"
+2026-06-29 08:56:53 INFO legacy_service.app GET /orders/00000031 200 status=PAID
+DEBUG: POST /orders payload={'customer': 'Vandelay', 'items': [{'sku': 'SKU-0003', 'qty': 4, 'unit_price': 8.8}, {'sku': 'SKU-0008', 'qty': 2, 'unit_price': 12.5}]}
+2026-06-29 08:58:09 INFO legacy_service.orders order 00000090 created customer=Vandelay items=2 total=60.20
+created order 00000090 total=60.2
+2026-06-29 08:58:09 INFO legacy_service.app POST /orders 201 id=00000090 total=60.20
+2026-06-29 08:59:07 INFO legacy_service.app GET /orders 200 count=48
+2026-06-29 09:00:26 INFO legacy_service.app GET /orders/00000059 200 status=CANCELLED
+2026-06-29 09:01:34 INFO legacy_service.app GET /orders/00000041 200 status=SHIPPED
+2026-06-29 09:02:33 INFO legacy_service.app GET /orders 200 count=1
+2026-06-29 09:03:01 INFO legacy_service.app GET /orders 200 count=30
+DEBUG: POST /orders payload={'customer': 'Wayne Retail', 'items': [{'sku': 'SKU-0006', 'qty': 3, 'unit_price': 12.5}]}
+2026-06-29 09:03:21 INFO legacy_service.orders order 00000091 created customer=Wayne Retail items=1 total=37.50
+created order 00000091 total=37.5
+2026-06-29 09:03:21 INFO legacy_service.app POST /orders 201 id=00000091 total=37.50
+2026-06-29 09:03:37 INFO legacy_service.app GET /orders/00000047 200 status=PAID
+DEBUG: POST /orders payload={'customer': 'Umbrella Co', 'items': [{'sku': 'SKU-0005', 'qty': 4, 'unit_price': 7.25}, {'sku': 'SKU-0003', 'qty': 3, 'unit_price': 7.25}, {'sku': 'SKU-0007', 'qty': 4, 'unit_price': 19.99}]}
+2026-06-29 09:04:15 INFO legacy_service.orders order 00000092 created customer=Umbrella Co items=3 total=130.71
+created order 00000092 total=130.71
+2026-06-29 09:04:15 INFO legacy_service.app POST /orders 201 id=00000092 total=130.71
+2026-06-29 09:05:01 INFO legacy_service.app GET /report 200 date=2026-06-29 orders=6 total=1268.87
+2026-06-29 09:06:19 INFO legacy_service.app GET /orders/00000008 200 status=NEW
+2026-06-29 09:06:37 INFO legacy_service.app GET /report 200 date=2026-06-29 orders=9 total=728.05
+2026-06-29 09:07:26 INFO legacy_service.app GET /orders/00000028 200 status=PAID
+2026-06-29 09:08:44 WARNING legacy_service.orders rejected order: at least one item is required
+2026-06-29 09:08:44 INFO legacy_service.app POST /orders 400 error="at least one item is required"
+2026-06-29 09:09:48 INFO legacy_service.app GET /orders/00000070 200 status=CANCELLED
+DEBUG: POST /orders payload={'customer': 'Hooli', 'items': [{'sku': 'SKU-0006', 'qty': 3, 'unit_price': 19.99}, {'sku': 'SKU-0003', 'qty': 3, 'unit_price': 19.99}, {'sku': 'SKU-0002', 'qty': 3, 'unit_price': 4.95}]}
+2026-06-29 09:10:13 INFO legacy_service.orders order 00000093 created customer=Hooli items=3 total=134.79
+created order 00000093 total=134.79
+2026-06-29 09:10:13 INFO legacy_service.app POST /orders 201 id=00000093 total=134.79
+2026-06-29 09:11:35 WARNING legacy_service.orders rejected order: discount_pct out of range
+2026-06-29 09:11:35 INFO legacy_service.app POST /orders 400 error="discount_pct out of range"
+2026-06-29 09:12:26 INFO legacy_service.app GET /orders/00000076 200 status=PAID
+2026-06-29 09:12:44 INFO legacy_service.app GET /orders/00000007 200 status=NEW
+2026-06-29 09:13:30 WARNING monitor order 00000007 shows NEW in API but SHIPPED in WMS (cache?)
+2026-06-29 09:13:36 INFO legacy_service.app GET /orders/00000041 200 status=NEW
+DEBUG: POST /orders payload={'customer': 'Globex', 'items': [{'sku': 'SKU-0008', 'qty': 3, 'unit_price': 19.99}, {'sku': 'SKU-0004', 'qty': 4, 'unit_price': 12.5}]}
+2026-06-29 09:14:35 INFO legacy_service.orders order 00000094 created customer=Globex items=2 total=109.97
+created order 00000094 total=109.97
+2026-06-29 09:14:35 INFO legacy_service.app POST /orders 201 id=00000094 total=109.97
+2026-06-29 09:15:27 INFO legacy_service.app GET /orders/00000082 200 status=PAID
+DEBUG: POST /orders payload={'customer': 'Vandelay', 'items': [{'sku': 'SKU-0002', 'qty': 4, 'unit_price': 4.95}, {'sku': 'SKU-0003', 'qty': 2, 'unit_price': 19.99}, {'sku': 'SKU-0004', 'qty': 1, 'unit_price': 7.25}]}
+2026-06-29 09:16:06 INFO legacy_service.orders order 00000095 created customer=Vandelay items=3 total=67.03
+created order 00000095 total=67.03
+2026-06-29 09:16:06 INFO legacy_service.app POST /orders 201 id=00000095 total=67.03
+2026-06-29 09:17:17 INFO legacy_service.app GET /orders/00000036 200 status=NEW
+2026-06-29 09:18:20 INFO legacy_service.app GET /report 200 date=2026-06-29 orders=7 total=1064.39
+2026-06-29 09:19:15 INFO legacy_service.app GET /orders 200 count=23
+2026-06-29 09:19:48 INFO legacy_service.app GET /report 200 date=2026-06-29 orders=6 total=484.87
+2026-06-29 09:21:06 INFO legacy_service.app GET /orders/00000013 200 status=CANCELLED
+2026-06-29 09:22:04 INFO legacy_service.app GET /orders 200 count=43
+DEBUG: POST /orders payload={'customer': 'Hooli', 'items': [{'sku': 'SKU-0003', 'qty': 1, 'unit_price': 19.99}, {'sku': 'SKU-0001', 'qty': 1, 'unit_price': 8.8}, {'sku': 'SKU-0007', 'qty': 2, 'unit_price': 4.95}]}
+2026-06-29 09:22:53 INFO legacy_service.orders order 00000096 created customer=Hooli items=3 total=38.69
+created order 00000096 total=38.69
+2026-06-29 09:22:53 INFO legacy_service.app POST /orders 201 id=00000096 total=38.69
+DEBUG: POST /orders payload={'customer': 'Globex', 'items': [{'sku': 'SKU-0001', 'qty': 1, 'unit_price': 4.95}, {'sku': 'SKU-0003', 'qty': 2, 'unit_price': 19.99}, {'sku': 'SKU-0004', 'qty': 4, 'unit_price': 7.25}]}
+2026-06-29 09:23:37 INFO legacy_service.orders order 00000097 created customer=Globex items=3 total=73.93
+created order 00000097 total=73.93
+2026-06-29 09:23:37 INFO legacy_service.app POST /orders 201 id=00000097 total=73.93
+2026-06-29 23:50:05 INFO legacy_service.reconcile reconcile_day start date=2026-06-29
+2026-06-29 23:50:09 WARNING legacy_service.reconcile total mismatch order=00000015 stored=9.40 recomputed=9.41 delta=0.01
