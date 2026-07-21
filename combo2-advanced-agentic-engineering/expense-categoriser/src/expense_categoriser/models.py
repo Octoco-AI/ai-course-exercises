@@ -40,6 +40,20 @@ class CategorisationOut(BaseModel):
     used_fallback: bool = Field(False, description="True when the model's confidence fell below the threshold and we returned 'Other' as a fallback.")
 
 
+
+class TopCategoryItem(BaseModel):
+    """An item in the TopCategoriesResponse."""
+
+    category: str = Field(..., description="The category name.")
+    count: int = Field(..., description="The number of times this category has been assigned.")
+
+
+class TopCategoriesResponse(BaseModel):
+    """The response for the /categories/top endpoint."""
+
+    top_categories: list[TopCategoryItem] = Field(..., description="A list of top categories by frequency, sorted in descending order.")
+
+
 class ModelResponse(BaseModel):
     """The schema we ask Gemini to produce. Kept separate from CategorisationOut
     so we can wrap the raw model output with our fallback logic before returning."""

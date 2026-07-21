@@ -17,16 +17,20 @@ import logging
 import os
 import time
 
+from collections import Counter, deque
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 
 from .core import categorise
-from .models import CANONICAL_CATEGORIES, CategorisationOut, ExpenseIn
+from .models import CANONICAL_CATEGORIES, CategorisationOut, ExpenseIn, TopCategoriesResponse, TopCategoryItem
 
 
 load_dotenv()
 
 logger = logging.getLogger(__name__)
+
+# Stores the last 100 categories assigned.
+CATEGORY_HISTORY = deque(maxlen=100)
 
 app = FastAPI(
     title="Expense Categoriser",
@@ -73,7 +77,23 @@ def categorise_expense(expense: ExpenseIn) -> CategorisationOut:
         "categorised %r -> %s (conf=%.2f, fallback=%s, %.0fms)",
         expense.description, result.category, result.confidence, result.used_fallback, elapsed_ms,
     )
+    CATEGORY_HISTORY.append(result.category)
     return result
+
+
+
+@app.get("/categories/top", response_model=TopCategoriesResponse)
+def top_categories(k: int = 3) -> TopCategoriesResponse:
+    """Return the top k most frequent categories from the last 100 transactions."""
+    if k <= 0:
+        raise HTTPException(status_code=400, detail="'k' must be a positive integer.")
+
+    category_counts = Counter(CATEGORY_HISTORY)
+    top_items = []
+    for category, count in category_counts.most_common(k):
+        top_items.append(TopCategoryItem(category=category, count=count))
+
+    return TopCategoriesResponse(top_categories=top_items)
 
 
 def dev_main() -> None:

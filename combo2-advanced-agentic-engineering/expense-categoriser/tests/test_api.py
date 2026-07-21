@@ -69,6 +69,52 @@ def test_categorise_endpoint_handles_contract_violation():
         assert "Snacks" in response.json()["detail"]
 
 
+
+
+def test_top_categories_endpoint():
+    # Clear history before test
+    api_module.CATEGORY_HISTORY.clear()
+
+    # Populate history with some categories
+    _replace_categorise_with(CategorisationOut(category="Food & Dining", confidence=0.9))
+    with TestClient(app) as client:
+        client.post("/categorise", json={"description": "Restaurant", "amount": 30.0})
+        client.post("/categorise", json={"description": "Groceries", "amount": 50.0})
+
+    _replace_categorise_with(CategorisationOut(category="Transportation", confidence=0.8))
+    with TestClient(app) as client:
+        client.post("/categorise", json={"description": "Gas", "amount": 40.0})
+        client.post("/categorise", json={"description": "Bus Ticket", "amount": 5.0})
+
+    _replace_categorise_with(CategorisationOut(category="Food & Dining", confidence=0.95))
+    with TestClient(app) as client:
+        client.post("/categorise", json={"description": "Cafe", "amount": 15.0})
+
+    with TestClient(app) as client:
+        # Test with default k (3)
+        response = client.get("/categories/top")
+        assert response.status_code == 200
+        assert response.json() == {
+            "top_categories": [
+                {"category": "Food & Dining", "count": 3},
+                {"category": "Transportation", "count": 2},
+            ]
+        }
+
+        # Test with k=1
+        response = client.get("/categories/top?k=1")
+        assert response.status_code == 200
+        assert response.json() == {
+            "top_categories": [
+                {"category": "Food & Dining", "count": 3},
+            ]
+        }
+
+        # Test with k=0
+        response = client.get("/categories/top?k=0")
+        assert response.status_code == 400
+        assert response.json() == {"detail": "'k' must be a positive integer."
+}
 def test_categorise_endpoint_handles_missing_api_key():
     _replace_categorise_with(RuntimeError("GOOGLE_API_KEY is not set"))
     with TestClient(app) as client:
