@@ -19,6 +19,6 @@ opencode/
 ## Notes
 
 - `mode: primary` means this agent is invokable as the top-level driver. Use `mode: subagent` if you want it usable only via `@spec-driven` from another agent.
-- `model: anthropic/claude-sonnet-4-6` — change provider/model freely. OpenCode supports 75+ providers via Models.dev (Anthropic, OpenAI, Google, Mistral, local via Ollama, etc.).
+- `model: anthropic/claude-sonnet-5` — change provider/model freely. OpenCode supports 75+ providers via Models.dev (Anthropic, OpenAI, Google, Mistral, local via Ollama, etc.).
 - `allow` / `ask` / `deny` — the three-tier permission model. `deny` overrides `ask` overrides `allow`. Useful for catastrophic actions (`Bash(rm:*)`, `Bash(git push:*)`).
 - If you want full `SKILL.md` (agentskills.io) compat, install the community plugin `opencode-agent-skills`.

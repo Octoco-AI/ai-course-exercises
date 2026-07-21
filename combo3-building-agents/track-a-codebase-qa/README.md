@@ -166,12 +166,13 @@ Instrument `run_agent_streaming` with `@opik.track` (see `../../../_shared/eval-
 
 ### M10 — Extended thinking
 
-Opus 4.7 supports adaptive thinking. In `backend/agent.py`, add:
+Opus 4.8 supports adaptive thinking. In `backend/agent.py`, add:
 
 ```python
 with client.messages.stream(
-    model="claude-opus-4-7",
-    thinking={"type": "adaptive", "effort": "high"},
+    model="claude-opus-4-8",
+    thinking={"type": "adaptive"},
+    output_config={"effort": "high"},
     ...
 )
 ```

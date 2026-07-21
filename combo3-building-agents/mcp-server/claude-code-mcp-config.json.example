@@ -1,5 +1,5 @@
 {
-  "//": "Example Claude Code MCP config. Save as `.claude/mcp.json` in any project to add this server.",
+  "//": "Example Claude Code MCP config. Save as `.mcp.json` in any project to add this server.",
   "//1": "Adjust the 'command' and 'cwd' paths to where you cloned this workshop repo.",
 
   "mcpServers": {

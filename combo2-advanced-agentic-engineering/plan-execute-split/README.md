@@ -72,15 +72,15 @@ python run_monolithic.py
 
 ### Partner B — Pro plans, then Flash executes (two calls)
 ```bash
-python run_plan.py      # Gemini 2.5 Pro writes plan.md (read it!)
-python run_execute.py   # Gemini 2.5 Flash implements plan.md
+python run_plan.py      # Gemini 3.1 Pro writes plan.md (read it!)
+python run_execute.py   # Gemini 3.1 Flash-Lite implements plan.md
 ```
 
 Each script prints a summary and appends a section to `COMPARISON.md`:
 
 ```
   ── Flash monolithic ──
-  Model:         gemini-2.5-flash
+  Model:         gemini-3.1-flash-lite
   Input tokens:  4182
   Output tokens: 1530 (+0 thinking)
   Approx cost:   $0.0051
@@ -100,12 +100,12 @@ Open `COMPARISON.md`. You'll have three sections: *Flash monolithic*,
 *Plan (Pro)*, and *Execute (Flash)*. Then, together:
 
 - **Split total** = Plan cost + Execute cost.
-- **Cost ratio** = split total ÷ Flash monolithic. (The split usually costs
-  **more** than Flash alone — 2×–4×. The comparison that matters is split vs.
-  **Pro monolithic**.)
+- **Cost ratio** = split total ÷ Flash-Lite monolithic. (The split usually costs
+  **more** than the budget tier alone — 2×–5×. The comparison that matters is
+  split vs. **Pro monolithic**.)
 - **Pro monolithic (estimated)** = re-price the monolithic token counts at Pro
-  rates ($1.25 in / $10 out). The split typically lands at ~1/2 of that on
-  Gemini — and far less on the Anthropic path (Opus↔Haiku gap is wider).
+  rates ($2 in / $12 out). The split typically lands at ~1/2 of that on Gemini;
+  on the Anthropic path the split is ~1/6 of Opus monolithic.
 - **Quality delta** — which output was better, and on what axis?
 
 Then write the one decision that matters: *for tasks of this shape in my real
@@ -115,7 +115,7 @@ backlog, would I use the split?*
 
 ## Tuning
 
-- **Wider price gap on execution.** Set `EXECUTOR_MODEL=gemini-2.5-flash-lite`
+- **Wider price gap on execution.** Set `EXECUTOR_MODEL=gemini-3.1-flash-lite`
   in `.env` — the ultra-budget tier. The report prices it automatically.
 - **Better plans.** Edit `PLANNER_PROMPT` at the top of `run_plan.py` (it's
   clearly marked) and re-run. The planner prompt is where teams compound gains
@@ -148,7 +148,7 @@ peek at them if you're curious; they're short and commented.
 
 ## On Claude instead of Gemini?
 
-This pack is the Gemini path. The shape is identical on Anthropic — Opus 4.7
+This pack is the Gemini path. The shape is identical on Anthropic — Opus 4.8
 plans, Haiku 4.5 executes. The M7 exercise instructions include the Anthropic
 code in collapsible blocks. Swap `pip install anthropic`, an `ANTHROPIC_API_KEY`,
 and Claude's `tool_use` content blocks for Gemini's `function_call` parts.

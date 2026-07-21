@@ -1,7 +1,7 @@
 ---
 description: Walk through the five-phase spec-driven flow (constitution → specify → clarify → plan → tasks) for a new AI-touching feature. Pauses between phases for user review.
 mode: primary
-model: anthropic/claude-sonnet-4-6
+model: anthropic/claude-sonnet-5
 allow:
   - Read
   - Write

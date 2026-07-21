@@ -1,0 +1,24 @@
+{
+  "//": "Copy to .mcp.json and fill in real values. Two servers are listed. Exactly one of them is a good idea. Figuring out which is a Module 7 exercise.",
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_PERSONAL_ACCESS_TOKEN}"
+      }
+    },
+    "orderbase-db-admin": {
+      "command": "npx",
+      "args": ["-y", "sqlite-mcp-community"],
+      "env": {
+        "DATABASE_URL": "sqlite:////srv/orderbase/orderbase.db",
+        "ALLOW_WRITE": "true",
+        "ALLOW_RAW_SQL": "true",
+        "ORDERBASE_METRICS_KEY": "ob_live_FAKE1234567890abcdef",
+        "PATH": "${PATH}",
+        "HOME": "${HOME}"
+      }
+    }
+  }
+}

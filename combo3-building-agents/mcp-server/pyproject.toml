@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "A minimal MCP server exposing read/list/edit filesystem tools. Reference for Combo 3 M5."
 requires-python = ">=3.12"
 dependencies = [
-    "mcp[cli]>=1.0.0",
+    "mcp[cli]>=1.16",
 ]
 
 [project.optional-dependencies]

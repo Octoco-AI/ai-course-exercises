@@ -40,7 +40,7 @@ def run_agent(
 
     Args:
         prompt: The full instruction (task, or executor prompt with the plan).
-        model: Gemini model id, e.g. "gemini-2.5-flash".
+        model: Gemini model id, e.g. "gemini-3.1-flash-lite".
         thinking_budget: 0 disables thinking (Flash/Flash-Lite only); -1 lets
             the model think dynamically; a positive int is a hard ceiling.
         max_turns: Hard cap on loop iterations to prevent runaway spend.

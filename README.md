@@ -22,3 +22,9 @@ course repo on every push to main; do not edit directly.
 - [`track-a-codebase-qa`](combo3-building-agents/track-a-codebase-qa)
 - [`track-b-helpdesk-qa`](combo3-building-agents/track-b-helpdesk-qa)
 
+## combo4-agentic-engineering-in-practice
+
+- [`claude-code-skills`](combo4-agentic-engineering-in-practice/claude-code-skills)
+- [`legacy-service`](combo4-agentic-engineering-in-practice/legacy-service)
+- [`tiny-agent`](combo4-agentic-engineering-in-practice/tiny-agent)
+

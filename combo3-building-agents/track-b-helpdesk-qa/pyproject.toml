@@ -4,8 +4,8 @@ version = "0.1.0"
 description = "Combo 3 Track B running artefact: a Streakly helpdesk agent with KB search, draft replies, and escalation. Twin of track-a-codebase-qa."
 requires-python = ">=3.12"
 dependencies = [
-    "anthropic>=0.40",
-    "fastapi>=0.110",
+    "anthropic>=0.100",
+    "fastapi>=0.115",
     "uvicorn[standard]>=0.30",
     "python-dotenv>=1.0.0",
     "pydantic>=2.13",

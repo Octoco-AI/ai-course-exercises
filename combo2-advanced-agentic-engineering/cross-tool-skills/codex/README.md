@@ -18,7 +18,7 @@ codex/
 
 ## Tuning
 
-- `model`: per-subagent override. Use `gpt-5.5` for planning, switch to `gpt-5.4` or `gpt-5.5-mini` for execution-heavy subagents (Module 7 plan/execute split). 
+- `model`: per-subagent override. Use `gpt-5.5` for planning, switch to `gpt-5.4` or `gpt-5.4-mini` for execution-heavy subagents (Module 7 plan/execute split). 
 - `sandbox_mode`: `read-only`, `workspace-write`, or `danger-full-access`. Default `workspace-write` is fine for spec writing.
 - `mcp_servers`: list of named MCP servers from your `~/.codex/config.toml` if the skill needs external tool access.
 - Global config: `agents.max_threads = 6` (default), `agents.max_depth = 1` (default).

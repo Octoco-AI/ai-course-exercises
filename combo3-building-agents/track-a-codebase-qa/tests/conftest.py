@@ -62,7 +62,7 @@ def settings_for_test(sandbox, monkeypatch):
     monkeypatch.setenv("ANTHROPIC_API_KEY", "test-key-do-not-use")
     return Settings(
         anthropic_api_key="test-key",
-        model="claude-sonnet-4-6",
+        model="claude-sonnet-5",
         workspace_root=sandbox["workspace"],
         chroma_persist_root=sandbox["workspace"].parent / "chroma",
         chroma_collection_name="test-corpus",
