@@ -71,7 +71,7 @@ def run_agent(
 
     Args:
         user_prompt: The initial user question or task.
-        model: Gemini model id. Defaults to env var GEMINI_MODEL or gemini-2.5-flash.
+        model: Gemini model id. Defaults to env var GEMINI_MODEL or gemini-3.5-flash.
         max_turns: Hard cap on loop iterations to prevent runaway spend.
         on_event: Optional callback invoked for each loop event. Gets a dict with
             keys like {"type": "tool_call", "name": ..., "args": ...} — useful for
@@ -82,7 +82,7 @@ def run_agent(
     """
     load_dotenv()
     client = genai.Client(api_key=os.environ["GOOGLE_API_KEY"])
-    model = model or os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
+    model = model or os.environ.get("GEMINI_MODEL", "gemini-3.5-flash")
 
     def emit(event):
         if on_event is not None:
