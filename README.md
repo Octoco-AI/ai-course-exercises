@@ -28,3 +28,15 @@ course repo on every push to main; do not edit directly.
 - [`legacy-service`](combo4-agentic-engineering-in-practice/legacy-service)
 - [`tiny-agent`](combo4-agentic-engineering-in-practice/tiny-agent)
 
+## combo5-advanced-plus-building-agents
+
+- [`chroma-corpora`](combo5-advanced-plus-building-agents/chroma-corpora)
+- [`claude-code-skills`](combo5-advanced-plus-building-agents/claude-code-skills)
+- [`cross-tool-skills`](combo5-advanced-plus-building-agents/cross-tool-skills)
+- [`expense-categoriser`](combo5-advanced-plus-building-agents/expense-categoriser)
+- [`mcp-server`](combo5-advanced-plus-building-agents/mcp-server)
+- [`plan-execute-split`](combo5-advanced-plus-building-agents/plan-execute-split)
+- [`tiny-agent`](combo5-advanced-plus-building-agents/tiny-agent)
+- [`track-a-codebase-qa`](combo5-advanced-plus-building-agents/track-a-codebase-qa)
+- [`track-b-helpdesk-qa`](combo5-advanced-plus-building-agents/track-b-helpdesk-qa)
+
