@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import os
 import sys
+from typing import Any, Callable, cast
 
 from dotenv import load_dotenv
 from google import genai
@@ -45,7 +46,7 @@ Workflow:
 """
 
 
-TOOL_FUNCTIONS = {
+TOOL_FUNCTIONS: dict[str, Callable[..., object]] = {
     "read_file": read_file,
     "list_files": list_files,
     "edit_file": edit_file,
@@ -75,10 +76,87 @@ def run_agent(
       - Termination: the candidate has no `.function_call` parts.
     """
     load_dotenv()
-    # TODO: Step 1 — write the loop.
-    #       Start with the simplest version that works on the exploration prompts
-    #       (TODO.md items 1 and 2), then test with the bug-fix prompt (item 3).
-    raise NotImplementedError("Implement run_agent for step 1.")
+    client = genai.Client(api_key=os.environ["GOOGLE_API_KEY"])
+    model = model or os.environ.get("GEMINI_MODEL", "gemini-3.5-flash")
+
+    def emit(event):
+        if on_event is not None:
+            on_event(event)
+
+    # Gemini's "contents" is an ordered list of Content objects. The user's
+    # prompt starts it; function responses are appended back as user turns.
+    contents: list[types.Content] = [
+        types.Content(role="user", parts=[types.Part(text=user_prompt)])
+    ]
+
+    config = types.GenerateContentConfig(
+        system_instruction=SYSTEM_INSTRUCTION,
+        # cast: the SDK types `tools` as an invariant list, so a plain
+        # list[Callable] doesn't satisfy it even though callables are accepted.
+        tools=cast("list[Any]", TOOLS),
+        # We drive the tool loop ourselves so we can SEE each step. Otherwise
+        # the SDK runs the tools and only hands back the final text.
+        automatic_function_calling=types.AutomaticFunctionCallingConfig(disable=True),
+    )
+
+    for turn in range(1, max_turns + 1):
+        emit({"type": "turn_start", "turn": turn})
+
+        response = client.models.generate_content(
+            model=model, contents=contents, config=config
+        )
+
+        # The SDK types these as optional; guard so the rest of the loop works
+        # with concrete objects (and mypy stays happy).
+        if not response.candidates:
+            return "ERROR: model returned no candidates"
+        content = response.candidates[0].content
+        if content is None:
+            return "ERROR: model returned an empty response"
+        contents.append(content)
+
+        function_calls = [
+            part.function_call
+            for part in content.parts or []
+            if part.function_call
+        ]
+
+        if not function_calls:
+            # No tool calls → the model signalled it's done.
+            final_text = "".join(part.text or "" for part in content.parts or [])
+            emit({"type": "final", "text": final_text, "turns": turn})
+            return final_text
+
+        response_parts: list[types.Part] = []
+        for call in function_calls:
+            name = call.name or "<unknown>"
+            args = dict(call.args or {})
+            emit({"type": "tool_call", "name": name, "args": args})
+
+            fn = TOOL_FUNCTIONS.get(name)
+            result: object
+            if fn is None:
+                result = f"ERROR: unknown tool {name!r}"
+            else:
+                try:
+                    result = fn(**args)
+                except TypeError as exc:
+                    result = f"ERROR: bad arguments to {name}: {exc}"
+                except Exception as exc:  # noqa: BLE001 — surface any tool failure to the LLM
+                    result = f"ERROR: {type(exc).__name__}: {exc}"
+
+            emit({"type": "tool_result", "name": name, "result": result})
+            response_parts.append(
+                types.Part.from_function_response(
+                    name=name,
+                    response={"result": result},
+                )
+            )
+
+        # Send all tool responses back in a single user turn, then loop.
+        contents.append(types.Content(role="user", parts=response_parts))
+
+    return f"ERROR: agent did not finish within {max_turns} turns"
 
 
 # ---- CLI entrypoint (given — no changes needed) ------------------------------

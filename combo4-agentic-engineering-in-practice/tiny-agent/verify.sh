@@ -71,7 +71,7 @@ import os
 from google import genai
 client = genai.Client(api_key=os.environ['GOOGLE_API_KEY'])
 response = client.models.generate_content(
-    model=os.environ.get('GEMINI_MODEL', 'gemini-2.5-flash'),
+    model=os.environ.get('GEMINI_MODEL', 'gemini-3.5-flash'),
     contents='Reply with exactly one word: ready'
 )
 text = (response.text or '').strip().lower()
