@@ -15,7 +15,7 @@ One short paragraph. The one-liner a reviewer reads first.
 Which algorithm, library, or service does this rely on, and why?
 
 - **Core technique**: e.g. collaborative filtering + content embeddings with a fallback rule-based layer.
-- **Model / provider**: e.g. Anthropic Claude Sonnet 4.6 for the categorisation; Gemini 2.5 Flash for the lightweight scoring.
+- **Model / provider**: e.g. Anthropic Claude Sonnet 4.6 for the categorisation; Gemini 3.5 Flash for the lightweight scoring.
 - **Why this over the alternatives**: e.g. benchmark comparison of Sonnet vs Haiku for our eval set; Haiku hit accuracy target at 1/3 the cost.
 
 ---

@@ -1,0 +1,17 @@
+# Secrets
+.env
+
+# Exercise outputs — these are generated when you run the scripts.
+plan.md
+COMPARISON.md
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+
+# macOS
+.DS_Store
