@@ -1,8 +1,9 @@
 """A minimal MCP server exposing read_file, list_files, and edit_file.
 
-This is what Combo 3 M5 Part A attendees CONSUME — the "existing server" we
-supply. In Part B, attendees build their own server from scratch (or fork
-this one and add a fourth custom tool).
+This is what Module 5 Part A attendees CONSUME — the "existing server" we
+supply. In Part B, attendees build their OWN server from scratch, in a new
+`mcp_my_server/` module in their agent's repo, wrapping one tool from an
+earlier module. They don't edit this file.
 
 The pattern demonstrated here:
 

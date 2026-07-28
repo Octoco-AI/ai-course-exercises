@@ -1,4 +1,11 @@
-"""FastAPI app — Track B. Same shape as Track A's server."""
+"""FastAPI app. Health check for now; Module 12 adds the streaming endpoint.
+
+Endpoints:
+  - GET  /health               → {"status": "ok"}
+  - POST /api/chat             → Module 12, Step A.3. Not implemented yet.
+  - GET  /                     → serves the built React UI from ui/dist/ if present
+  - GET  /assets/{path}        → static assets for the UI
+"""
 
 from __future__ import annotations
 
@@ -7,15 +14,12 @@ import os
 from pathlib import Path
 
 from dotenv import load_dotenv
-from fastapi import FastAPI, Request
-from fastapi.responses import FileResponse, StreamingResponse
+from fastapi import FastAPI
+from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel, Field
 
-from .agent import run_agent_streaming
 from .settings import Settings, load_settings
-from .streaming import error_event
-from .tools import ToolSet
+from .tools import ToolSet, build_toolset
 
 
 load_dotenv()
@@ -25,7 +29,7 @@ logger = logging.getLogger(__name__)
 app = FastAPI(
     title="Track B — Streakly Helpdesk agent",
     version="0.1.0",
-    description="Streaming helpdesk agent over the Streakly KB.",
+    description="Agent over the Streakly ticket workspace.",
 )
 
 _settings: Settings | None = None
@@ -36,13 +40,7 @@ def _get_runtime() -> tuple[Settings, ToolSet]:
     global _settings, _tools
     if _settings is None:
         _settings = load_settings()
-        _tools = ToolSet(
-            workspace_root=_settings.workspace_root,
-            chroma_persist_root=_settings.chroma_persist_root,
-            chroma_collection_name=_settings.chroma_collection_name,
-            draft_replies_root=_settings.draft_replies_root,
-            escalations_root=_settings.escalations_root,
-        )
+        _tools = build_toolset(_settings.workspace_root, draft_replies=_settings.draft_replies_root)
         logger.info("runtime initialised (model=%s, workspace=%s)", _settings.model, _settings.workspace_root)
     assert _tools is not None
     return _settings, _tools
@@ -53,49 +51,18 @@ def health() -> dict[str, str]:
     return {"status": "ok"}
 
 
-class ChatRequest(BaseModel):
-    message: str = Field(..., min_length=1, max_length=4000)
-    history: list[dict] | None = None
-
-
-@app.post("/api/chat")
-async def chat(req: ChatRequest, request: Request) -> StreamingResponse:
-    """Stream the agent's response as Server-Sent Events."""
-    try:
-        settings, tools = _get_runtime()
-    except RuntimeError as exc:
-        error_message = str(exc)
-
-        async def error_stream():
-            yield error_event(error_message)
-
-        return StreamingResponse(
-            error_stream(),
-            media_type="text/event-stream",
-            headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
-        )
-
-    async def event_stream():
-        try:
-            async for event in run_agent_streaming(
-                req.message,
-                history=req.history,
-                settings=settings,
-                tools=tools,
-            ):
-                if await request.is_disconnected():
-                    logger.info("client disconnected mid-stream; stopping agent")
-                    return
-                yield event
-        except Exception as exc:  # noqa: BLE001
-            logger.exception("unexpected error in agent stream")
-            yield error_event(f"{type(exc).__name__}: {exc}")
-
-    return StreamingResponse(
-        event_stream(),
-        media_type="text/event-stream",
-        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
-    )
+# ---------------------------------------------------------------------------
+# Module 12, Step A.3 — POST /api/chat
+#
+# Add a `ChatRequest(BaseModel)` with `message: str` + `history: list[dict]
+# | None`, then a handler that calls `_get_runtime()`, builds a
+# `StreamingResponse(run_agent_streaming(...), media_type="text/event-stream",
+# headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})`. The
+# exercise's Step A.3 prints the full handler — copy it in, then wire the
+# imports (`from .agent import run_agent_streaming`, `from fastapi import
+# Request`, `from fastapi.responses import StreamingResponse`,
+# `from pydantic import BaseModel`).
+# ---------------------------------------------------------------------------
 
 
 _ui_dist = Path(__file__).parent.parent / "ui" / "dist"
@@ -115,9 +82,8 @@ else:
             "status": "no-ui",
             "hint": (
                 "The UI hasn't been built yet. Run `cd ui && npm install && npm run build`, "
-                "then restart the server. The streaming endpoint at /api/chat works without "
-                "the UI — try: `curl -N -X POST http://localhost:8000/api/chat -H 'Content-Type: "
-                "application/json' -d '{\"message\": \"how do I enable 2FA?\"}'`"
+                "then restart the server. Until Module 12 wires /api/chat, use "
+                "`run_agent.py` from the repo root to talk to the agent."
             ),
         }
 

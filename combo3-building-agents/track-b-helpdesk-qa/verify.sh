@@ -36,14 +36,23 @@ if [ -n "${ANTHROPIC_API_KEY:-}" ] && [ "$ANTHROPIC_API_KEY" != "your_anthropic_
 
 if [ -d workspace ] && [ "$(ls -A workspace 2>/dev/null | grep -v '^\.gitkeep$' | wc -l)" -gt 0 ]; then pass "workspace/ populated"; else warn "workspace/ empty — run ./scripts/seed-workspace.sh"; fi
 
+# Not needed until Module 4 (search_kb), but the prep step has you build
+# it early alongside everything else.
 CHROMA_DIR="../chroma-corpora/track-b-helpdesk/.chroma"
-if [ -d "$CHROMA_DIR" ]; then pass "Track B Chroma index present"; else fail "Chroma index missing at $CHROMA_DIR"; fi
+if [ -d "$CHROMA_DIR" ]; then pass "Track B Chroma index present"; else warn "Chroma index missing at $CHROMA_DIR (not needed until Module 4)"; fi
 
+# Module 1/2/3 tests are designed to SKIP (not fail) until you've
+# implemented the step they check — a fresh starter is green here.
 echo
-echo "=== Running unit tests ==="
-if pytest -v 2>&1 | tail -25; then
-    if [ "${PIPESTATUS[0]}" -eq 0 ]; then pass "all unit tests pass"; else fail "some tests failed"; fi
+echo "=== Running tests ==="
+if pytest -v 2>&1 | tail -40; then
+    if [ "${PIPESTATUS[0]}" -eq 0 ]; then pass "all tests pass (or skip pending your implementation)"; else fail "some tests failed"; fi
 fi
+echo
+echo "Check your Module 1 work specifically:  pytest -m m1"
+echo "Check your Module 2 work specifically:  pytest -m m2"
+echo "Check your Module 3 work specifically:  pytest -m m3"
+echo "Fell behind? Catch up to a module's end state: ./scripts/checkpoint.sh m1-end"
 
 echo
 if [ "$FAILED" -eq 0 ]; then

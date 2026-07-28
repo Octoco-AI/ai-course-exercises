@@ -15,20 +15,22 @@ For use from Claude Desktop, Claude Code, or any MCP client.
 5. *"Fetch the sandbox-root resource and tell me where the server is rooted."*
    - Verifies resources.
 
-## Build-your-own-tool exercises (Part B)
+## Build-your-own-server exercise (Part B)
 
-Open `mcp_filesystem_server/server.py` and add a fourth tool of your choice. Some candidates:
+Part B isn't done here — you build a **new**, separate MCP server in your
+agent's own repo (`mcp_my_server/__init__.py` + `mcp_my_server/server.py`),
+wrapping ONE tool from an earlier module (Track A: `search_docs` or
+`edit_file`; Track B: `search_kb` or `draft_reply`). Module 5's
+`exercise.adoc` (Part B) has the full code sample. This file's server
+(`mcp_filesystem_server/`) is reference material to read alongside your
+own — don't edit it.
 
-- `run_tests() -> str` — shell out to `pytest` and return the output.
-- `grep(pattern: str, path: str = ".") -> list[str]` — find lines matching a regex.
-- `word_count(path: str) -> int` — count words in a file.
-- `search_recipes(query: str) -> list[str]` — a tiny dedicated search over the `recipes.md` file.
+After you've written your server:
 
-After you've added your tool:
-
-1. Restart the server (or Claude Desktop / Claude Code).
+1. Start it (or point Claude Desktop / Claude Code at it via config).
 2. Ask your client to use the new tool.
-3. Notice that you didn't change the client config — just the server — and the new tool is immediately available.
+3. Notice the client config only names the server — the tool itself is
+   discovered automatically.
 
 ## Elicitation exercise (stretch)
 

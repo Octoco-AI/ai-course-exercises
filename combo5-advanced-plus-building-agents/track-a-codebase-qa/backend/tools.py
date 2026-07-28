@@ -1,299 +1,165 @@
-"""The four tools the agent can call.
+"""The tools the agent can call.
 
-Pattern: each tool is a plain function that returns a string (or structured
-result). Errors come back as "ERROR: ..." strings so the LLM can self-
-correct, not exceptions.
+Module 11 has you build three: `read_file`, `list_files`, `edit_file`.
+(Module 13 adds a fourth, `search_docs`, over the Chroma corpus. Module 18
+converts `edit_file` into a non-mutating `draft_patch`. Neither exists yet
+— don't add them now.)
 
-Four tools:
+Pattern: each handler is a plain function; `dispatch()` never lets an
+exception escape — it catches everything and returns a string starting
+with "ERROR:" so the LLM can self-correct on the next turn, rather than
+crashing the loop.
 
-  - search_docs(query)                     — retrieve from the Chroma corpus
-  - read_file(path)                        — read from the workspace
-  - list_files(path=".")                   — list workspace contents
-  - draft_patch(path, old_str, new_str)    — STUBBED PR: writes a unified-diff
-                                              file to patches/; does NOT
-                                              modify the workspace
-
-This is deliberately a read-plus-draft agent. No delete. No shell. No network.
-See `guardrails.py` for the policy.
+The `Tool` dataclass and `to_gemini_schema()` are given — they're pure
+mechanics (see the concept doc's "Typed Tool + ToolSet" section for the
+full shape). What you write: `ToolSet.dispatch()`, the three handlers, and
+`build_toolset()`.
 """
 
 from __future__ import annotations
 
-import difflib
-import time
+import json
+from dataclasses import dataclass
 from pathlib import Path
-from typing import TypedDict
-
-import chromadb
+from typing import Any, Callable
 
 from .guardrails import GuardrailViolation, ensure_within
 
 
 # ---------------------------------------------------------------------------
-# Shape of a search result. Mirrors chroma-corpora/shared/search.py so the
-# agent-facing contract is identical.
+# Tool + ToolSet — given. Mechanics only; see concept.adoc for the narrative.
 # ---------------------------------------------------------------------------
 
 
-class SearchHit(TypedDict):
-    text: str
-    source: str
-    heading: str
-    score: float
+@dataclass
+class Tool:
+    name: str
+    description: str
+    input_schema: dict  # JSON-schema for the parameters
+    handler: Callable[..., Any]
 
-
-# ---------------------------------------------------------------------------
-# Tool implementations. Construct these via ToolSet.from_settings(), which
-# binds the sandbox paths once at startup instead of re-reading env per call.
-# ---------------------------------------------------------------------------
+    def to_gemini_schema(self) -> dict:
+        # Gemini wants {name, description, parameters}. `parameters` is the
+        # same JSON-schema object, minus the keywords its validator
+        # rejects — most commonly `default`.
+        props = {
+            name: {k: v for k, v in spec.items() if k != "default"}
+            for name, spec in self.input_schema.get("properties", {}).items()
+        }
+        parameters: dict = {"type": "object", "properties": props}
+        if self.input_schema.get("required"):
+            parameters["required"] = self.input_schema["required"]
+        return {"name": self.name, "description": self.description, "parameters": parameters}
 
 
 class ToolSet:
-    def __init__(
-        self,
-        *,
-        workspace_root: Path,
-        chroma_persist_root: Path,
-        chroma_collection_name: str,
-        patches_root: Path,
-    ) -> None:
-        self.workspace_root = workspace_root.resolve()
-        self.patches_root = patches_root.resolve()
+    def __init__(self, tools: list[Tool]):
+        self._by_name = {t.name: t for t in tools}
 
-        client = chromadb.PersistentClient(path=str(chroma_persist_root))
-        try:
-            self.collection = client.get_collection(chroma_collection_name)
-        except Exception as exc:  # noqa: BLE001
-            raise RuntimeError(
-                f"Chroma collection {chroma_collection_name!r} not found at "
-                f"{chroma_persist_root}. Build the corpus first: "
-                f"`cd ../chroma-corpora/track-a-codebase && python build.py`."
-            ) from exc
+    def schemas(self) -> list[dict]:
+        # The `function_declarations` list you pass to types.Tool(...).
+        return [t.to_gemini_schema() for t in self._by_name.values()]
 
-    # -- search_docs -----------------------------------------------------
+    # -----------------------------------------------------------------
+    # STEP 3 — implement dispatch
+    # -----------------------------------------------------------------
+    def dispatch(self, name: str, args: dict) -> str:
+        """Call the named tool's handler with `args`. Never raises.
 
-    def search_docs(self, query: str, k: int = 5) -> list[SearchHit]:
-        """Search the codebase-documentation corpus. Returns up to k hits."""
-        if not query.strip():
-            return [{"text": "ERROR: empty query", "source": "", "heading": "", "score": 0.0}]
-
-        result = self.collection.query(query_texts=[query], n_results=k)
-        docs = result["documents"][0]
-        metadatas = result["metadatas"][0]
-        distances = result["distances"][0] if result.get("distances") else [None] * len(docs)
-
-        hits: list[SearchHit] = []
-        for doc, meta, dist in zip(docs, metadatas, distances):
-            score = max(0.0, 1.0 - float(dist) / 2.0) if dist is not None else 0.0
-            hits.append({
-                "text": doc,
-                "source": meta.get("source", ""),
-                "heading": meta.get("heading", ""),
-                "score": round(score, 3),
-            })
-        return hits
-
-    # -- read_file -------------------------------------------------------
-
-    def read_file(self, path: str) -> str:
-        """Read a file in the workspace."""
-        try:
-            resolved = ensure_within(path, self.workspace_root)
-        except GuardrailViolation as exc:
-            return f"ERROR: {exc}"
-        if not resolved.exists():
-            return f"ERROR: {path!r} does not exist"
-        if not resolved.is_file():
-            return f"ERROR: {path!r} is not a file"
-        try:
-            return resolved.read_text(encoding="utf-8")
-        except UnicodeDecodeError:
-            return f"ERROR: {path!r} is not UTF-8 text"
-
-    # -- list_files ------------------------------------------------------
-
-    def list_files(self, path: str = ".") -> list[str]:
-        """List a directory in the workspace."""
-        try:
-            resolved = ensure_within(path, self.workspace_root)
-        except GuardrailViolation as exc:
-            return [f"ERROR: {exc}"]
-        if not resolved.exists():
-            return [f"ERROR: {path!r} does not exist"]
-        if not resolved.is_dir():
-            return [f"ERROR: {path!r} is not a directory"]
-        return [c.name + ("/" if c.is_dir() else "") for c in sorted(resolved.iterdir())]
-
-    # -- draft_patch -----------------------------------------------------
-
-    def draft_patch(self, path: str, old_str: str, new_str: str) -> str:
-        """Draft a unified-diff patch. Writes to `patches/<timestamp>.patch`.
-
-        The workspace is NEVER modified. This is the "stubbed PR drafting"
-        behaviour the Combo 3 M9 guardrails exercise explicitly calls out.
+        Hints:
+          - Look up the tool in `self._by_name`; unknown name -> return an
+            "ERROR: unknown tool {name!r}" string.
+          - Call `tool.handler(**args)`.
+          - `except TypeError` -> "ERROR: bad arguments to {name}: {exc}"
+            (the model passed the wrong shape of arguments).
+          - `except Exception` -> "ERROR: {type(exc).__name__}: {exc}"
+            (a handler raised — e.g. FileNotFoundError, ValueError).
+          - If the result isn't already a string, `json.dumps` it before
+            returning (tool results must be strings for the SSE preview
+            in Module 12; `json` is already imported above).
         """
-        try:
-            resolved = ensure_within(path, self.workspace_root)
-        except GuardrailViolation as exc:
-            return f"ERROR: {exc}"
-        if not resolved.exists():
-            return f"ERROR: {path!r} does not exist"
-        if not resolved.is_file():
-            return f"ERROR: {path!r} is not a file"
-
-        try:
-            content = resolved.read_text(encoding="utf-8")
-        except UnicodeDecodeError:
-            return f"ERROR: {path!r} is not UTF-8 text"
-
-        count = content.count(old_str)
-        if count == 0:
-            return f"ERROR: old_str not found in {path!r}"
-        if count > 1:
-            return (
-                f"ERROR: old_str appears {count} times in {path!r}; must be unique. "
-                "Add more surrounding context to old_str so it matches exactly once."
-            )
-
-        new_content = content.replace(old_str, new_str)
-
-        diff_lines = list(difflib.unified_diff(
-            content.splitlines(keepends=True),
-            new_content.splitlines(keepends=True),
-            fromfile=f"a/{path}",
-            tofile=f"b/{path}",
-        ))
-        patch_text = "".join(diff_lines)
-
-        # Write to patches/ with a safe, unique name.
-        timestamp = int(time.time() * 1000)
-        safe_path_slug = path.replace("/", "_").replace("\\", "_")
-        patch_file = self.patches_root / f"{timestamp}__{safe_path_slug}.patch"
-        patch_file.write_text(patch_text, encoding="utf-8")
-
-        return (
-            f"OK: drafted patch at {patch_file.name}. "
-            f"The workspace was NOT modified. Review the patch and apply with "
-            f"`patch -p1 < patches/{patch_file.name}` if you approve."
-        )
+        # TODO: Step 3 — implement dispatch. See concept.adoc's
+        #       "Errors as strings" section for the exact shape.
+        raise NotImplementedError("Implement ToolSet.dispatch for step 3.")
 
 
 # ---------------------------------------------------------------------------
-# Anthropic tool schemas — what we pass in the `tools=[]` config.
+# Handlers — Track A: read_file, list_files, edit_file.
 # ---------------------------------------------------------------------------
 
 
-def anthropic_tool_schemas() -> list[dict]:
-    """Return the tool definitions in Anthropic's format."""
-    return [
-        {
-            "name": "search_docs",
-            "description": (
-                "Search the codebase-documentation corpus with a natural-language "
-                "query. Returns up to 5 relevant chunks with their source file, "
-                "heading, and a relevance score in [0, 1]. Use this before reading "
-                "full files — it'll tell you where to look."
-            ),
-            "input_schema": {
-                "type": "object",
-                "properties": {
-                    "query": {
-                        "type": "string",
-                        "description": "A natural-language query. Phrase it as a question or keywords.",
-                    },
-                },
-                "required": ["query"],
-            },
-        },
-        {
-            "name": "read_file",
-            "description": (
-                "Read a file from the workspace. The workspace is the source "
-                "tree for TodoMagic. Paths are relative to the workspace root."
-            ),
-            "input_schema": {
-                "type": "object",
-                "properties": {
-                    "path": {
-                        "type": "string",
-                        "description": "Workspace-relative path (e.g., 'docs/api.md').",
-                    },
-                },
-                "required": ["path"],
-            },
-        },
-        {
-            "name": "list_files",
-            "description": (
-                "List the contents of a directory in the workspace. Directories "
-                "end with a '/'. Use '.' for the workspace root."
-            ),
-            "input_schema": {
-                "type": "object",
-                "properties": {
-                    "path": {
-                        "type": "string",
-                        "description": "Workspace-relative path. Defaults to '.'.",
-                        "default": ".",
-                    },
-                },
-            },
-        },
-        {
-            "name": "draft_patch",
-            "description": (
-                "Draft a unified-diff patch that replaces `old_str` with `new_str` "
-                "in the file at `path`. THE WORKSPACE IS NOT MODIFIED. The patch is "
-                "written to a patches/ directory for human review. old_str MUST "
-                "appear exactly once in the file; include enough surrounding context "
-                "to make it unique. Use this when the user asks for a change."
-            ),
-            "input_schema": {
-                "type": "object",
-                "properties": {
-                    "path": {
-                        "type": "string",
-                        "description": "Workspace-relative path to the file to patch.",
-                    },
-                    "old_str": {
-                        "type": "string",
-                        "description": "Exact text to replace. Must appear exactly once.",
-                    },
-                    "new_str": {
-                        "type": "string",
-                        "description": "Replacement text.",
-                    },
-                },
-                "required": ["path", "old_str", "new_str"],
-            },
-        },
-    ]
+# -----------------------------------------------------------------------
+# STEP 3a — implement read_file
+# -----------------------------------------------------------------------
+def read_file(path: str, *, workspace: Path) -> str:
+    """Read a file in the workspace.
 
-
-def gemini_tool_schemas() -> list[dict]:
-    """The same four tools in Gemini's function-declaration format.
-
-    Gemini wants ``{name, description, parameters}`` where ``parameters`` is the
-    same JSON-schema object Anthropic calls ``input_schema`` — minus a couple of
-    keywords Gemini's schema validator rejects (notably ``default``). We derive
-    it from ``anthropic_tool_schemas()`` so the two never drift.
+    Hints:
+      - `ensure_within(path, workspace)` (imported above) resolves the path
+        and raises `GuardrailViolation` if it escapes the sandbox — let it
+        raise; `dispatch()`'s generic `except Exception` will format it.
+      - Check the resolved path exists and is a file; raise
+        `FileNotFoundError(path)` / a suitable error otherwise.
+      - Read as UTF-8 text and return the string. On `UnicodeDecodeError`,
+        raise (or return) an informative message — don't let a raw
+        traceback reach the model.
     """
+    # TODO: Step 3a — implement read_file.
+    raise NotImplementedError("Implement read_file for step 3a.")
 
-    def _clean(schema: dict) -> dict:
-        props = {
-            name: {k: v for k, v in spec.items() if k != "default"}
-            for name, spec in schema.get("properties", {}).items()
-        }
-        out: dict = {"type": "object", "properties": props}
-        if schema.get("required"):
-            out["required"] = schema["required"]
-        return out
 
-    return [
-        {
-            "name": tool["name"],
-            "description": tool["description"],
-            "parameters": _clean(tool["input_schema"]),
-        }
-        for tool in anthropic_tool_schemas()
-    ]
+# -----------------------------------------------------------------------
+# STEP 3b — implement list_files
+# -----------------------------------------------------------------------
+def list_files(path: str = ".", *, workspace: Path) -> list[str]:
+    """List a directory in the workspace.
+
+    Hints:
+      - `ensure_within(path, workspace)`, then check `.is_dir()`.
+      - Return a sorted list of entry names; suffix directory entries
+        with "/" so the model can tell files from dirs without another call.
+    """
+    # TODO: Step 3b — implement list_files.
+    raise NotImplementedError("Implement list_files for step 3b.")
+
+
+# -----------------------------------------------------------------------
+# STEP 3c — implement edit_file
+# -----------------------------------------------------------------------
+def edit_file(path: str, old_str: str, new_str: str, *, workspace: Path) -> str:
+    """Replace `old_str` with `new_str` in a file. Requires exactly one match.
+
+    The exact-match-once rule protects against silently editing the wrong
+    occurrence when `old_str` isn't unique.
+
+    Hints:
+      - `ensure_within` + exists/is_file checks, as in read_file.
+      - Read the current content; `content.count(old_str)` — raise
+        `ValueError` if it's 0 (not found) or > 1 (not unique; ask for
+        more surrounding context in the error message).
+      - Write the replaced content back; return
+        `f"Edited {path!r} (1 replacement)"`.
+    """
+    # TODO: Step 3c — implement edit_file.
+    raise NotImplementedError("Implement edit_file for step 3c.")
+
+
+# ---------------------------------------------------------------------------
+# STEP 3d — build_toolset
+# ---------------------------------------------------------------------------
+def build_toolset(workspace: Path) -> ToolSet:
+    """Wrap the three handlers into a ToolSet bound to `workspace`.
+
+    Hints:
+      - Each `Tool.handler` must be a zero-argument-shape callable from the
+        LLM's point of view — i.e. `lambda **kw: read_file(**kw, workspace=workspace)`
+        — so `workspace` is bound once here, not passed by the model.
+      - Descriptions: rough is fine for now (Phase 2, Step 8 asks you to
+        tighten the thinnest one). Keep them short but real — "Read a file
+        in the workspace." is enough for Phase 1.
+      - `input_schema` is JSON-schema `{"type": "object", "properties": {...},
+        "required": [...]}` — see the concept doc's example for `read_file`.
+    """
+    # TODO: Step 3d — build the three Tool(...) entries and return
+    #       ToolSet([...]).
+    raise NotImplementedError("Implement build_toolset for step 3d.")

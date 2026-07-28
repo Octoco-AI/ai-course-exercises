@@ -1,11 +1,13 @@
 /**
- * useStreamingChat — the hook that consumes the agent's SSE stream.
+ * useStreamingChat — the hook that will consume the agent's SSE stream.
  *
- * This is the pedagogical centrepiece of the UI side of Combo 3 M3b. It
- * reads SSE events from `/api/chat` and maintains a list of messages
- * reactively. Raw fetch + ReadableStream, no framework. ~80 lines.
+ * Module 12, Steps B.2-B.3. Right now this is an inert stub: the types are
+ * complete (so the rest of the scaffold — App.tsx, ChatPanel.tsx,
+ * Message.tsx, InputBar.tsx — typechecks and renders), but `send` doesn't
+ * talk to the backend yet. Typing and sending currently does nothing.
  *
- * Event types it expects (from backend/streaming.py):
+ * Event types the real implementation will read (from backend/streaming.py,
+ * once Module 12's Part A exists):
  *   text         → chunk of assistant text (accumulates)
  *   tool_call    → the agent called a tool (renders as a collapsed block)
  *   tool_result  → the tool returned (renders under its matching tool_call)
@@ -13,10 +15,10 @@
  *   error        → something broke
  */
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 
 export type ToolCallEvent = {
-  id: string;        // client-generated, so we can match tool_result to tool_call
+  id: string;
   name: string;
   args: Record<string, unknown>;
   resultPreview?: string;
@@ -29,129 +31,40 @@ export type Message = {
   finished: boolean;
 };
 
-type SSEData =
-  | { type: "text"; content: string }
-  | { type: "tool_call"; name: string; args: Record<string, unknown> }
-  | { type: "tool_result"; name: string; preview: string }
-  | { type: "done"; turns: number; final_text: string }
-  | { type: "error"; message: string };
+// -----------------------------------------------------------------------
+// STEP B.2 — the SSE event union
+// -----------------------------------------------------------------------
+// TODO: define a discriminated union over the five event shapes the
+//       backend emits (text / tool_call / tool_result / done / error).
+//       See exercise.adoc Step B.2 for the exact shape.
+// type SSEData = ...
 
 export function useStreamingChat() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isStreaming, setIsStreaming] = useState(false);
-  const abortController = useRef<AbortController | null>(null);
 
-  const send = useCallback(async (userMessage: string) => {
-    // Push the user turn and a placeholder assistant turn that we'll fill in.
-    setMessages((prev) => [
-      ...prev,
-      { role: "user", text: userMessage, toolCalls: [], finished: true },
-      { role: "assistant", text: "", toolCalls: [], finished: false },
-    ]);
-    setIsStreaming(true);
-
-    abortController.current = new AbortController();
-    try {
-      const response = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: userMessage }),
-        signal: abortController.current.signal,
-      });
-
-      if (!response.body) throw new Error("No response body");
-
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-      let buffer = "";
-
-      while (true) {
-        const { value, done } = await reader.read();
-        if (done) break;
-        buffer += decoder.decode(value, { stream: true });
-
-        // SSE messages are separated by a blank line.
-        const parts = buffer.split("\n\n");
-        buffer = parts.pop() ?? "";
-
-        for (const part of parts) {
-          const dataLine = part.split("\n").find((l) => l.startsWith("data: "));
-          if (!dataLine) continue;
-          try {
-            const payload: SSEData = JSON.parse(dataLine.slice(6));
-            handleEvent(payload);
-          } catch {
-            // ignore malformed chunks — usually a heartbeat or a split message
-          }
-        }
-      }
-    } catch (err) {
-      if ((err as Error).name !== "AbortError") {
-        appendError(`${(err as Error).message}`);
-      }
-    } finally {
-      setIsStreaming(false);
-      abortController.current = null;
-      // Mark the latest assistant message finished no matter how the loop ended.
-      setMessages((prev) =>
-        prev.map((m, i) =>
-          i === prev.length - 1 && m.role === "assistant" ? { ...m, finished: true } : m,
-        ),
-      );
-    }
+  // -----------------------------------------------------------------------
+  // STEP B.3 — the hook
+  // -----------------------------------------------------------------------
+  // TODO: implement `send(userMessage)`:
+  //   - Push a user message + a placeholder assistant message.
+  //   - POST to /api/chat with an AbortController signal.
+  //   - Read `response.body.getReader()`; decode chunks with a TextDecoder;
+  //     split on "\n\n" to find complete SSE frames; parse the `data: ` line
+  //     as JSON; dispatch on `.type` (see handleEvent's shape in
+  //     exercise.adoc).
+  //   - On AbortError, treat it as a clean stop (no error shown).
+  // TODO: implement `cancel()` — abort the in-flight fetch.
+  const send = useCallback(async (_userMessage: string) => {
+    // TODO: Step B.3 — implement send(). Until then, typing and sending is
+    // a no-op — this stub deliberately never throws, so the scaffold keeps
+    // rendering while you build the rest of Part B.
+    console.warn("useStreamingChat.send is not implemented yet — see Module 12, Step B.3.");
   }, []);
 
   const cancel = useCallback(() => {
-    abortController.current?.abort();
+    // TODO: Step B.3 — implement cancel() (Step B.7 wires it to a Stop button).
   }, []);
-
-  function handleEvent(ev: SSEData) {
-    setMessages((prev) => {
-      const next = [...prev];
-      const last = { ...next[next.length - 1] };
-      if (last.role !== "assistant") return prev;
-
-      switch (ev.type) {
-        case "text":
-          last.text += ev.content;
-          break;
-        case "tool_call":
-          last.toolCalls = [
-            ...last.toolCalls,
-            { id: crypto.randomUUID(), name: ev.name, args: ev.args },
-          ];
-          break;
-        case "tool_result": {
-          // Match to the most recent matching tool_call by name.
-          const updated = [...last.toolCalls];
-          for (let i = updated.length - 1; i >= 0; i--) {
-            if (updated[i].name === ev.name && updated[i].resultPreview === undefined) {
-              updated[i] = { ...updated[i], resultPreview: ev.preview };
-              break;
-            }
-          }
-          last.toolCalls = updated;
-          break;
-        }
-        case "done":
-          last.finished = true;
-          break;
-        case "error":
-          last.text += `\n\n**ERROR:** ${ev.message}`;
-          last.finished = true;
-          break;
-      }
-      next[next.length - 1] = last;
-      return next;
-    });
-  }
-
-  function appendError(msg: string) {
-    setMessages((prev) => [
-      ...prev,
-      { role: "assistant", text: `**ERROR:** ${msg}`, toolCalls: [], finished: true },
-    ]);
-  }
 
   return { messages, isStreaming, send, cancel };
 }
