@@ -43,14 +43,22 @@ fi
 
 if [ -d workspace ] && [ "$(ls -A workspace 2>/dev/null | grep -v '^\.gitkeep$' | wc -l)" -gt 0 ]; then pass "workspace/ populated"; else warn "workspace/ empty — run ./scripts/seed-workspace.sh"; fi
 
+# Not needed until Module 13 (search_kb), but Module 13's prep step has
+# you build it early alongside everything else.
 CHROMA_DIR="../chroma-corpora/track-b-helpdesk/.chroma"
-if [ -d "$CHROMA_DIR" ]; then pass "Track B Chroma index present"; else fail "Chroma index missing at $CHROMA_DIR"; fi
+if [ -d "$CHROMA_DIR" ]; then pass "Track B Chroma index present"; else warn "Chroma index missing at $CHROMA_DIR (not needed until Module 13)"; fi
 
+# Module 11/12 tests are designed to SKIP (not fail) until you've
+# implemented the step they check — a fresh starter is green here.
 echo
-echo "=== Running unit tests ==="
-if pytest -v 2>&1 | tail -25; then
-    if [ "${PIPESTATUS[0]}" -eq 0 ]; then pass "all unit tests pass"; else fail "some tests failed"; fi
+echo "=== Running tests ==="
+if pytest -v 2>&1 | tail -40; then
+    if [ "${PIPESTATUS[0]}" -eq 0 ]; then pass "all tests pass (or skip pending your implementation)"; else fail "some tests failed"; fi
 fi
+echo
+echo "Check your Module 11 work specifically:  pytest -m m11"
+echo "Check your Module 12 work specifically:  pytest -m m12"
+echo "Fell behind? Catch up to a module's end state: ./scripts/checkpoint.sh m11-end"
 
 echo
 if [ "$FAILED" -eq 0 ]; then

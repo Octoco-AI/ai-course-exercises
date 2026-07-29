@@ -40,3 +40,7 @@ course repo on every push to main; do not edit directly.
 - [`track-a-codebase-qa`](combo5-advanced-plus-building-agents/track-a-codebase-qa)
 - [`track-b-helpdesk-qa`](combo5-advanced-plus-building-agents/track-b-helpdesk-qa)
 
+## combo6-ai-for-product-teams
+
+- [`claude-code-skills`](combo6-ai-for-product-teams/claude-code-skills)
+

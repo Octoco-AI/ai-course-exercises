@@ -1,6 +1,11 @@
 import { useState } from "react";
 import type { ToolCallEvent } from "../hooks/useStreamingChat";
 
+/**
+ * ToolCallBlock — Module 12, Step B.5 end state. Collapsible; shows a
+ * running/done status, a one-line args summary, and (expanded) the full
+ * args + result preview.
+ */
 export function ToolCallBlock({ call }: { call: ToolCallEvent }) {
   const [expanded, setExpanded] = useState(false);
   const status = call.resultPreview === undefined ? "running" : "done";
@@ -9,12 +14,8 @@ export function ToolCallBlock({ call }: { call: ToolCallEvent }) {
     .map(([k, v]) => `${k}=${formatArgValue(v)}`)
     .join(", ");
 
-  // Helpdesk-specific visual flavour: the escalate_to_human tool gets a
-  // red tint since it's a "flag for human" action, not a neutral read.
-  const extra = call.name === "escalate_to_human" ? " tool-call--escalation" : "";
-
   return (
-    <div className={`tool-call tool-call--${status}${extra}`}>
+    <div className={`tool-call tool-call--${status}`}>
       <button
         className="tool-call__header"
         onClick={() => setExpanded((e) => !e)}

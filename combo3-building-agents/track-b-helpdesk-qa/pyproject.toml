@@ -1,7 +1,7 @@
 [project]
 name = "track-b-helpdesk-qa"
 version = "0.1.0"
-description = "Combo 3 Track B running artefact: a Streakly helpdesk agent with KB search, draft replies, and escalation. Twin of track-a-codebase-qa."
+description = "Combo 3 Track B starter: a Streakly helpdesk agent you build across Modules 1-12 (ticket triage, KB search, draft replies, escalation). Twin of track-a-codebase-qa."
 requires-python = ">=3.12"
 dependencies = [
     "anthropic>=0.100",
@@ -33,3 +33,9 @@ packages = ["backend"]
 testpaths = ["tests"]
 pythonpath = ["."]
 asyncio_mode = "auto"
+norecursedirs = ["checkpoints", "reference", "ui", ".venv", "sample_tickets"]
+markers = [
+    "m1: Module 1 exercise checks (the agent loop)",
+    "m2: Module 2 exercise checks (tool design)",
+    "m3: Module 3 exercise checks (streaming backend + chat UI)",
+]

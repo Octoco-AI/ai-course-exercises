@@ -1,7 +1,7 @@
 [project]
 name = "track-a-codebase-qa"
 version = "0.1.0"
-description = "Combo 3 Track A running artefact: a codebase-Q&A agent with a streaming chat UI, backed by the chroma-corpora Track A index."
+description = "Combo 3 Track A starter: a codebase-Q&A agent you build across Modules 1-12, with a streaming chat UI backed by the chroma-corpora Track A index."
 requires-python = ">=3.12"
 dependencies = [
     "anthropic>=0.100",
@@ -33,3 +33,9 @@ packages = ["backend"]
 testpaths = ["tests"]
 pythonpath = ["."]
 asyncio_mode = "auto"
+norecursedirs = ["checkpoints", "reference", "ui", ".venv", "sample_code"]
+markers = [
+    "m1: Module 1 exercise checks (the agent loop)",
+    "m2: Module 2 exercise checks (tool design)",
+    "m3: Module 3 exercise checks (streaming backend + chat UI)",
+]

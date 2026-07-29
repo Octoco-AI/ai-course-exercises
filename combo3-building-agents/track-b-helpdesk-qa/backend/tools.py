@@ -1,289 +1,149 @@
-"""The four tools the helpdesk agent can call.
+"""The tools the helpdesk agent can call.
 
-  - search_kb(query)                             — retrieve from the Chroma KB
-  - read_article(path)                           — read a full KB article
-  - create_draft_reply(subject, body, tags)      — draft a reply email for a human to send
-  - escalate_to_human(category, summary, priority) — create an escalation ticket
+Module 1 has you build three: `list_tickets`, `read_ticket`, `draft_reply`.
+(Module 4 adds a fourth, `search_kb`, over the Chroma KB corpus. Module 9
+adds `escalate_to_human` plus an action-gate pattern for it. Neither
+exists yet — don't add them now.)
 
-`create_draft_reply` and `escalate_to_human` both write to files. A human
-reads these out-of-band (email client, ticketing system) and acts.
+Pattern: each handler is a plain function; `dispatch()` never lets an
+exception escape — it catches everything and returns a string starting
+with "ERROR:" so the LLM can self-correct on the next turn, rather than
+crashing the loop.
+
+The `Tool` dataclass and `to_anthropic_schema()` are given — they're pure
+mechanics. What you write: `ToolSet.dispatch()`, the three handlers, and
+`build_toolset()`.
 """
 
 from __future__ import annotations
 
 import json
-import time
+from dataclasses import dataclass
 from pathlib import Path
-from typing import TypedDict
-
-import chromadb
+from typing import Any, Callable
 
 from .guardrails import GuardrailViolation, ensure_within
 
 
-VALID_PRIORITIES = ("low", "normal", "high", "urgent")
-VALID_ESCALATION_CATEGORIES = (
-    "billing",           # > $20 refund, disputed charge
-    "account-recovery",  # lost email + 2FA
-    "security",          # suspicious activity
-    "legal",             # child accounts, press, privacy law
-    "bug-report",        # likely affecting multiple users
-    "product-complaint", # frustrated tone, needs human empathy
-    "other",
-)
+@dataclass
+class Tool:
+    name: str
+    description: str
+    input_schema: dict
+    handler: Callable[..., Any]
 
-
-class SearchHit(TypedDict):
-    text: str
-    source: str
-    heading: str
-    score: float
+    def to_anthropic_schema(self, strict: bool = True) -> dict:
+        schema = {
+            "name": self.name,
+            "description": self.description,
+            "input_schema": self.input_schema,
+        }
+        if strict:
+            schema["strict"] = True
+        return schema
 
 
 class ToolSet:
-    def __init__(
-        self,
-        *,
-        workspace_root: Path,
-        chroma_persist_root: Path,
-        chroma_collection_name: str,
-        draft_replies_root: Path,
-        escalations_root: Path,
-    ) -> None:
-        self.workspace_root = workspace_root.resolve()
-        self.draft_replies_root = draft_replies_root.resolve()
-        self.escalations_root = escalations_root.resolve()
+    def __init__(self, tools: list[Tool]):
+        self._by_name = {t.name: t for t in tools}
 
-        client = chromadb.PersistentClient(path=str(chroma_persist_root))
-        try:
-            self.collection = client.get_collection(chroma_collection_name)
-        except Exception as exc:  # noqa: BLE001
-            raise RuntimeError(
-                f"Chroma collection {chroma_collection_name!r} not found at "
-                f"{chroma_persist_root}. Build the corpus first: "
-                f"`cd ../chroma-corpora/track-b-helpdesk && python build.py`."
-            ) from exc
+    def schemas(self, strict: bool = True) -> list[dict]:
+        return [t.to_anthropic_schema(strict=strict) for t in self._by_name.values()]
 
-    # -- search_kb -------------------------------------------------------
+    # -----------------------------------------------------------------
+    # STEP 3 — implement dispatch
+    # -----------------------------------------------------------------
+    def dispatch(self, name: str, args: dict) -> str:
+        """Call the named tool's handler with `args`. Never raises.
 
-    def search_kb(self, query: str, k: int = 5) -> list[SearchHit]:
-        """Search the Streakly KB for passages relevant to a question."""
-        if not query.strip():
-            return [{"text": "ERROR: empty query", "source": "", "heading": "", "score": 0.0}]
-        result = self.collection.query(query_texts=[query], n_results=k)
-        docs = result["documents"][0]
-        metadatas = result["metadatas"][0]
-        distances = result["distances"][0] if result.get("distances") else [None] * len(docs)
-        hits: list[SearchHit] = []
-        for doc, meta, dist in zip(docs, metadatas, distances):
-            score = max(0.0, 1.0 - float(dist) / 2.0) if dist is not None else 0.0
-            hits.append({
-                "text": doc,
-                "source": meta.get("source", ""),
-                "heading": meta.get("heading", ""),
-                "score": round(score, 3),
-            })
-        return hits
-
-    # -- read_article ----------------------------------------------------
-
-    def read_article(self, path: str) -> str:
-        """Read a full KB article when a snippet from search_kb isn't enough."""
-        try:
-            resolved = ensure_within(path, self.workspace_root)
-        except GuardrailViolation as exc:
-            return f"ERROR: {exc}"
-        if not resolved.exists():
-            return f"ERROR: {path!r} does not exist"
-        if not resolved.is_file():
-            return f"ERROR: {path!r} is not a file"
-        try:
-            return resolved.read_text(encoding="utf-8")
-        except UnicodeDecodeError:
-            return f"ERROR: {path!r} is not UTF-8 text"
-
-    # -- create_draft_reply ----------------------------------------------
-
-    def create_draft_reply(
-        self,
-        subject: str,
-        body: str,
-        tags: list[str] | None = None,
-    ) -> str:
-        """Draft a reply email for a human to review and send.
-
-        The agent never sends email itself. This writes a Markdown file under
-        draft-replies/ which a support human opens, edits if needed, then
-        copies into their email client.
+        Hints:
+          - Unknown name -> "ERROR: unknown tool {name!r}".
+          - `except TypeError` -> "ERROR: bad arguments to {name}: {exc}".
+          - `except Exception` -> "ERROR: {type(exc).__name__}: {exc}".
+          - Non-string results -> `json.dumps` before returning.
         """
-        if not subject.strip():
-            return "ERROR: subject is empty"
-        if not body.strip():
-            return "ERROR: body is empty"
-
-        timestamp = int(time.time() * 1000)
-        safe_subject = "".join(c if c.isalnum() or c in "-_" else "_" for c in subject)[:50]
-        path = self.draft_replies_root / f"{timestamp}__{safe_subject}.md"
-
-        tags = tags or []
-        header = [
-            "---",
-            f"subject: {subject}",
-            f"tags: [{', '.join(tags)}]",
-            f"drafted_at: {time.strftime('%Y-%m-%dT%H:%M:%S%z', time.gmtime(timestamp / 1000))}",
-            "---",
-            "",
-        ]
-        path.write_text("\n".join(header) + body.rstrip() + "\n", encoding="utf-8")
-        return (
-            f"OK: draft reply written to {path.name}. A human will review and send."
-        )
-
-    # -- escalate_to_human -----------------------------------------------
-
-    def escalate_to_human(
-        self,
-        category: str,
-        summary: str,
-        priority: str = "normal",
-    ) -> str:
-        """Create an escalation ticket for a human to pick up.
-
-        Args:
-            category: one of the VALID_ESCALATION_CATEGORIES.
-            summary: what the user asked, what you tried, and why this needs a human.
-            priority: 'low' | 'normal' | 'high' | 'urgent'.
-        """
-        if category not in VALID_ESCALATION_CATEGORIES:
-            return (
-                f"ERROR: unknown category {category!r}. Use one of: "
-                f"{', '.join(VALID_ESCALATION_CATEGORIES)}"
-            )
-        if priority not in VALID_PRIORITIES:
-            return f"ERROR: priority must be one of {', '.join(VALID_PRIORITIES)}"
-        if not summary.strip():
-            return "ERROR: summary is empty"
-
-        timestamp = int(time.time() * 1000)
-        path = self.escalations_root / f"{timestamp}__{priority}__{category}.md"
-        payload = {
-            "category": category,
-            "priority": priority,
-            "summary": summary,
-            "escalated_at_ms": timestamp,
-        }
-        path.write_text(
-            "---\n" + "\n".join(f"{k}: {v}" for k, v in payload.items()) + "\n---\n\n" + summary + "\n",
-            encoding="utf-8",
-        )
-
-        return (
-            f"OK: escalation {path.name} filed. A human will be paged according to "
-            f"priority={priority}. Tell the user a human will respond."
-        )
+        # TODO: Step 3 — implement dispatch.
+        raise NotImplementedError("Implement ToolSet.dispatch for step 3.")
 
 
-def anthropic_tool_schemas() -> list[dict]:
-    """Tool definitions for the Anthropic API."""
-    return [
-        {
-            "name": "search_kb",
-            "description": (
-                "Search the Streakly knowledge base for passages relevant to a user's "
-                "question. Returns up to 5 chunks with source article and heading. "
-                "Use this FIRST for most questions — it's cheap and surfaces the right "
-                "article."
-            ),
-            "input_schema": {
-                "type": "object",
-                "properties": {
-                    "query": {
-                        "type": "string",
-                        "description": "Natural-language query derived from the user's question.",
-                    },
-                },
-                "required": ["query"],
-            },
-        },
-        {
-            "name": "read_article",
-            "description": (
-                "Read a full KB article when a snippet from search_kb isn't enough. "
-                "Path is a filename relative to the KB root, e.g. 'billing-and-plans.md'."
-            ),
-            "input_schema": {
-                "type": "object",
-                "properties": {
-                    "path": {
-                        "type": "string",
-                        "description": "Article path, e.g. 'billing-and-plans.md'.",
-                    },
-                },
-                "required": ["path"],
-            },
-        },
-        {
-            "name": "create_draft_reply",
-            "description": (
-                "Draft a reply email for a human support agent to review and send. "
-                "YOU NEVER SEND EMAILS YOURSELF. Use this when you have a clear answer "
-                "the user needs and the question doesn't require escalation. The draft "
-                "is reviewed by a human before going out."
-            ),
-            "input_schema": {
-                "type": "object",
-                "properties": {
-                    "subject": {
-                        "type": "string",
-                        "description": "Email subject line.",
-                    },
-                    "body": {
-                        "type": "string",
-                        "description": "Full reply body. Friendly, cite KB articles when relevant.",
-                    },
-                    "tags": {
-                        "type": "array",
-                        "items": {"type": "string"},
-                        "description": "Topic tags for routing. e.g. ['billing', 'refund'].",
-                        "default": [],
-                    },
-                },
-                "required": ["subject", "body"],
-            },
-        },
-        {
-            "name": "escalate_to_human",
-            "description": (
-                "Create an escalation ticket for a human to handle. Use when: "
-                "the question requires looking up specific account data you can't see; "
-                "a billing refund over $20; account recovery with no email access; "
-                "suspected security issue; legal / press / child-safety concerns; "
-                "a product complaint where tone suggests the user needs empathy from a human. "
-                "Always prefer escalation over speculating about user-specific details."
-            ),
-            "input_schema": {
-                "type": "object",
-                "properties": {
-                    "category": {
-                        "type": "string",
-                        "enum": list(VALID_ESCALATION_CATEGORIES),
-                        "description": "Escalation category.",
-                    },
-                    "summary": {
-                        "type": "string",
-                        "description": (
-                            "One paragraph: what the user asked, what you tried, "
-                            "and why a human is needed."
-                        ),
-                    },
-                    "priority": {
-                        "type": "string",
-                        "enum": list(VALID_PRIORITIES),
-                        "description": "'urgent' for security/legal; 'high' for account-recovery; 'normal' for most; 'low' for non-blocking.",
-                        "default": "normal",
-                    },
-                },
-                "required": ["category", "summary"],
-            },
-        },
-    ]
+# ---------------------------------------------------------------------------
+# Handlers — Track B: list_tickets, read_ticket, draft_reply.
+#
+# Tickets live as one Markdown file per ticket under `workspace/tickets/`,
+# named `<ticket_id>.md` (e.g. `TKT-1001.md`), with a small header:
+#
+#   Status: open
+#   Customer: alice@example.com
+#   Theme: billing
+#
+#   ## Message
+#
+#   <the customer's message>
+# ---------------------------------------------------------------------------
+
+
+# -----------------------------------------------------------------------
+# STEP 3a — implement list_tickets
+# -----------------------------------------------------------------------
+def list_tickets(*, workspace: Path) -> list[str]:
+    """List all tickets under workspace/tickets/ as short summary strings.
+
+    Hints:
+      - The tickets directory is `workspace / "tickets"`.
+      - For each `*.md` file, parse the `Status:` and `Theme:` header
+        lines and return something like `"TKT-1001 [open] billing"`.
+      - Sort by ticket id (the filename stem) so results are stable.
+    """
+    # TODO: Step 3a — implement list_tickets.
+    raise NotImplementedError("Implement list_tickets for step 3a.")
+
+
+# -----------------------------------------------------------------------
+# STEP 3b — implement read_ticket
+# -----------------------------------------------------------------------
+def read_ticket(ticket_id: str, *, workspace: Path) -> str:
+    """Read a ticket's full contents.
+
+    Hints:
+      - `ensure_within(f"tickets/{ticket_id}.md", workspace)` (imported
+        above) resolves the path and raises `GuardrailViolation` if it
+        escapes the sandbox — let it raise.
+      - Raise `FileNotFoundError(ticket_id)` if the ticket doesn't exist.
+      - Read as UTF-8 text and return the string.
+    """
+    # TODO: Step 3b — implement read_ticket.
+    raise NotImplementedError("Implement read_ticket for step 3b.")
+
+
+# -----------------------------------------------------------------------
+# STEP 3c — implement draft_reply
+# -----------------------------------------------------------------------
+def draft_reply(ticket_id: str, body: str, *, draft_replies: Path) -> str:
+    """Draft a reply to a ticket. Writes to draft_replies/, never mutates
+    the ticket itself — a human reviews and sends the reply.
+
+    Hints:
+      - Validate `body` isn't empty; raise `ValueError` otherwise.
+      - Write to `draft_replies / f"{ticket_id}.md"`.
+      - Return a message confirming the draft was written.
+    """
+    # TODO: Step 3c — implement draft_reply.
+    raise NotImplementedError("Implement draft_reply for step 3c.")
+
+
+# ---------------------------------------------------------------------------
+# STEP 3d — build_toolset
+# ---------------------------------------------------------------------------
+def build_toolset(workspace: Path, *, draft_replies: Path | None = None) -> ToolSet:
+    """Wrap the three handlers into a ToolSet bound to `workspace` (and a
+    draft-replies output directory).
+
+    Hints:
+      - Bind `workspace` / `draft_replies` in each `Tool.handler` via a
+        closure, so the model never has to supply them.
+      - Descriptions: rough is fine for now (Module 2 asks you to tighten
+        the thinnest one).
+    """
+    # TODO: Step 3d — build the three Tool(...) entries and return
+    #       ToolSet([...]).
+    raise NotImplementedError("Implement build_toolset for step 3d.")

@@ -1,98 +1,56 @@
-"""Shared pytest fixtures — Track B."""
+"""Shared pytest fixtures for the Module 11 / Module 12 exercises — Track B."""
 
 from __future__ import annotations
 
 from pathlib import Path
 
-import chromadb
 import pytest
-
-from backend.settings import Settings
-from backend.tools import ToolSet
 
 
 @pytest.fixture
 def sandbox(tmp_path: Path):
-    """A temp workspace + a fresh Chroma collection seeded with a few KB articles."""
+    """A temp workspace with a couple of tickets + a ToolSet bound to it.
+
+    Skips (rather than erroring) if `build_toolset` isn't implemented yet —
+    that's the expected state of a fresh Module 11 starter.
+    """
+    from backend.tools import build_toolset
+
     workspace = tmp_path / "workspace"
-    workspace.mkdir()
-    (workspace / "account-security.md").write_text(
-        "# Account security\n\n## Two-factor authentication\n\nWe support TOTP via any authenticator app.\n",
+    tickets = workspace / "tickets"
+    tickets.mkdir(parents=True)
+    (tickets / "TKT-1001.md").write_text(
+        "Status: open\nCustomer: alice@example.com\nTheme: billing\n\n"
+        "## Message\n\nI was charged twice this month.\n",
         encoding="utf-8",
     )
-    (workspace / "billing-and-plans.md").write_text(
-        "# Plans\n\n## Refunds\n\nRefunds go through Apple or Google.\n",
+    (tickets / "TKT-1002.md").write_text(
+        "Status: open\nCustomer: bob@example.com\nTheme: sync\n\n"
+        "## Message\n\nMy streak reset overnight.\n",
         encoding="utf-8",
     )
 
     draft_replies = tmp_path / "draft-replies"
-    escalations = tmp_path / "escalations"
     draft_replies.mkdir()
-    escalations.mkdir()
 
-    chroma_root = tmp_path / "chroma"
-    client = chromadb.PersistentClient(path=str(chroma_root))
-    collection = client.create_collection("test-kb")
-    collection.add(
-        documents=[
-            "We support TOTP via any authenticator app. To enable, go to Settings.",
-            "Refunds go through Apple or Google. Streakly can't issue them directly.",
-            "Your streak grows by one each consecutive day you mark a habit done.",
-        ],
-        metadatas=[
-            {"source": "account-security.md", "heading": "Two-factor authentication"},
-            {"source": "billing-and-plans.md", "heading": "Refunds"},
-            {"source": "streaks-and-tracking.md", "heading": "The basic rule"},
-        ],
-        ids=["a", "b", "c"],
-    )
+    try:
+        tools = build_toolset(workspace, draft_replies=draft_replies)
+    except NotImplementedError:
+        pytest.skip("build_toolset() not implemented yet — Module 11, Step 3d.")
 
-    tools = ToolSet(
-        workspace_root=workspace,
-        chroma_persist_root=chroma_root,
-        chroma_collection_name="test-kb",
-        draft_replies_root=draft_replies,
-        escalations_root=escalations,
-    )
-
-    yield {
-        "workspace": workspace,
-        "draft_replies": draft_replies,
-        "escalations": escalations,
-        "tools": tools,
-    }
+    return {"workspace": workspace, "draft_replies": draft_replies, "tools": tools}
 
 
 @pytest.fixture
-def settings_for_test(sandbox, monkeypatch):
-    """Settings on the Anthropic path (client mocked in tests)."""
-    monkeypatch.setenv("ANTHROPIC_API_KEY", "test-key-do-not-use")
-    return Settings(
-        provider="anthropic",
-        google_api_key="",
-        anthropic_api_key="test-key",
-        model="claude-haiku-4-5",
-        workspace_root=sandbox["workspace"],
-        chroma_persist_root=sandbox["workspace"].parent / "chroma",
-        chroma_collection_name="test-kb",
-        draft_replies_root=sandbox["draft_replies"],
-        escalations_root=sandbox["escalations"],
-        max_agent_turns=5,
-    )
+def settings_for_test(sandbox):
+    """A Settings instance pointed at the sandbox workspace (Gemini path, mocked in tests)."""
+    from backend.settings import Settings
 
-
-@pytest.fixture
-def gemini_settings_for_test(sandbox):
-    """Settings on the default Gemini path (client mocked in tests)."""
     return Settings(
         provider="gemini",
         google_api_key="test-key",
         anthropic_api_key="",
-        model="gemini-3.1-flash-lite",
         workspace_root=sandbox["workspace"],
-        chroma_persist_root=sandbox["workspace"].parent / "chroma",
-        chroma_collection_name="test-kb",
         draft_replies_root=sandbox["draft_replies"],
-        escalations_root=sandbox["escalations"],
         max_agent_turns=5,
     )
