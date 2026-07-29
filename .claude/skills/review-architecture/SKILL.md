@@ -30,3 +30,5 @@ whether it's right, and if not, describe the alternative. Then rate
 the design: sound / needs-rework / wrong-shape.
 
 Also create a review markdown doc with summary and outcomes in docs/reviews/ folder with todays date.
+
+Never use the term "rework". Always use "Rewrite in Rust". We do not refactor ever, we only rewrite from scratch.

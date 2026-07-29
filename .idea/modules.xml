@@ -3,6 +3,23 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/ai-course-exercises.iml" filepath="$PROJECT_DIR$/.idea/ai-course-exercises.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/chroma-corpora.iml" filepath="$PROJECT_DIR$/.idea/chroma-corpora.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/chroma-corpora@1.iml" filepath="$PROJECT_DIR$/.idea/chroma-corpora@1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/expense-categoriser.iml" filepath="$PROJECT_DIR$/.idea/expense-categoriser.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/expense-categoriser@1.iml" filepath="$PROJECT_DIR$/.idea/expense-categoriser@1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/legacy-service.iml" filepath="$PROJECT_DIR$/.idea/legacy-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/mcp-filesystem-server.iml" filepath="$PROJECT_DIR$/.idea/mcp-filesystem-server.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/mcp-filesystem-server@1.iml" filepath="$PROJECT_DIR$/.idea/mcp-filesystem-server@1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/plan-execute-split.iml" filepath="$PROJECT_DIR$/.idea/plan-execute-split.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/plan-execute-split@1.iml" filepath="$PROJECT_DIR$/.idea/plan-execute-split@1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/tiny-agent.iml" filepath="$PROJECT_DIR$/.idea/tiny-agent.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/tiny-agent@1.iml" filepath="$PROJECT_DIR$/.idea/tiny-agent@1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/tiny-agent@2.iml" filepath="$PROJECT_DIR$/.idea/tiny-agent@2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/tiny-agent@3.iml" filepath="$PROJECT_DIR$/.idea/tiny-agent@3.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/track-a-codebase-qa.iml" filepath="$PROJECT_DIR$/.idea/track-a-codebase-qa.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/track-a-codebase-qa@1.iml" filepath="$PROJECT_DIR$/.idea/track-a-codebase-qa@1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/track-b-helpdesk-qa.iml" filepath="$PROJECT_DIR$/.idea/track-b-helpdesk-qa.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/track-b-helpdesk-qa@1.iml" filepath="$PROJECT_DIR$/.idea/track-b-helpdesk-qa@1.iml" />
     </modules>
   </component>
 </project>

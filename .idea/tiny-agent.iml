@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module external.system.id="pyproject.toml" type="PYTHON_MODULE" version="4">
+  <component name="NewModuleRootManager">
+    <content url="file://$MODULE_DIR$/combo1-agentic-engineering-intro/tiny-agent">
+      <sourceFolder url="file://$MODULE_DIR$/combo1-agentic-engineering-intro/tiny-agent" />
+    </content>
+    <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+</module>
