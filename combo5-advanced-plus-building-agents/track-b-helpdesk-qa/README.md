@@ -50,13 +50,19 @@ cp .env.example .env   # add your Gemini key (default) or Anthropic key
 
 ./scripts/seed-workspace.sh   # copies KB articles + sample tickets into workspace/
 
+# Build the Chroma index search_kb (Module 13) reads from. One-time — do it
+# now so it's ready when you get there. The corpus lives in a sibling
+# project with its own venv; see ../chroma-corpora/README.md if you
+# haven't set that up yet.
+(cd ../chroma-corpora/track-b-helpdesk && python build.py)
+
 cd ui && npm install && cd ..
 ./verify.sh
 ```
 
-`./verify.sh` is green on a fresh clone — Module 11/12 tests are designed
+`./verify.sh` is green on a fresh clone — Module 11/12/13 tests are designed
 to *skip* (not fail) until you've implemented the step they check. Run
-`pytest -m m11` / `pytest -m m12` to check your own progress.
+`pytest -m m11` / `pytest -m m12` / `pytest -m m13` to check your own progress.
 
 ---
 
@@ -95,11 +101,14 @@ Same mechanism as Track A:
 ```bash
 ./scripts/checkpoint.sh m11-end   # overlays the Module 11 end state
 ./scripts/checkpoint.sh m12-end   # overlays the Module 12 end state
+./scripts/checkpoint.sh m13-end   # overlays the Module 13 end state
 ```
 
 This **overwrites** the files the checkpoint provides — commit or stash
 first if you want to keep your own attempt. `reference/` is the same
-content as a full browsable tree; see `reference/REFERENCE.md`.
+content as a full browsable tree; see `reference/REFERENCE.md`. It stops
+at Module 12 on purpose — Modules 13+ (like `m13-end` above) are only
+available as checkpoints, not as an extended `reference/` tree.
 
 ---
 
@@ -168,12 +177,13 @@ track-b-helpdesk-qa/
 ├── workspace/             ← KB articles + tickets (seeded — don't hand-edit)
 ├── draft-replies/         ← where draft_reply writes
 ├── escalations/           ← where escalate_to_human writes (Module 18+)
-├── checkpoints/           ← catch-up snapshots (m11-end, m12-end)
+├── checkpoints/           ← catch-up snapshots (m11-end, m12-end, m13-end)
 ├── reference/             ← full browsable copy of the Module 12 end state
 ├── tests/
 │   ├── test_scaffold.py   ← always green
 │   ├── m11/                ← pytest -m m11
-│   └── m12/                ← pytest -m m12
+│   ├── m12/                ← pytest -m m12
+│   └── m13/                ← pytest -m m13
 ├── scripts/{seed-workspace.sh,checkpoint.sh,test-reference.sh}
 ├── Dockerfile, docker-compose.yml, verify.sh, pyproject.toml, .env.example, .gitignore
 ```
