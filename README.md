@@ -13,6 +13,7 @@ course repo on every push to main; do not edit directly.
 - [`codex-skills`](combo2-advanced-agentic-engineering/codex-skills)
 - [`cross-tool-skills`](combo2-advanced-agentic-engineering/cross-tool-skills)
 - [`expense-categoriser`](combo2-advanced-agentic-engineering/expense-categoriser)
+- [`legacy-service`](combo2-advanced-agentic-engineering/legacy-service)
 - [`plan-execute-split`](combo2-advanced-agentic-engineering/plan-execute-split)
 - [`tiny-agent`](combo2-advanced-agentic-engineering/tiny-agent)
 
