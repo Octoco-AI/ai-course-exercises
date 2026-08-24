@@ -39,22 +39,16 @@ cp .env.example .env   # then edit .env and add your Gemini key (default) or Ant
 # 2. Seed the workspace with the TodoMagic docs + sample code
 ./scripts/seed-workspace.sh
 
-# 3. Build the Chroma index search_docs (Module 13) reads from. One-time —
-#    do it now so it's ready when you get there. The corpus lives in a
-#    sibling project with its own venv; see ../chroma-corpora/README.md if
-#    you haven't set that up yet.
-(cd ../chroma-corpora/track-a-codebase && python build.py)
-
-# 4. UI side (required for the browser chat in Module 12; skip if using curl/run_agent.py only)
+# 3. UI side (required for the browser chat in Module 12; skip if using curl/run_agent.py only)
 cd ui && npm install && cd ..
 
-# 5. Verify everything
+# 4. Verify everything
 ./verify.sh
 ```
 
-`./verify.sh` is green on a fresh clone — Module 11/12/13 tests are designed
+`./verify.sh` is green on a fresh clone — Module 11/12 tests are designed
 to *skip* (not fail) until you've implemented the step they check. Run
-`pytest -m m11` / `pytest -m m12` / `pytest -m m13` to check your own progress.
+`pytest -m m11` / `pytest -m m12` to check your own progress.
 
 ---
 
@@ -100,7 +94,6 @@ behind or want to see a worked example:
 ```bash
 ./scripts/checkpoint.sh m11-end   # overlays the Module 11 end state — sets you up for Module 12
 ./scripts/checkpoint.sh m12-end   # overlays the Module 12 end state — sets you up for Module 13
-./scripts/checkpoint.sh m13-end   # overlays the Module 13 end state — sets you up for Module 14
 ```
 
 This **overwrites** the files the checkpoint provides. Commit or stash
@@ -110,8 +103,6 @@ first if you want to keep your own attempt.
 content as `checkpoints/m12-end/`, laid out as a complete tree instead of
 an overlay) — useful for reading end-to-end without touching your working
 copy. It's not wired into the live package; see `reference/REFERENCE.md`.
-It stops at Module 12 on purpose — Modules 13+ (like `m13-end` above) are
-only available as checkpoints, not as an extended `reference/` tree.
 
 ---
 
@@ -177,13 +168,12 @@ track-a-codebase-qa/
 ├── sample_code/          ← seeded into workspace/src/ (has the M11 bug)
 ├── workspace/            ← what the agent reads (seeded — don't hand-edit)
 ├── patches/              ← where draft_patch writes (Module 18+)
-├── checkpoints/          ← catch-up snapshots (m11-end, m12-end, m13-end)
+├── checkpoints/          ← catch-up snapshots (m11-end, m12-end)
 ├── reference/            ← full browsable copy of the Module 12 end state
 ├── tests/
 │   ├── test_scaffold.py  ← always green
 │   ├── m11/               ← pytest -m m11
-│   ├── m12/               ← pytest -m m12
-│   └── m13/               ← pytest -m m13
+│   └── m12/               ← pytest -m m12
 ├── scripts/
 │   ├── seed-workspace.sh
 │   ├── checkpoint.sh

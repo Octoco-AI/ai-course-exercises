@@ -10,6 +10,7 @@ course repo on every push to main; do not edit directly.
 ## combo2-advanced-agentic-engineering
 
 - [`claude-code-skills`](combo2-advanced-agentic-engineering/claude-code-skills)
+- [`codex-skills`](combo2-advanced-agentic-engineering/codex-skills)
 - [`cross-tool-skills`](combo2-advanced-agentic-engineering/cross-tool-skills)
 - [`expense-categoriser`](combo2-advanced-agentic-engineering/expense-categoriser)
 - [`plan-execute-split`](combo2-advanced-agentic-engineering/plan-execute-split)
@@ -32,6 +33,7 @@ course repo on every push to main; do not edit directly.
 
 - [`chroma-corpora`](combo5-advanced-plus-building-agents/chroma-corpora)
 - [`claude-code-skills`](combo5-advanced-plus-building-agents/claude-code-skills)
+- [`codex-skills`](combo5-advanced-plus-building-agents/codex-skills)
 - [`cross-tool-skills`](combo5-advanced-plus-building-agents/cross-tool-skills)
 - [`expense-categoriser`](combo5-advanced-plus-building-agents/expense-categoriser)
 - [`mcp-server`](combo5-advanced-plus-building-agents/mcp-server)

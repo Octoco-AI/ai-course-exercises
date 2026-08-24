@@ -1,6 +1,6 @@
-# Claude Code Skills — Combo 2 reference
+# Claude Code Skills — Combo 5 reference
 
-Workshop-authored Claude Code skills for Combo 2 M3b (*Specs with teeth — lightweight path*). Attendees install these during the module, then customise for their own project.
+Workshop-authored Claude Code skills for Combo 5 M3b (*Specs with teeth — lightweight path*). Attendees install these during the module, then customise for their own project.
 
 ## Contents
 
@@ -75,7 +75,7 @@ Two valid approaches for spec-driven development. Pick based on your team's stac
 | **Customisation** | Edit `SKILL.md` and templates in your repo | Fork / create a preset |
 | **Best for** | Teams mostly on Claude Code | Mixed-tool teams; multi-IDE shops |
 
-Both implement the same conceptual flow. The Claude Code skill version is what Combo 2 M3b live-creates; SpecKit is shown in M3c.
+Both implement the same conceptual flow. The Claude Code skill version is what Combo 5 M3b live-creates; SpecKit is shown in M3c.
 
 ---
 
