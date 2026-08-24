@@ -1,6 +1,6 @@
 # Cross-tool spec-driven skill — reference implementations
 
-Five minimal `spec-driven` skill implementations, one per agent harness, for use as reference alongside the two hands-on paths taught in Module 3 (`m3-specs-with-teeth-full`) — Claude Code (`../claude-code-skills/`) and Codex CLI (`../codex-skills/`).
+Five minimal `spec-driven` skill implementations, one per agent harness, for use as reference alongside the two hands-on paths taught in Module 10 (`m10-specs-with-teeth`) — Claude Code (`../claude-code-skills/`) and Codex CLI (`../codex-skills/`).
 
 | Tool | Subdirectory | Constitution file | Skill / agent file | Invocation |
 |---|---|---|---|---|
@@ -22,4 +22,4 @@ The full lightweight references (with `templates/`, state detection, pause-for-a
 - You want to compare how the same discipline expresses across harnesses.
 - You're authoring a workshop talk and need a concrete demo per tool.
 
-Not for use as: a complete workshop exercise on the day (Combo 2 M3 hands-on is Claude Code, Codex CLI, or SpecKit).
+Not for use as: a complete workshop exercise on the day (Combo 2 Module 10 hands-on is Claude Code, Codex CLI, or SpecKit).

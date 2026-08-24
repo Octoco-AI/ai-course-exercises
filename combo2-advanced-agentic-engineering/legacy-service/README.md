@@ -117,11 +117,11 @@ turn into a reusable skill:
 
 | Module | Uses |
 |---|---|
-| M9 — context engineering | `CLAUDE.md` (audit target — it is deliberately bloated) and `AGENTS.md`. The two files **contradict each other**; reconciling them is the exercise. |
-| M9b — MCP for teams | `.mcp.json.sample` (which servers to trust) and `DOCS/INSTRUCTIONS.md` (governance, and a hardcoded key). |
-| M9c — working with legacy code | The whole service. Main event: `src/legacy_service/orders.py` is untested, `utils.py` carries the refactor targets. |
-| M9d — patterns: promote vs discourage | The rule candidates: `print` vs `log.info`, string-formatted SQL, `DEBUG = True`, duplicate helpers, the committed key. |
-| M10 — security, governance, agent inventory | `.mcp.json.sample` + `DOCS/INSTRUCTIONS.md` as inventory rows. |
+| M16 — context engineering | `CLAUDE.md` (audit target — it is deliberately bloated) and `AGENTS.md`. The two files **contradict each other**; reconciling them is the exercise. |
+| M17 — MCP for teams | `.mcp.json.sample` (which servers to trust) and `DOCS/INSTRUCTIONS.md` (governance, and a hardcoded key). |
+| M18 — working with legacy code | The whole service. Main event: `src/legacy_service/orders.py` is untested, `utils.py` carries the refactor targets. |
+| M19 — patterns: promote vs discourage | The rule candidates: `print` vs `log.info`, string-formatted SQL, `DEBUG = True`, duplicate helpers, the committed key. |
+| M20 — security, governance, agent inventory | `.mcp.json.sample` + `DOCS/INSTRUCTIONS.md` as inventory rows. |
 
 `FAKE_SENTRY.md` and `logs/` are extra material — three exported issue
 writeups and noisy log fixtures. Nothing requires them, but they're the

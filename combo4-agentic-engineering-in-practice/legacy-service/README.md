@@ -27,7 +27,7 @@ Four HTTP endpoints over a two-table sqlite schema (`orders`, `order_items`):
 
 There is intentionally **no `/health` endpoint** — monitoring hits
 `GET /orders?limit=1` as a liveness probe. (Adding a real health check is a
-Module 5 exercise; don't add it here.)
+Module 24 exercise; don't add it here.)
 
 ---
 
@@ -93,9 +93,9 @@ comment as the spec.
 
 ---
 
-## The three microtooling chores (Module 10)
+## The three microtooling chores (Module 26)
 
-OrderBase ships three small, real chores. In Module 10 you turn each into a
+OrderBase ships three small, real chores. In Module 26 you turn each into a
 reusable command / script instead of doing it by hand:
 
 1. **Log summary.** Parse `logs/app-*.log` and produce a per-endpoint,
@@ -115,12 +115,12 @@ reusable command / script instead of doing it by hand:
 
 | Module | Uses |
 |---|---|
-| M4 — agent-assisted testing | `scripts/create-regression-branch.sh`, `.github/workflows/tests.yml` (the CI gate). |
-| M6 — context engineering | `CLAUDE.md` (audit target) and `AGENTS.md` (reconcile the two). |
-| M7 — MCP in practice | `.mcp.json.sample` (which servers to trust) and `DOCS/INSTRUCTIONS.md` (governance). |
-| M8 — working with legacy code | The whole service, plus `FAKE_SENTRY.md` and `logs/`. Main event. |
-| M10 — microtooling | The three chores above. |
-| M11 — debugging & triage | `logs/` + `FAKE_SENTRY.md` — trace a reported issue to the code. |
+| M23 — agent-assisted testing | `scripts/create-regression-branch.sh`, `.github/workflows/tests.yml` (the CI gate). |
+| M57 — context engineering | `CLAUDE.md` (audit target) and `AGENTS.md` (reconcile the two). |
+| M58 — MCP in practice | `.mcp.json.sample` (which servers to trust) and `DOCS/INSTRUCTIONS.md` (governance). |
+| M18 — working with legacy code | The whole service, plus `FAKE_SENTRY.md` and `logs/`. Main event. |
+| M26 — microtooling | The three chores above. |
+| M27 — debugging & triage | `logs/` + `FAKE_SENTRY.md` — trace a reported issue to the code. |
 
 ---
 

@@ -23,7 +23,7 @@ python search_example.py "can I refund a user"
 
 (That last one should return low-relevance hits — it's a Track B kind of question. Useful for showing what "irrelevant" looks like in the score.)
 
-## Integrating into the M4 agent
+## Integrating into the M11 agent
 
 Your agent's `search_docs(query)` tool wraps the `CorpusSearch` class:
 

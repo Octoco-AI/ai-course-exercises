@@ -2,21 +2,21 @@
 
 A streaming agent that answers questions about a codebase and drafts small changes as patch files. Full stack: **Anthropic Claude** backend loop, **FastAPI** streaming endpoint, **React + Vite** chat UI, **Chroma** retrieval, runs in **Docker**.
 
-This is the running thread across Combo 3 modules M1 through M11. Each module adds one slice:
+This is the running thread across Combo 3 modules M31 through M41. Each module adds one slice:
 
 | Module | Slice this artefact demonstrates |
 |---|---|
-| M1 — Agent loop | `backend/agent.py` — the loop, dispatching tools, termination on no-tool-use |
-| M2 — Tool design | `backend/tools.py` + `anthropic_tool_schemas()` — 4 tools, all sandboxed |
-| M3a — Streaming backend | `backend/streaming.py` + SSE endpoint in `backend/server.py` |
-| M3b — Chat UI | `ui/src/hooks/useStreamingChat.ts` + components |
-| M4 — Context engineering | `search_docs` tool wrapping `../chroma-corpora/track-a-codebase/` |
-| M5 — MCP | (see `../mcp-server/` — wrap these same tools as MCP) |
-| M6 — Caching | `backend/agent.py` — system prompt is stable across turns (candidate for prompt caching; see M6 notes) |
-| M7 — Evals | `tests/test_agent.py` + the eval extension path documented below |
-| M8 — Tracing | Opik integration point in `backend/agent.py` (see M8 notes) |
-| M9 — Guardrails | `backend/guardrails.py` + `draft_patch` stubbed PR |
-| M11 — Deployment | `Dockerfile` + `docker-compose.yml` |
+| M31 — Agent loop | `backend/agent.py` — the loop, dispatching tools, termination on no-tool-use |
+| M32 — Tool design | `backend/tools.py` + `anthropic_tool_schemas()` — 4 tools, all sandboxed |
+| M33a — Streaming backend | `backend/streaming.py` + SSE endpoint in `backend/server.py` |
+| M33b — Chat UI | `ui/src/hooks/useStreamingChat.ts` + components |
+| M34 — Context engineering | `search_docs` tool wrapping `../chroma-corpora/track-a-codebase/` |
+| M35 — MCP | (see `../mcp-server/` — wrap these same tools as MCP) |
+| M36 — Caching | `backend/agent.py` — system prompt is stable across turns (candidate for prompt caching; see M36 notes) |
+| M37 — Evals | `tests/test_agent.py` + the eval extension path documented below |
+| M38 — Tracing | Opik integration point in `backend/agent.py` (see M38 notes) |
+| M39 — Guardrails | `backend/guardrails.py` + `draft_patch` stubbed PR |
+| M41 — Deployment | `Dockerfile` + `docker-compose.yml` |
 
 ---
 
@@ -108,7 +108,7 @@ The `-N` disables curl's output buffering so you see the stream in real time.
 
 ### Why stubbed PRs and not actual edits
 
-The Combo 3 M9 guardrails module explicitly calls for this pattern: the agent proposes, a human disposes. A drafted patch is:
+The Combo 3 Module 39 guardrails module explicitly calls for this pattern: the agent proposes, a human disposes. A drafted patch is:
 
 1. A file under `patches/` with a timestamp in the name.
 2. A standard unified diff, applyable with `patch -p1 < patches/<name>.patch`.
@@ -144,11 +144,11 @@ Escalation (agent should gracefully decline):
 
 ## How each Combo 3 module extends this
 
-### M6 — Prompt caching
+### M36 — Prompt caching
 
 The system prompt and tool schemas are stable across turns. Add prompt caching by passing `cache_control: {"type": "ephemeral"}` on the system prompt block in `backend/agent.py`. For the workshop, demonstrate with the Anthropic SDK's native caching; measure before/after `cache_read_input_tokens` in the response `usage`.
 
-### M7 — Evals
+### M37 — Evals
 
 `tests/test_agent.py` is the scaffolding. For real evals against the live agent:
 1. Build a golden dataset of `(prompt, expected_behaviour)` cases.
@@ -158,13 +158,13 @@ The system prompt and tool schemas are stable across turns. Add prompt caching b
    - **Catastrophic failure**: no forbidden actions, no workspace mutations.
 3. Wire into CI as a `pytest -m evals` job with `ANTHROPIC_API_KEY` secret.
 
-See Combo 2 M5's `expense-categoriser` sample for the CI pattern to copy.
+See Combo 2 Module 12's `expense-categoriser` sample for the CI pattern to copy.
 
-### M8 — Tracing (Opik)
+### M38 — Tracing (Opik)
 
 Instrument `run_agent_streaming` with `@opik.track` (see `../../../_shared/eval-tooling-install.md`). Every LLM call and every tool dispatch becomes a span, grouped by session. Add `session.id` to the trace attributes so the dashboard groups multi-turn conversations.
 
-### M10 — Extended thinking
+### M40 — Extended thinking
 
 Opus 4.8 supports adaptive thinking. In `backend/agent.py`, add:
 
@@ -179,7 +179,7 @@ with client.messages.stream(
 
 **Gotcha**: extended thinking is incompatible with `tool_choice: "any"`. The agent uses the default (`"auto"`), so this works as-is.
 
-### M11 — Deployment patterns
+### M41 — Deployment patterns
 
 The supplied `Dockerfile` + `docker-compose.yml` is the local Docker sandbox. For managed runtimes (AgentCore et al.), see Herman's *"Building production agents on AgentCore"* — the 6 services, the entrypoint pattern, the three observability traps. Not hands-on in the workshop; conceptual only.
 
@@ -230,6 +230,6 @@ track-a-codebase-qa/
 ## What this running artefact is NOT
 
 - **Not production-ready.** No auth. No rate limiting. No per-user workspace isolation.
-- **Not the only way.** You could use Gemini instead of Anthropic (mirror Combo 1 M1), the Vercel AI SDK instead of raw SSE (1-day variant), Pinecone instead of Chroma. The shapes stay the same.
+- **Not the only way.** You could use Gemini instead of Anthropic (mirror Combo 1 Module 1), the Vercel AI SDK instead of raw SSE (1-day variant), Pinecone instead of Chroma. The shapes stay the same.
 - **Not a LangChain tutorial.** No frameworks on the agent side. The loop is 100 lines of Python.
 - **Not complete.** Track B (the helpdesk agent) uses the same backend shape but with different tools, different system prompt, different eval strategy. See `../track-b-helpdesk-qa/` once that lands.

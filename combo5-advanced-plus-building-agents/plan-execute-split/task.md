@@ -15,7 +15,7 @@
   "never do this" constraints. The agent reads/edits files inside the
   WORKSPACE directory you set in .env (default: the expense-categoriser repo).
 
-  The default task below is the M7 "fallback task" and runs against the
+  The default task below is the M14 "fallback task" and runs against the
   default WORKSPACE out of the box.
 -->
 

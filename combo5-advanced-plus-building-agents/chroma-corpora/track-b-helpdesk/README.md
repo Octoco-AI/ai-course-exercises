@@ -21,7 +21,7 @@ python search_example.py "my widget isn't updating"
 python search_example.py "I think someone is using my account"
 ```
 
-## Integrating into the M4 agent
+## Integrating into the M11 agent
 
 Same shape as Track A. The agent's `search_docs(query)` tool wraps `CorpusSearch`:
 

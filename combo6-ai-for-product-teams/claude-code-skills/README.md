@@ -1,6 +1,6 @@
 # Claude Code Skills — Combo 6 reference
 
-Workshop-authored Claude Code skills for Combo 6 M2 (*From a request to a spec with teeth*). Attendees install these after the session and run them on a real request.
+Workshop-authored Claude Code skills for Combo 6 Module 52 (*From a request to a spec with teeth*). Attendees install these after the session and run them on a real request.
 
 > **Provenance.** This is a copy of `combo5-advanced-plus-building-agents/examples/claude-code-skills/`, which is the source of truth. Fix bugs there first, then re-copy. Combos 2, 4, 5 and 6 all carry the same skill.
 

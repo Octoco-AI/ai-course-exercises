@@ -20,7 +20,7 @@ codex/
 
 ## Tuning
 
-- `model`: per-sub-agent override. Frontier tier for planning, the fast/affordable tier for execution-heavy sub-agents (Module 7 plan/execute split). Run `codex debug models` for the current ladder — at time of writing `gpt-5.6-sol` → `gpt-5.6-terra` → `gpt-5.6-luna`, with the `gpt-5.4` family hidden. Omit the key to inherit the parent session's model.
+- `model`: per-sub-agent override. Frontier tier for planning, the fast/affordable tier for execution-heavy sub-agents (Module 14 plan/execute split). Run `codex debug models` for the current ladder — at time of writing `gpt-5.6-sol` → `gpt-5.6-terra` → `gpt-5.6-luna`, with the `gpt-5.4` family hidden. Omit the key to inherit the parent session's model.
 - `model_reasoning_effort`: `low` / `medium` / `high` / `xhigh`, plus `max` / `ultra` on the 5.6 family. The thinking dial — up on planners, down on executors. Independent of `model`, which makes it the more durable of the two levers.
 - `sandbox_mode`: `read-only`, `workspace-write`, or `danger-full-access`. Default `workspace-write` is fine for spec writing.
 - `mcp_servers`: list of named MCP servers from your `~/.codex/config.toml` if the skill needs external tool access.

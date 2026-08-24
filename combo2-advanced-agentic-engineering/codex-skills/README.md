@@ -1,6 +1,6 @@
 # Codex CLI Skills — Combo 2 reference
 
-Workshop-authored Codex CLI skills for Combo 2 M3b (*Specs with teeth — lightweight path*). Attendees install these during the module, then customise for their own project.
+Workshop-authored Codex CLI skills for Combo 2 Module 3b (*Specs with teeth — lightweight path*). Attendees install these during the module, then customise for their own project.
 
 This is the Codex sibling of `../claude-code-skills/`. Same five-phase discipline, same templates — the differences are where the constitution lives (`AGENTS.md`, not `CLAUDE.md`), where the skill installs (`~/.codex/skills/`, not `~/.claude/skills/`), and how you invoke it.
 
@@ -105,7 +105,7 @@ Two valid approaches for spec-driven development. Pick based on your team's stac
 | **Customisation** | Edit `SKILL.md` and templates in your repo | Fork / create a preset |
 | **Best for** | Teams mostly on Codex | Mixed-tool teams; multi-IDE shops |
 
-Both implement the same conceptual flow. The lightweight skill version is what Combo 2 M3b live-creates; SpecKit is shown in M3c.
+Both implement the same conceptual flow. The lightweight skill version is what Combo 2 Module 3b live-creates; SpecKit is shown in M10c.
 
 ---
 
@@ -126,7 +126,7 @@ After editing, restart the Codex session — skills are read at startup.
 - **Not SpecKit.** See above. Different tool, same methodology.
 - **Not a code generator.** The skill deliberately does not write implementation code — Phase 5 outputs tasks, and a separate skill (or your manual review) drives implementation.
 - **Not a replacement for PM.** The skill helps structure thinking; it doesn't know your user research. The spec output should be reviewed by a human who knows the users.
-- **Not a silver bullet for non-determinism.** Writing a threshold in a spec doesn't make the AI meet it. Evals (M4 / M5) do.
+- **Not a silver bullet for non-determinism.** Writing a threshold in a spec doesn't make the AI meet it. Evals (M11 / M12) do.
 
 ---
 
