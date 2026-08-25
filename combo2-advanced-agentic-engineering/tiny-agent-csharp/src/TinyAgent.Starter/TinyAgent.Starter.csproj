@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>TinyAgent.Starter</RootNamespace>
+    <AssemblyName>tiny-agent-starter</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../TinyAgent.Shared/TinyAgent.Shared.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,61 @@
+# Synced from _shared/dotnet-project.gitignore.template
+# Canonical .gitignore for C#/.NET workshop example projects.
+#
+# Every .NET-stack example under combo*/examples/csharp/ should use this as a
+# baseline. Update here first; sync downstream.
+#
+# To sync a project:
+#   cp _shared/dotnet-project.gitignore.template <project>/.gitignore
+
+# --- environment & secrets --------------------------------------------------
+.env
+.env.*
+!.env.example
+appsettings.Development.json
+appsettings.Local.json
+*.user
+secrets.json
+
+# --- build output -----------------------------------------------------------
+bin/
+obj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+*.dll
+*.exe
+*.pdb
+*.nupkg
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# --- test output ------------------------------------------------------------
+TestResults/
+[Tt]est[Rr]esult*/
+coverage*.json
+coverage*.xml
+coverage*.info
+*.coverage
+*.trx
+
+# --- IDE / tooling ----------------------------------------------------------
+.vs/
+.vscode/
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
+*.suo
+*.userprefs
+*.sln.docstates
+.fake/
+.ionide/
+
+# --- OS ---------------------------------------------------------------------
+.DS_Store
+Thumbs.db
+
+# --- workshop scratch -------------------------------------------------------
+# Attendees experiment inside the sample repo; don't fight them over it.
+scratch/

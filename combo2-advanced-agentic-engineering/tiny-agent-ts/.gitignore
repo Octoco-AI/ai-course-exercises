@@ -1,0 +1,61 @@
+# Synced from _shared/node-project.gitignore.template
+# Canonical .gitignore for TypeScript/Node workshop example projects.
+#
+# Every Node-stack example under combo*/examples/typescript/ should use this as
+# a baseline. Update here first; sync downstream.
+#
+# To sync a project:
+#   cp _shared/node-project.gitignore.template <project>/.gitignore
+
+# --- environment & secrets --------------------------------------------------
+.env
+.env.*
+!.env.example
+
+# --- dependencies -----------------------------------------------------------
+node_modules/
+.pnp
+.pnp.js
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+
+# --- build output -----------------------------------------------------------
+dist/
+build/
+out/
+*.tsbuildinfo
+
+# --- test output ------------------------------------------------------------
+coverage/
+.nyc_output/
+*.lcov
+
+# --- caches -----------------------------------------------------------------
+.cache/
+.vite/
+.eslintcache
+.npm/
+
+# --- logs -------------------------------------------------------------------
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+logs/
+*.log
+
+# --- IDE / tooling ----------------------------------------------------------
+.vscode/
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
+
+# --- OS ---------------------------------------------------------------------
+.DS_Store
+Thumbs.db
+
+# --- workshop scratch -------------------------------------------------------
+# Attendees experiment inside the sample repo; don't fight them over it.
+scratch/

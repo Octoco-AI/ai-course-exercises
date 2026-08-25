@@ -12,9 +12,13 @@ course repo on every push to main; do not edit directly.
 - [`claude-code-skills`](combo2-advanced-agentic-engineering/claude-code-skills)
 - [`codex-skills`](combo2-advanced-agentic-engineering/codex-skills)
 - [`cross-tool-skills`](combo2-advanced-agentic-engineering/cross-tool-skills)
+- [`expense-categoriser-csharp`](combo2-advanced-agentic-engineering/expense-categoriser-csharp)
+- [`expense-categoriser-ts`](combo2-advanced-agentic-engineering/expense-categoriser-ts)
 - [`expense-categoriser`](combo2-advanced-agentic-engineering/expense-categoriser)
 - [`legacy-service`](combo2-advanced-agentic-engineering/legacy-service)
 - [`plan-execute-split`](combo2-advanced-agentic-engineering/plan-execute-split)
+- [`tiny-agent-csharp`](combo2-advanced-agentic-engineering/tiny-agent-csharp)
+- [`tiny-agent-ts`](combo2-advanced-agentic-engineering/tiny-agent-ts)
 - [`tiny-agent`](combo2-advanced-agentic-engineering/tiny-agent)
 
 ## combo3-building-agents

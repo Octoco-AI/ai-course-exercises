@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>TinyAgent.Tests</RootNamespace>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageReference Include="xunit.v3" Version="3.1.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.4" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/TinyAgent.Shared/TinyAgent.Shared.csproj" />
+    <ProjectReference Include="../../src/TinyAgent.Starter/TinyAgent.Starter.csproj" />
+    <ProjectReference Include="../../src/TinyAgent.Reference/TinyAgent.Reference.csproj" />
+  </ItemGroup>
+</Project>

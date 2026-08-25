@@ -1,0 +1,30 @@
+{
+  "name": "expense-categoriser-ts",
+  "version": "0.1.0",
+  "description": "Workshop reference: AI expense categoriser with three-layer testing (unit / API / evals) and CI that blocks on eval regression.",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "start": "tsx src/server.ts",
+    "test": "vitest run --project unit",
+    "test:watch": "vitest --project unit",
+    "test:evals": "vitest run --project evals",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@google/genai": "^1.34.0",
+    "dotenv": "^17.2.3",
+    "fastify": "^5.6.1",
+    "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.3",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4"
+  }
+}
