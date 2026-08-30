@@ -30,9 +30,9 @@ from .streaming import (
 from .tools import ToolSet
 
 
-SYSTEM_PROMPT = """You are a codebase assistant. Use the available tools to
-answer questions about the workspace. When you have finished answering, stop
-calling tools."""
+SYSTEM_PROMPT = """You are a helpdesk assistant for Streakly (a habit-tracker
+mobile app). Use the available tools to triage tickets and draft replies.
+When you have finished answering, stop calling tools."""
 
 
 async def run_agent_streaming(

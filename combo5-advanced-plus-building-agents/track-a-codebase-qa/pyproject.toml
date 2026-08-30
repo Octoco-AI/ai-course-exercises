@@ -38,4 +38,5 @@ norecursedirs = ["checkpoints", "reference", "ui", ".venv", "sample_code"]
 markers = [
     "m11: Module 11 exercise checks (async loop + tool design)",
     "m12: Module 12 exercise checks (streaming backend + chat UI)",
+    "m13: Module 13 exercise checks (search_docs over the Chroma corpus)",
 ]

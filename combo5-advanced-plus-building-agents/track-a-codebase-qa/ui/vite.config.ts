@@ -6,10 +6,15 @@ export default defineConfig({
   server: {
     // Dev server runs on :5173; proxy /api requests to the FastAPI backend
     // running on :8000. Means npm run dev works without CORS faff.
+    //
+    // Target is 127.0.0.1, not "localhost": Node resolves "localhost" to
+    // ::1 first, and if anything else on the machine also happens to bind
+    // :8000 on IPv6 (e.g. a Docker container), the proxy silently forwards
+    // there instead of to our IPv4-only uvicorn backend.
     port: 5173,
     proxy: {
       "/api": {
-        target: "http://localhost:8000",
+        target: "http://127.0.0.1:8000",
         changeOrigin: true,
       },
     },

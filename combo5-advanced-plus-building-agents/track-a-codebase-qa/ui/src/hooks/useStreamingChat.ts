@@ -1,13 +1,10 @@
 /**
- * useStreamingChat — the hook that will consume the agent's SSE stream.
+ * useStreamingChat — the hook that consumes the agent's SSE stream.
  *
- * Module 12, Steps B.2-B.3. Right now this is an inert stub: the types are
- * complete (so the rest of the scaffold — App.tsx, ChatPanel.tsx,
- * Message.tsx, InputBar.tsx — typechecks and renders), but `send` doesn't
- * talk to the backend yet. Typing and sending currently does nothing.
+ * Module 12, Steps B.2-B.3 end state. Raw fetch + ReadableStream, no
+ * framework — no EventSource, because we POST.
  *
- * Event types the real implementation will read (from backend/streaming.py,
- * once Module 12's Part A exists):
+ * Event types it expects (from backend/streaming.py):
  *   text         → chunk of assistant text (accumulates)
  *   tool_call    → the agent called a tool (renders as a collapsed block)
  *   tool_result  → the tool returned (renders under its matching tool_call)
@@ -15,56 +12,170 @@
  *   error        → something broke
  */
 
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 
 export type ToolCallEvent = {
-  id: string;
-  name: string;
-  args: Record<string, unknown>;
-  resultPreview?: string;
+    id: string;
+    name: string;
+    args: Record<string, unknown>;
+    resultPreview?: string;
 };
 
 export type Message = {
-  role: "user" | "assistant";
-  text: string;
-  toolCalls: ToolCallEvent[];
-  finished: boolean;
+    role: "user" | "assistant";
+    text: string;
+    toolCalls: ToolCallEvent[];
+    finished: boolean;
 };
 
-// -----------------------------------------------------------------------
-// STEP B.2 — the SSE event union
-// -----------------------------------------------------------------------
-// TODO: define a discriminated union over the five event shapes the
-//       backend emits (text / tool_call / tool_result / done / error).
-//       See exercise.adoc Step B.2 for the exact shape.
-// type SSEData = ...
+type SSEData =
+    | { type: "text"; content: string }
+    | { type: "tool_call"; name: string; args: Record<string, unknown> }
+    | { type: "tool_result"; name: string; preview: string }
+    | { type: "done"; turns: number; final_text: string }
+    | { type: "error"; message: string };
 
 export function useStreamingChat() {
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [isStreaming, setIsStreaming] = useState(false);
+    const [messages, setMessages] = useState<Message[]>([]);
+    const [isStreaming, setIsStreaming] = useState(false);
+    const abortController = useRef<AbortController | null>(null);
 
-  // -----------------------------------------------------------------------
-  // STEP B.3 — the hook
-  // -----------------------------------------------------------------------
-  // TODO: implement `send(userMessage)`:
-  //   - Push a user message + a placeholder assistant message.
-  //   - POST to /api/chat with an AbortController signal.
-  //   - Read `response.body.getReader()`; decode chunks with a TextDecoder;
-  //     split on "\n\n" to find complete SSE frames; parse the `data: ` line
-  //     as JSON; dispatch on `.type` (see handleEvent's shape in
-  //     exercise.adoc).
-  //   - On AbortError, treat it as a clean stop (no error shown).
-  // TODO: implement `cancel()` — abort the in-flight fetch.
-  const send = useCallback(async (_userMessage: string) => {
-    // TODO: Step B.3 — implement send(). Until then, typing and sending is
-    // a no-op — this stub deliberately never throws, so the scaffold keeps
-    // rendering while you build the rest of Part B.
-    console.warn("useStreamingChat.send is not implemented yet — see Module 12, Step B.3.");
-  }, []);
+    const handleEvent = useCallback((data: SSEData) => {
+        setMessages(prev => {
+            const next = [...prev];
+            const last = next[next.length - 1];
 
-  const cancel = useCallback(() => {
-    // TODO: Step B.3 — implement cancel() (Step B.7 wires it to a Stop button).
-  }, []);
+            switch (data.type) {
+                case "text":
+                    next[next.length - 1] = {
+                        ...last,
+                        text: last.text + data.content,
+                    };
+                    break;
+                case "tool_call":
+                    next[next.length - 1] = {
+                        ...last,
+                        toolCalls: [
+                            ...last.toolCalls,
+                            {
+                                id: `${data.name}-${last.toolCalls.length}`,
+                                name: data.name,
+                                args: data.args,
+                            },
+                        ],
+                    };
+                    break;
+                case "tool_result": {
+                    // Match to the last tool_call with this name and no result yet.
+                    const updatedToolCalls = [...last.toolCalls];
+                    for (let i = updatedToolCalls.length - 1; i >= 0; i--) {
+                        if (
+                            updatedToolCalls[i].name === data.name &&
+                            !updatedToolCalls[i].resultPreview
+                        ) {
+                            updatedToolCalls[i] = {
+                                ...updatedToolCalls[i],
+                                resultPreview: data.preview,
+                            };
+                            break;
+                        }
+                    }
+                    next[next.length - 1] = {
+                        ...last,
+                        toolCalls: updatedToolCalls,
+                    };
+                    break;
+                }
+                case "done":
+                    next[next.length - 1] = { ...last, finished: true };
+                    break;
+                case "error":
+                    next[next.length - 1] = {
+                        ...last,
+                        text: last.text + `\n\n[ERROR: ${data.message}]`,
+                        finished: true,
+                    };
+                    break;
+            }
 
-  return { messages, isStreaming, send, cancel };
+            return next;
+        });
+    }, []);
+
+    const send = useCallback(async (userMessage: string) => {
+        // Push user turn + placeholder assistant turn.
+        setMessages(prev => [
+            ...prev,
+            { role: "user", text: userMessage, toolCalls: [], finished: true },
+            { role: "assistant", text: "", toolCalls: [], finished: false },
+        ]);
+
+        setIsStreaming(true);
+        abortController.current = new AbortController();
+
+        try {
+            const response = await fetch("/api/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: userMessage }),
+                signal: abortController.current.signal,
+            });
+
+            if (!response.body) {
+                throw new Error("No response body");
+            }
+
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            let buffer = "";
+
+            while (true) {
+                const { value, done } = await reader.read();
+                if (done) break;
+                const chunk = decoder.decode(value, { stream: true });
+                console.log("[SSE chunk]", chunk);
+                buffer += chunk;
+
+                // Parse complete SSE events (terminated by \n\n).
+                const events = buffer.split("\n\n");
+                buffer = events.pop() ?? "";
+
+                for (const eventBlock of events) {
+                    const dataLine = eventBlock
+                        .split("\n")
+                        .find(l => l.startsWith("data: "));
+                    if (!dataLine) continue;
+
+                    let data: SSEData;
+                    try {
+                        data = JSON.parse(dataLine.slice(6));
+                    } catch {
+                        console.log("[SSE event] <unparseable>", dataLine);
+                        continue;
+                    }
+
+                    console.log("[SSE event]", data);
+                    handleEvent(data);
+                }
+            }
+        } catch (err) {
+            if ((err as Error).name === "AbortError") {
+                // User cancelled. Clean.
+            } else {
+                handleEvent({
+                    type: "error",
+                    message: (err as Error).message,
+                });
+            }
+        } finally {
+            setIsStreaming(false);
+            abortController.current = null;
+        }
+    }, [handleEvent]);
+
+    const cancel = useCallback(() => {
+        abortController.current?.abort();
+    }, []);
+
+    return { messages, isStreaming, send, cancel };
 }

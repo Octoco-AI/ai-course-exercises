@@ -1,5 +1,5 @@
 """FastAPI app. Module 13 end state — /api/chat + health + static UI, tools
-now include search_docs.
+now include search_kb.
 
 Endpoints:
   - GET  /health               → {"status": "ok"}
@@ -8,8 +8,8 @@ Endpoints:
   - GET  /assets/{path}        → static assets for the UI
 
 Only change from Module 12: `_get_runtime()` now also threads the Chroma
-settings through to `build_toolset()`, so `search_docs` can find the
-pre-built index (see ../chroma-corpora/track-a-codebase/build.py).
+settings through to `build_toolset()`, so `search_kb` can find the
+pre-built index (see ../chroma-corpora/track-b-helpdesk/build.py).
 """
 
 from __future__ import annotations
@@ -34,7 +34,7 @@ load_dotenv()
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
 logger = logging.getLogger(__name__)
 
-app = FastAPI(title="Track A — Codebase Q&A agent (Module 13)")
+app = FastAPI(title="Track B — Streakly Helpdesk agent (Module 13)")
 
 _settings: Settings | None = None
 _tools: ToolSet | None = None
@@ -46,6 +46,7 @@ def _get_runtime() -> tuple[Settings, ToolSet]:
         _settings = load_settings()
         _tools = build_toolset(
             _settings.workspace_root,
+            draft_replies=_settings.draft_replies_root,
             chroma_persist_root=_settings.chroma_persist_root,
             chroma_collection_name=_settings.chroma_collection_name,
         )
@@ -105,8 +106,6 @@ async def chat(req: ChatRequest, request: Request) -> StreamingResponse:
         },
     )
 
-
-# ---- Static UI ------------------------------------------------------------
 
 _ui_dist = Path(__file__).parent.parent / "ui" / "dist"
 

@@ -87,6 +87,7 @@ fi
 echo
 echo "Check your Module 11 work specifically:  pytest -m m11"
 echo "Check your Module 12 work specifically:  pytest -m m12"
+echo "Check your Module 13 work specifically:  pytest -m m13"
 echo "Fell behind? Catch up to a module's end state: ./scripts/checkpoint.sh m11-end"
 
 # Optional: UI build sanity

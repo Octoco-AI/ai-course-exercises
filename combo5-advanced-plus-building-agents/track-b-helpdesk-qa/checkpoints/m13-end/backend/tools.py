@@ -1,12 +1,18 @@
-"""The tools the helpdesk agent can call. Module 11 end state.
+"""The tools the helpdesk agent can call. Module 13 end state.
 
-Three tools: `list_tickets`, `read_ticket`, `draft_reply`. Phase 2
-refinements applied: `read_ticket`'s description was rewritten with a
-usage example (Step 8), and it raises a structured `ToolError` with a
-recovery suggestion (Step 9). See NOTES.md for the before/after.
+Four tools: `list_tickets`, `read_ticket`, `draft_reply`, `search_kb`. The
+first three are unchanged from Module 11 (see NOTES.md for that history).
+`search_kb` is Module 13's addition — a thin wrapper around the pre-built
+Chroma index at `../chroma-corpora/track-b-helpdesk/` (build it first with
+`python build.py` from that directory; see the repo README's Setup
+section).
 
-(Module 13 adds a fourth tool, `search_kb`, over the Chroma KB corpus.
-Module 18 adds `escalate_to_human` plus an action-gate pattern for it.)
+`search_kb` follows the same shape as the other three: a plain function, a
+`Tool` entry with a JSON schema, and failures surfaced as a `ToolError`
+(never a bare exception) so the LLM can self-correct — here, that means
+the Chroma index not existing yet.
+
+(Module 18 adds `escalate_to_human` plus an action-gate pattern for it.)
 """
 
 from __future__ import annotations
@@ -17,7 +23,10 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Callable
 
+import chromadb
+
 from .guardrails import GuardrailViolation, ensure_within
+from .settings import Settings
 
 
 class ToolError(Exception):
@@ -127,8 +136,63 @@ def draft_reply(ticket_id: str, body: str, *, draft_replies: Path) -> str:
     return f"OK: draft reply written for {ticket_id} ({path.name}). A human will review and send."
 
 
-def build_toolset(workspace: Path, *, draft_replies: Path | None = None) -> ToolSet:
+def search_kb(
+    query: str,
+    k: int = 5,
+    *,
+    chroma_persist_root: Path,
+    chroma_collection_name: str,
+) -> list[dict]:
+    """Search the Streakly help-centre KB for passages relevant to `query`.
+
+    Talks directly to the pre-built Chroma collection at
+    `chroma_persist_root` — no dependency on chroma-corpora's own Python
+    package, just the persisted index files it wrote. Raises ToolError
+    with a build hint if the index doesn't exist yet.
+    """
+    try:
+        client = chromadb.PersistentClient(path=str(chroma_persist_root))
+        collection = client.get_collection(chroma_collection_name)
+    except Exception as exc:
+        raise ToolError(
+            f"Chroma index not available at {chroma_persist_root} ({type(exc).__name__}: {exc})",
+            suggestion=f"Build it first: cd {chroma_persist_root.parent} && python build.py",
+        )
+
+    result = collection.query(query_texts=[query], n_results=k)
+    docs = result["documents"][0]
+    metadatas = result["metadatas"][0]
+    distances = result["distances"][0] if result.get("distances") else [None] * len(docs)
+
+    hits = []
+    for doc, meta, dist in zip(docs, metadatas, distances):
+        # Chroma's cosine distance is in [0, 2]; invert + clip so higher =
+        # more relevant. A rough heuristic, good enough for ranking.
+        score = max(0.0, 1.0 - float(dist) / 2.0) if dist is not None else 0.0
+        hits.append(
+            {
+                "text": doc,
+                "source": meta.get("source", ""),
+                "heading": meta.get("heading", ""),
+                "score": round(score, 3),
+            }
+        )
+    return hits
+
+
+def build_toolset(
+    workspace: Path,
+    *,
+    draft_replies: Path | None = None,
+    chroma_persist_root: Path | None = None,
+    chroma_collection_name: str | None = None,
+) -> ToolSet:
     draft_replies = draft_replies or (workspace.parent / "draft-replies")
+    if chroma_persist_root is None or chroma_collection_name is None:
+        defaults = Settings()
+        chroma_persist_root = chroma_persist_root or defaults.chroma_persist_root
+        chroma_collection_name = chroma_collection_name or defaults.chroma_collection_name
+
     return ToolSet(
         [
             Tool(
@@ -176,6 +240,38 @@ def build_toolset(workspace: Path, *, draft_replies: Path | None = None) -> Tool
                 },
                 handler=lambda ticket_id, body: draft_reply(
                     ticket_id, body, draft_replies=draft_replies
+                ),
+            ),
+            Tool(
+                name="search_kb",
+                description=(
+                    "Search the Streakly help-centre KB for passages relevant to a "
+                    "customer's question. Use this before drafting a reply to "
+                    "conceptual 'how do I ...' questions. Returns up to k "
+                    "passages, each with its source article, heading, and a "
+                    "relevance score in [0, 1]. Example: "
+                    "search_kb(query='how do I enable 2FA')."
+                ),
+                input_schema={
+                    "type": "object",
+                    "properties": {
+                        "query": {
+                            "type": "string",
+                            "description": "Natural-language question or topic to search for.",
+                        },
+                        "k": {
+                            "type": "integer",
+                            "description": "Number of passages to return. Defaults to 5.",
+                            "default": 5,
+                        },
+                    },
+                    "required": ["query"],
+                },
+                handler=lambda query, k=5: search_kb(
+                    query,
+                    k,
+                    chroma_persist_root=chroma_persist_root,
+                    chroma_collection_name=chroma_collection_name,
                 ),
             ),
         ]
