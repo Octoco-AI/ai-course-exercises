@@ -133,9 +133,9 @@ See `backend/guardrails.py` for the full forbidden-actions list.
 
 See `../track-a-codebase-qa/README.md#how-each-combo-3-module-extends-this` — the same module-to-code mapping applies. Differences:
 
-- **M7 (evals)** — the eval dataset for Track B should include categorisation cases: given a user question, did the agent search-and-draft, or did it escalate? That's a classification-style eval, different shape from Track A's trajectory evals. See `tests/test_agent.py` for the scaffold.
-- **M9 (guardrails)** — Track B's forbidden-actions list is more varied (account-mutation, external-comms). Good teaching case: different domains have different "never do this" rules; the shape of the guardrails is the same.
-- **M11 (deployment)** — same Dockerfile pattern, different volume mounts for `draft-replies/` and `escalations/`.
+- **M37 (evals)** — the eval dataset for Track B should include categorisation cases: given a user question, did the agent search-and-draft, or did it escalate? That's a classification-style eval, different shape from Track A's trajectory evals. See `tests/test_agent.py` for the scaffold.
+- **M39 (guardrails)** — Track B's forbidden-actions list is more varied (account-mutation, external-comms). Good teaching case: different domains have different "never do this" rules; the shape of the guardrails is the same.
+- **M41 (deployment)** — same Dockerfile pattern, different volume mounts for `draft-replies/` and `escalations/`.
 
 ---
 
@@ -167,4 +167,4 @@ track-b-helpdesk-qa/
 
 - **Not a real helpdesk backend.** A real product would integrate with a ticketing system (Zendesk, Linear, etc.) via API, not files. The file-based stubs here are pedagogical.
 - **Not a replacement for human support.** The escalation paths assume there's a human on the other end. The agent is a force multiplier, not an FTE replacement.
-- **Not tested against adversarial users.** Prompt-injection via user message is a real concern in production; Combo 3 M9 exercise covers this. The baseline here doesn't include injection-defence beyond sandbox paths.
+- **Not tested against adversarial users.** Prompt-injection via user message is a real concern in production; Combo 3 Module 39 exercise covers this. The baseline here doesn't include injection-defence beyond sandbox paths.

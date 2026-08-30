@@ -8,7 +8,7 @@
 #   - A GOOGLE_API_KEY is set (in .env or the environment).
 #   - A simple Gemini call succeeds.
 #
-# If all checks pass, you are ready for M1.
+# If all checks pass, you are ready for M8.
 
 set -u
 
@@ -86,7 +86,7 @@ fi
 
 echo
 if [ "$FAILED" -eq 0 ]; then
-    echo -e "${GREEN}All checks passed — you are ready for M1.${NC}"
+    echo -e "${GREEN}All checks passed — you are ready for M8.${NC}"
     exit 0
 else
     echo -e "${RED}Some checks failed. Fix the items above and re-run.${NC}"

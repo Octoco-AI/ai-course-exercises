@@ -1,4 +1,4 @@
-# chroma-corpora — Combo 3 M4 reference
+# chroma-corpora — Combo 3 Module 34 reference
 
 Two pre-built Chroma indexes for the Combo 3 running artefact, one per track:
 
@@ -18,7 +18,7 @@ pip install -e '.[dev]'
 
 **First-run note**: the first `python build.py` downloads Chroma's default embedding model (~79 MB, one-time, cached at `~/.cache/chroma/`). If you ran `_shared/verify-eval-tools.sh` before, the cache is already warm and build is fast.
 
-## Usage in the M4 agent
+## Usage in the M34 agent
 
 Each track's corpus exposes the same shape to an agent:
 
@@ -49,7 +49,7 @@ def search_docs(query: str) -> list[dict]:
 ```
 chroma-corpora/
 ├── README.md                 ← you are here
-├── FACILITATOR.md            ← notes for running M4
+├── FACILITATOR.md            ← notes for running M34
 ├── pyproject.toml
 ├── verify.sh                 ← pre-flight + build both indexes
 ├── shared/
@@ -83,7 +83,7 @@ chroma-corpora/
 
 ## What this corpus is NOT
 
-- **Not a RAG tutorial.** Retrieval-augmented generation has many more pieces (re-ranking, query rewriting, hybrid search). This is the minimal "search over documents" slice needed for M4.
+- **Not a RAG tutorial.** Retrieval-augmented generation has many more pieces (re-ranking, query rewriting, hybrid search). This is the minimal "search over documents" slice needed for M34.
 - **Not a benchmark.** We don't measure retrieval quality. In a real product you'd build eval sets specifically for retrieval (as distinct from generation quality).
 - **Not representative of your production documents.** These are small, well-structured markdown. Real docs are messier. The pedagogy carries over; the chunking strategy may need to evolve.
 

@@ -1,6 +1,6 @@
 # TodoMagic
 
-A small todo-list microservice used as the fictional codebase for Track A of Combo 3's running artefact. The agent in M4 answers questions about this code using a Chroma-indexed corpus of the documents under this directory.
+A small todo-list microservice used as the fictional codebase for Track A of Combo 3's running artefact. The agent in M11 answers questions about this code using a Chroma-indexed corpus of the documents under this directory.
 
 ## What TodoMagic does
 

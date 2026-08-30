@@ -1,14 +1,14 @@
-# Reference implementation — Module 3 end state
+# Reference implementation — Module 33 end state
 
 Facilitator/attendee reference only. Not imported by the test suite, not
 wired into the live `backend`/`ui` package — it's a browsable copy of what
-a diligent pair produces by the end of Module 3: the blocking agent loop
-(Module 1, refined in Module 2) turned into a streaming SSE backend with a
-working chat UI (Module 3).
+a diligent pair produces by the end of Module 33: the blocking agent loop
+(Module 31, refined in Module 32) turned into a streaming SSE backend with a
+working chat UI (Module 33).
 
 Three tools only — `read_file`, `list_files`, `edit_file` — matching the
-M1/M2/M3 exercise scope. Modules 4-12 keep extending this same file set
-(Module 4 adds a `search_docs` tool over the Chroma corpus; Module 9
+M31/M32/M33 exercise scope. Modules 4-12 keep extending this same file set
+(Module 34 adds a `search_docs` tool over the Chroma corpus; Module 39
 converts `edit_file` into a non-mutating `draft_patch`; and so on) — their
 own exercise docs specify those changes in full, so this reference doesn't
 pre-build them.
@@ -25,15 +25,15 @@ dev`, or `python run_agent.py --stream "..."`).
 
 ```
 backend/
-  settings.py     unchanged from the starter (given from Module 1 on)
-  guardrails.py   unchanged from the starter (given from Module 1 on)
-  tools.py        Module 2 end state (ToolError, tightened description)
-  agent.py        Module 3 end state (run_agent_streaming)
-  streaming.py    Module 3, Part A
-  server.py       Module 3, Part A (/api/chat wired)
+  settings.py     unchanged from the starter (given from Module 31 on)
+  guardrails.py   unchanged from the starter (given from Module 31 on)
+  tools.py        Module 32 end state (ToolError, tightened description)
+  agent.py        Module 33 end state (run_agent_streaming)
+  streaming.py    Module 33, Part A
+  server.py       Module 33, Part A (/api/chat wired)
 ui/src/
-  hooks/useStreamingChat.ts        Module 3, Part B
-  components/ToolCallBlock.tsx     Module 3, Part B
+  hooks/useStreamingChat.ts        Module 33, Part B
+  components/ToolCallBlock.tsx     Module 33, Part B
   App.tsx, ChatPanel.tsx, Message.tsx, InputBar.tsx, main.tsx, styles.css
                                     given scaffold, unchanged throughout
 ```

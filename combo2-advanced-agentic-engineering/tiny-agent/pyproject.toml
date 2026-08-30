@@ -1,7 +1,7 @@
 [project]
 name = "tiny-agent"
 version = "0.1.0"
-description = "A ~200-line Gemini coding agent for Combo 1 M1. Mirrors Thorsten Ball's ampcode walkthrough."
+description = "A ~200-line Gemini coding agent for Combo 2 M8. Mirrors Thorsten Ball's ampcode walkthrough."
 requires-python = ">=3.12"
 dependencies = [
     "google-genai>=1.0.0",

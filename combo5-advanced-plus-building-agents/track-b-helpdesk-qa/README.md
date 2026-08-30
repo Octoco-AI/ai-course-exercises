@@ -12,8 +12,8 @@ the build sequence are near-identical. What differs is the agent's domain.
 
 **This is a starter, not a finished app.** `backend/agent.py` and
 `backend/tools.py` are stubs with `TODO` comments — you write the async
-agent loop and its tools yourself across Module 11, then wrap it in a
-streaming chat UI in Module 12.
+agent loop and its tools yourself across Module 43, then wrap it in a
+streaming chat UI in Module 44.
 
 ---
 
@@ -22,14 +22,14 @@ streaming chat UI in Module 12.
 | Component | Track A — Codebase Q&A | Track B — Helpdesk |
 |---|---|---|
 | Corpus | TodoMagic codebase docs | Streakly KB articles |
-| Chroma collection (Module 13) | `track-a-codebase` | `track-b-helpdesk` |
+| Chroma collection (Module 45) | `track-a-codebase` | `track-b-helpdesk` |
 | Default model | `gemini-3.1-flash-lite` (Anthropic alt: Sonnet 5) | Same Gemini default (Anthropic alt: Haiku 4.5 — classify/retrieve/paraphrase needs less) |
-| Tool 1 (Module 11) | `read_file` | `read_ticket` |
-| Tool 2 (Module 11) | `list_files` | `list_tickets` |
-| Tool 3 (Module 11) | `edit_file` → `draft_patch` (Module 18) | `draft_reply` |
-| Tool 4 (Module 13) | `search_docs` | `search_kb` |
-| Tool 5 (Module 18) | — | `escalate_to_human` *(new — Track B's action-gate exercise)* |
-| Output | `patches/*.md` | `draft-replies/*.md` (+ `escalations/*.md` from Module 18) |
+| Tool 1 (Module 43) | `read_file` | `read_ticket` |
+| Tool 2 (Module 43) | `list_files` | `list_tickets` |
+| Tool 3 (Module 43) | `edit_file` → `draft_patch` (Module 55) | `draft_reply` |
+| Tool 4 (Module 45) | `search_docs` | `search_kb` |
+| Tool 5 (Module 55) | — | `escalate_to_human` *(new — Track B's action-gate exercise)* |
+| Output | `patches/*.md` | `draft-replies/*.md` (+ `escalations/*.md` from Module 55) |
 | UI palette | Orange accent | Blue accent; red for escalations |
 | System prompt | "Codebase assistant" | "Helpdesk agent with escalation rules" |
 
@@ -50,7 +50,7 @@ cp .env.example .env   # add your Gemini key (default) or Anthropic key
 
 ./scripts/seed-workspace.sh   # copies KB articles + sample tickets into workspace/
 
-# Build the Chroma index search_kb (Module 13) reads from. One-time — do it
+# Build the Chroma index search_kb (Module 45) reads from. One-time — do it
 # now so it's ready when you get there. The corpus lives in a sibling
 # project with its own venv; see ../chroma-corpora/README.md if you
 # haven't set that up yet.
@@ -60,7 +60,7 @@ cd ui && npm install && cd ..
 ./verify.sh
 ```
 
-`./verify.sh` is green on a fresh clone — Module 11/12/13 tests are designed
+`./verify.sh` is green on a fresh clone — Module 43/44/45 tests are designed
 to *skip* (not fail) until you've implemented the step they check. Run
 `pytest -m m11` / `pytest -m m12` / `pytest -m m13` to check your own progress.
 
@@ -70,10 +70,10 @@ to *skip* (not fail) until you've implemented the step they check. Run
 
 ```bash
 python run_agent.py "Summarise the open tickets. Group by theme."
-python run_agent.py --stream "Summarise the open tickets. Group by theme."   # after Module 12
+python run_agent.py --stream "Summarise the open tickets. Group by theme."   # after Module 44
 ```
 
-Once Module 12 is done:
+Once Module 44 is done:
 
 ```bash
 # Terminal 1 — backend
@@ -99,30 +99,30 @@ Docker: `docker compose up --build`.
 Same mechanism as Track A:
 
 ```bash
-./scripts/checkpoint.sh m11-end   # overlays the Module 11 end state
-./scripts/checkpoint.sh m12-end   # overlays the Module 12 end state
-./scripts/checkpoint.sh m13-end   # overlays the Module 13 end state
+./scripts/checkpoint.sh m11-end   # overlays the Module 43 end state
+./scripts/checkpoint.sh m12-end   # overlays the Module 44 end state
+./scripts/checkpoint.sh m13-end   # overlays the Module 45 end state
 ```
 
 This **overwrites** the files the checkpoint provides — commit or stash
 first if you want to keep your own attempt. `reference/` is the same
 content as a full browsable tree; see `reference/REFERENCE.md`. It stops
-at Module 12 on purpose — Modules 13+ (like `m13-end` above) are only
+at Module 44 on purpose — Modules 45+ (like `m13-end` above) are only
 available as checkpoints, not as an extended `reference/` tree.
 
 ---
 
-## The tools, by the time you're through Module 18
+## The tools, by the time you're through Module 55
 
 | Tool | Purpose | Arrives |
 |---|---|---|
-| `list_tickets()` | List all tickets with status + theme | Module 11 |
-| `read_ticket(ticket_id)` | Read a ticket's full contents | Module 11 |
-| `draft_reply(ticket_id, body)` | Draft a reply for a human to review and send. Never sends. | Module 11 |
-| `search_kb(query)` | Find relevant KB passages | Module 13 |
-| `escalate_to_human(category, summary, priority)` | File an escalation for a human to pick up, behind a confirm gate | Module 18 |
+| `list_tickets()` | List all tickets with status + theme | Module 43 |
+| `read_ticket(ticket_id)` | Read a ticket's full contents | Module 43 |
+| `draft_reply(ticket_id, body)` | Draft a reply for a human to review and send. Never sends. | Module 43 |
+| `search_kb(query)` | Find relevant KB passages | Module 45 |
+| `escalate_to_human(category, summary, priority)` | File an escalation for a human to pick up, behind a confirm gate | Module 55 |
 
-### Escalation categories (Module 18)
+### Escalation categories (Module 55)
 
 One of: `billing` (refund > $20 or disputed charge), `account-recovery`
 (user locked out, no 2FA backup), `security` (suspicious activity),
@@ -134,11 +134,11 @@ needs human empathy), `other`. Priorities: `low`, `normal`, `high`, `urgent`.
 
 ## Example prompts to try
 
-From Module 11 on:
+From Module 43 on:
 
 - *"Summarise the open tickets. Group by theme."*
 - *"For the billing-related tickets, draft a reply citing policy."*
-- *"Read ticket TKT-99999 and draft a reply."* → declines; ticket doesn't exist (Module 11, Step 9's error-recovery moment).
+- *"Read ticket TKT-99999 and draft a reply."* → declines; ticket doesn't exist (Module 43, Step 9's error-recovery moment).
 
 Once `search_kb` and `escalate_to_human` exist (Modules 13 and 18):
 
@@ -149,7 +149,7 @@ Once `search_kb` and `escalate_to_human` exist (Modules 13 and 18):
 
 ---
 
-## The guardrails philosophy (Module 18)
+## The guardrails philosophy (Module 55)
 
 The helpdesk agent's failure modes differ from the codebase Q&A agent's:
 
@@ -168,17 +168,17 @@ track-b-helpdesk-qa/
 ├── backend/
 │   ├── settings.py       ← given: track-b paths, helpdesk model default
 │   ├── guardrails.py     ← given: 13 forbidden actions vs Track A's 7
-│   ├── tools.py          ← YOU WRITE (Module 11): Tool/ToolSet + handlers
-│   ├── agent.py          ← YOU WRITE (Module 11 loop, Module 12 streaming)
-│   └── server.py         ← YOU WRITE (Module 12): /api/chat SSE endpoint
+│   ├── tools.py          ← YOU WRITE (Module 43): Tool/ToolSet + handlers
+│   ├── agent.py          ← YOU WRITE (Module 43 loop, Module 44 streaming)
+│   └── server.py         ← YOU WRITE (Module 44): /api/chat SSE endpoint
 ├── run_agent.py           ← given: CLI entry point
 ├── ui/                    ← same components as Track A, different palette
 ├── sample_tickets/        ← seeded into workspace/tickets/
 ├── workspace/             ← KB articles + tickets (seeded — don't hand-edit)
 ├── draft-replies/         ← where draft_reply writes
-├── escalations/           ← where escalate_to_human writes (Module 18+)
+├── escalations/           ← where escalate_to_human writes (Module 55+)
 ├── checkpoints/           ← catch-up snapshots (m11-end, m12-end, m13-end)
-├── reference/             ← full browsable copy of the Module 12 end state
+├── reference/             ← full browsable copy of the Module 44 end state
 ├── tests/
 │   ├── test_scaffold.py   ← always green
 │   ├── m11/                ← pytest -m m11
@@ -194,4 +194,4 @@ track-b-helpdesk-qa/
 
 - **Not a real helpdesk backend.** A real product would integrate with a ticketing system (Zendesk, Linear, etc.) via API, not files. The file-based stubs here are pedagogical.
 - **Not a replacement for human support.** The escalation paths assume a human on the other end.
-- **Not tested against adversarial users.** Prompt-injection via a ticket message is a real concern in production; Module 18 covers the general pattern. The baseline here doesn't include injection-defence beyond sandbox paths and the forbidden-actions list.
+- **Not tested against adversarial users.** Prompt-injection via a ticket message is a real concern in production; Module 55 covers the general pattern. The baseline here doesn't include injection-defence beyond sandbox paths and the forbidden-actions list.

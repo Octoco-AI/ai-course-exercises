@@ -8,9 +8,10 @@
 name = "spec-driven"
 description = "Walk the five-phase spec-driven flow (constitution → specify → clarify → plan → tasks) for a new AI-touching feature. Pauses between phases for user review."
 
-model = "gpt-5.5"
+model = "gpt-5.6-sol"   # frontier tier; `codex debug models` lists yours
 sandbox_mode = "workspace-write"
-mcp_servers = []
+# Per-agent MCP wiring is possible, but the key shape differs by Codex
+# version — check the config reference before adding it here.
 
 developer_instructions = """
 This subagent walks the five-phase spec-driven flow. Pause after each phase. Present the output. Ask the user to approve before moving on.

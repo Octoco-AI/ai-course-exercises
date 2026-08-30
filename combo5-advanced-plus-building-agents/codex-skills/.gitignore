@@ -1,0 +1,29 @@
+# codex-skills/ is a markdown-only reference directory (no Python, no Node).
+# This .gitignore is intentionally short — it just catches the things attendees
+# or facilitators might accidentally generate while testing the skill inside
+# this directory.
+
+# --- operating system -------------------------------------------------------
+.DS_Store
+Thumbs.db
+
+# --- editors / IDEs ---------------------------------------------------------
+.vscode/
+.idea/
+*.swp
+*~
+
+# --- secrets in case someone drops a .env in here while experimenting ------
+.env
+.env.*
+!.env.example
+
+# --- Codex CLI local state --------------------------------------------------
+# If a facilitator runs `codex` from inside this directory while demoing, it
+# may create a project-scoped .codex/ hierarchy. The skill files themselves
+# (spec-driven/, agents/, AGENTS.md.example) are tracked above; the state and
+# per-project trust files below are not.
+.codex/sessions/
+.codex/log/
+.codex/cache/
+.codex/config.toml

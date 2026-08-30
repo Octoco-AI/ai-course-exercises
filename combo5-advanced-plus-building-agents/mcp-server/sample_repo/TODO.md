@@ -21,7 +21,7 @@ Part B isn't done here — you build a **new**, separate MCP server in your
 agent's own repo (`mcp_my_server/__init__.py` + `mcp_my_server/server.py`),
 wrapping ONE tool from an earlier module (Track A: `search_docs` or
 `edit_file`; Track B: `search_kb` or `draft_reply`). The exercise doc
-(Module 14, Part B) has the full code sample. This file's server
+(Module 46, Part B) has the full code sample. This file's server
 (`mcp_filesystem_server/`) is reference material to read alongside your
 own — don't edit it.
 

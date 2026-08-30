@@ -1,11 +1,11 @@
-# Tiny Agent — Module 1
+# Tiny Agent — Module 8
 
 A Python coding agent in under 200 lines. Built with Google Gemini, mirrors Thorsten Ball's [*"How to build an agent"*](https://ampcode.com/how-to-build-an-agent) — same three tools, same conceptual shape, Python instead of Go.
 
 > *"It's an LLM, a loop, and enough tokens."*
 > — Thorsten Ball
 
-This repo is the basis for the **M1: Build a Tiny Agent** exercise. In the 2-day variant you work in `starter/` and make it run. In the 1-day variant the facilitator live-codes against `reference/` and you follow along.
+This repo is the basis for the **M8: Build a Tiny Agent** exercise. In the 2-day variant you work in `starter/` and make it run. In the 1-day variant the facilitator live-codes against `reference/` and you follow along.
 
 ---
 

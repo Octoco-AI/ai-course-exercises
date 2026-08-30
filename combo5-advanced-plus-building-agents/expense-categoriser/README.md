@@ -1,8 +1,8 @@
-# Expense Categoriser — Combo 2, Module 5
+# Expense Categoriser — Combo 2, Module 12
 
 A small FastAPI service that categorises expenses using Google Gemini, with a **three-layer testing strategy** and a **CI pipeline that blocks merges on eval regressions**.
 
-This is the reference repo for Combo 2 M5 (*CI/CD/CE in practice*). You use it to see the pipeline in action, then extend it with evals you wrote in M4.
+This is the reference repo for Combo 2 Module 12 (*CI/CD/CE in practice*). You use it to see the pipeline in action, then extend it with evals you wrote in M11.
 
 > Your deployment pipeline is green. Your model is live. And somewhere in production, it's quietly failing.
 > — Herman Lintvelt, *CI/CD/CE: The Third Pillar of AI Development*
@@ -114,7 +114,7 @@ A PR that fails either workflow cannot merge. That's the point.
 
 ---
 
-## The regression demo (Combo 2 M5)
+## The regression demo (Combo 2 Module 12)
 
 Run this on a fresh clone:
 
@@ -133,11 +133,11 @@ What happens:
 5. The PR is blocked from merging.
 6. Revert the regression, push again, `evals.yml` goes green, PR merges.
 
-This is the whole lesson of M5: evals are tests, in CI, that block on quality regressions, not just code-correctness regressions.
+This is the whole lesson of M12: evals are tests, in CI, that block on quality regressions, not just code-correctness regressions.
 
 ---
 
-## Extending this in M5 (2-day workshop)
+## Extending this in M12 (2-day workshop)
 
 During the hands-on, you:
 
@@ -155,7 +155,7 @@ At the end of the day you have a CI pipeline with real evals, enforced by the sa
 
 The thresholds (85%, 0, 3 s, 0.9) aren't magical. They came from the **spec**. In a real project:
 
-1. You write the spec using the four-extras pattern (Combo 2 M3).
+1. You write the spec using the four-extras pattern (Combo 2 Module 10).
 2. The performance thresholds in the spec become the eval gates.
 3. The graceful-degradation rules in the spec become fallback behaviours (see `apply_confidence_threshold`).
 4. The failure-mode list becomes the catastrophic-failure set.

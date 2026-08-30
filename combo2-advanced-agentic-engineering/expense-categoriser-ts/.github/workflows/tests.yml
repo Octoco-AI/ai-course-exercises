@@ -1,0 +1,25 @@
+name: tests
+
+# Unit + API tests run on every push and PR. No external API key required —
+# the LLM is mocked at the LlmClient boundary. Fast, cheap, green-or-red signal.
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+      - name: Install
+        run: npm ci
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Run unit + API tests
+        # The "unit" vitest project excludes tests/evals/. Those run in evals.yml.
+        run: npm test

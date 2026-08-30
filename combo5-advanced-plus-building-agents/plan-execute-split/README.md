@@ -1,6 +1,6 @@
-# Plan/Execute Split — Module 7
+# Plan/Execute Split — Module 14
 
-A runnable version of the **M7 cost-comparison exercise**. Run the same task two
+A runnable version of the **M14 cost-comparison exercise**. Run the same task two
 ways on Google Gemini — **Flash monolithic** vs. **Pro-plan + Flash-execute** —
 and read the actual dollar numbers.
 
@@ -149,6 +149,6 @@ peek at them if you're curious; they're short and commented.
 ## On Claude instead of Gemini?
 
 This pack is the Gemini path. The shape is identical on Anthropic — Opus 4.8
-plans, Haiku 4.5 executes. The M7 exercise instructions include the Anthropic
+plans, Haiku 4.5 executes. The M14 exercise instructions include the Anthropic
 code in collapsible blocks. Swap `pip install anthropic`, an `ANTHROPIC_API_KEY`,
 and Claude's `tool_use` content blocks for Gemini's `function_call` parts.

@@ -1,0 +1,24 @@
+name: tests
+
+# Unit + API tests run on every push and PR. No external API key required —
+# the LLM is mocked at the ILlmClient boundary. Fast, cheap, green-or-red signal.
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+      - name: Restore
+        run: dotnet restore
+      - name: Build
+        run: dotnet build --no-restore --nologo
+      - name: Run unit + API tests
+        # Category!=Evals skips the LLM-calling eval suite. Those run in evals.yml.
+        run: dotnet test --no-build --nologo --filter "Category!=Evals" --logger "console;verbosity=normal"

@@ -1,8 +1,8 @@
-# MCP Filesystem Server — Combo 3 M5 reference
+# MCP Filesystem Server — Combo 3 Module 35 reference
 
 A minimal Model Context Protocol server exposing three filesystem tools: `read_file`, `list_files`, `edit_file`. Built with the official `mcp` Python SDK's `FastMCP` helper. Runs over stdio by default; HTTP and SSE transports are one-line changes.
 
-The point of this example is the **wrap, don't rewrite** pattern: the three tools are identical to the ones you built in Combo 1 M1 (tiny-agent). All that's different is three `@mcp.tool()` decorators and a `mcp.run()` call.
+The point of this example is the **wrap, don't rewrite** pattern: the three tools are identical to the ones you built in Combo 1 Module 1 (tiny-agent). All that's different is three `@mcp.tool()` decorators and a `mcp.run()` call.
 
 ---
 
@@ -43,7 +43,7 @@ In the UI:
 3. Call `read_file` with `path: "recipes.md"`.
 4. There's also a resource at `server://sandbox-root` — click through to fetch it.
 
-This is the "consume an MCP server" experience attendees go through in M5 Part A.
+This is the "consume an MCP server" experience attendees go through in M12 Part A.
 
 ---
 

@@ -21,7 +21,7 @@ Pick any of these as a prompt to `python -m reference.agent`:
 
 6. *"Write a README section for `math_utils.py` that lists each function with a one-line description. Add it to `sample_repo/README.md` between the 'Contents' section and the 'Running the agent against this' section."*
 
-## Stretch (M1 stretch exercise)
+## Stretch (M8 stretch exercise)
 
 7. *"Read `hello.py` and propose three ways to make it more robust. Don't edit the file — just explain each option."*
    (This should trigger no `edit_file` calls. Good test of 'no-tool-call means done'.)
