@@ -51,13 +51,16 @@ The agent **loops**: ask Gemini, run any tools it wants to call, feed the result
 
 ## The exercise (~75 minutes)
 
-**Step 1 — The loop (30 min).** Open `src/TinyAgent.Starter/Agent.cs`. Find `RunAsync` with the TODO. Make it work. The loop shape and the exact API calls you need are documented in the XML comment above it.
+**Step 1 — The loop (30 min).** Open `src/TinyAgent.Starter/Agent.cs`. Find `RunAsync` with the TODO. Make it work. The loop shape and the exact API calls you need are documented in the XML comment above it. The 7 tests in `AgentLoopTests.cs` check your loop against a canned model — offline, no API key, no spend — so you can run them as you go:
+```bash
+dotnet test --filter AgentLoop
+```
 
 **Step 2 — The tools (25 min).** Open `src/TinyAgent.Starter/Tools.cs`. Implement `ReadFile`, `ListFiles`, and `EditFile`. Each has clear TODOs. Run the tests as you go:
 ```bash
 dotnet test
 ```
-The tests point at **your** code by default and will be red until you've implemented all three. To see them green against the worked solution:
+The tests point at **your** code by default — both the loop and the tools — and will be red until you've written all four pieces. To see them green against the worked solution:
 ```bash
 TINY_AGENT_IMPL=reference dotnet test
 ```
@@ -132,12 +135,12 @@ tiny-agent-csharp/
 │   │   └── Tools.cs                (three TODOs)
 │   └── TinyAgent.Reference/        ← complete worked solution (peek if stuck)
 └── tests/TinyAgent.Tests/
-    ├── ToolsTests.cs               (13 contract tests for your tools)
+    ├── ToolsTests.cs               (15 contract tests for your tools)
     ├── AgentLoopTests.cs           (7 loop tests, offline — no API key needed)
     └── FakeGemini.cs               (canned model for the loop tests)
 ```
 
-`AgentLoopTests` are worth a look even before you start. They test the loop against a scripted model with no network and no spend, and they assert on the three things that most often go wrong: appending the model's own turn, sending tool results under the right role, and terminating.
+`AgentLoopTests` are worth a look even before you start. They test your loop against a scripted model with no network and no spend, and they assert on the three things that most often go wrong: appending the model's own turn, sending tool results under the right role, and terminating. The tools they call are always the reference ones, so they stay red-or-green on the strength of step 1 alone.
 
 ---
 

@@ -48,13 +48,16 @@ The agent **loops**: ask Gemini, run any tools it wants to call, feed the result
 
 ## The exercise (~75 minutes)
 
-**Step 1 — The loop (30 min).** Open `src/starter/agent.ts`. Find `runAgent` with the TODO. Make it work. The loop shape and the exact SDK calls you need are in the doc comment above it.
+**Step 1 — The loop (30 min).** Open `src/starter/agent.ts`. Find `runAgent` with the TODO. Make it work. The loop shape and the exact SDK calls you need are in the doc comment above it. The 8 tests in `tests/agentLoop.test.ts` check your loop against a stubbed model — offline, no API key, no spend — so you can run them as you go:
+```bash
+npm test
+```
 
 **Step 2 — The tools (25 min).** Open `src/starter/tools.ts`. Implement `readFile`, `listFiles`, and `editFile`. Each has clear TODOs. Run the tests as you go:
 ```bash
 npm test
 ```
-The tests point at **your** code by default and will be red until you've implemented all three. To see them green against the worked solution:
+The tests point at **your** code by default — both the loop and the tools — and will be red until you've written all four pieces. To see them green against the worked solution:
 ```bash
 npm run test:reference
 ```
@@ -128,12 +131,12 @@ tiny-agent-ts/
 │   ├── reference/                  ← complete worked solution (peek if stuck)
 │   └── cli.ts                      ← console entrypoint (given)
 └── tests/
-    ├── tools.test.ts               (13 contract tests for your tools)
+    ├── tools.test.ts               (15 contract tests for your tools)
     ├── agentLoop.test.ts           (8 loop tests, offline — no API key needed)
     └── impl.ts                     (the starter/reference switch)
 ```
 
-`agentLoop.test.ts` is worth a look even before you start. It tests the loop against a stubbed model with no network and no spend, and asserts on the things that most often go wrong: appending the model's own turn, sending tool results under the right role, disabling automatic function calling, and terminating.
+`agentLoop.test.ts` is worth a look even before you start. It tests your loop against a stubbed model with no network and no spend, and asserts on the things that most often go wrong: appending the model's own turn, sending tool results under the right role, disabling automatic function calling, and terminating. The tools it calls are always the reference ones, so it stays red-or-green on the strength of step 1 alone.
 
 ---
 

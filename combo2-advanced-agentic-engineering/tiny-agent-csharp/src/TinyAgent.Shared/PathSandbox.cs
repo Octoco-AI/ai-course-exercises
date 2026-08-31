@@ -15,7 +15,20 @@ public sealed class PathSandbox
 {
     private readonly string _root;
 
-    public PathSandbox(string root) => _root = Path.TrimEndingDirectorySeparator(Path.GetFullPath(root));
+    /// <summary>
+    /// The root with symlinks resolved. Containment is decided against this
+    /// rather than <see cref="_root"/>, because a real path can only be compared
+    /// against another real path: on macOS <c>Path.GetTempPath()</c> is itself
+    /// behind a symlink, so checking a resolved path against a textual root
+    /// would reject the sandbox's own files.
+    /// </summary>
+    private readonly string _realRoot;
+
+    public PathSandbox(string root)
+    {
+        _root = Path.TrimEndingDirectorySeparator(Path.GetFullPath(root));
+        _realRoot = RealPath(_root);
+    }
 
     public string Root => _root;
 
@@ -42,9 +55,21 @@ public sealed class PathSandbox
             return false;
         }
 
-        if (!IsInsideRoot(candidate))
+        // First pass, purely textual: catches ".." traversal and absolute paths
+        // pointing elsewhere, which is most of what a confused model sends.
+        if (!IsInside(_root, candidate))
         {
             error = $"ERROR: path '{path}' is outside the sandbox ({_root})";
+            return false;
+        }
+
+        // Second pass, following symlinks. Path.GetFullPath is textual, so a
+        // symlink *inside* the sandbox may point anywhere on disk and still sail
+        // through the check above — and File.ReadAllText will happily follow it.
+        // Decide on the real path.
+        if (!IsInside(_realRoot, RealPath(candidate)))
+        {
+            error = $"ERROR: path '{path}' is a symlink leading outside the sandbox ({_root})";
             return false;
         }
 
@@ -52,7 +77,8 @@ public sealed class PathSandbox
         return true;
     }
 
-    private bool IsInsideRoot(string candidate)
+    /// <summary>True when <paramref name="candidate"/> is the root itself, or under it.</summary>
+    private static bool IsInside(string root, string candidate)
     {
         var trimmed = Path.TrimEndingDirectorySeparator(candidate);
 
@@ -63,10 +89,61 @@ public sealed class PathSandbox
             ? StringComparison.Ordinal
             : StringComparison.OrdinalIgnoreCase;
 
-        if (string.Equals(trimmed, _root, comparison)) return true;
+        if (string.Equals(trimmed, root, comparison)) return true;
 
         // Compare against root + separator, never a bare prefix: a plain
         // StartsWith would let "/tmp/sandbox-evil" pass as inside "/tmp/sandbox".
-        return trimmed.StartsWith(_root + Path.DirectorySeparatorChar, comparison);
+        return trimmed.StartsWith(root + Path.DirectorySeparatorChar, comparison);
+    }
+
+    /// <summary>
+    /// <paramref name="target"/> with every symlink along it resolved.
+    /// </summary>
+    /// <remarks>
+    /// .NET has no <c>realpath(3)</c>, and <c>ResolveLinkTarget</c> only reports
+    /// on the entry it is handed — a link in the *middle* of a path is invisible
+    /// to it. So walk the path a segment at a time and follow each link found.
+    /// A path that does not exist yet still has to be checked, because its parent
+    /// may be the link, so a missing segment is appended rather than rejected.
+    /// </remarks>
+    private static string RealPath(string target)
+    {
+        var full = Path.GetFullPath(target);
+        var root = Path.GetPathRoot(full);
+        if (string.IsNullOrEmpty(root)) return Path.TrimEndingDirectorySeparator(full);
+
+        var segments = full[root.Length..]
+            .Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries);
+
+        var current = root;
+        foreach (var segment in segments)
+        {
+            current = Path.Combine(current, segment);
+
+            FileSystemInfo? link;
+            try
+            {
+                link = Directory.Exists(current)
+                    ? Directory.ResolveLinkTarget(current, returnFinalTarget: true)
+                    : File.ResolveLinkTarget(current, returnFinalTarget: true);
+            }
+            catch (IOException)
+            {
+                // A broken link, or a chain too long to follow. Treat it as
+                // opaque — the tool's own existence check will report it.
+                link = null;
+            }
+
+            if (link is not null)
+            {
+                // A relative link target is relative to the link's own directory,
+                // not the process's working directory.
+                current = Path.IsPathRooted(link.FullName)
+                    ? Path.GetFullPath(link.FullName)
+                    : Path.GetFullPath(Path.Combine(Path.GetDirectoryName(current) ?? root, link.FullName));
+            }
+        }
+
+        return Path.TrimEndingDirectorySeparator(current);
     }
 }

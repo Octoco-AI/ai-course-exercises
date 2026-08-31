@@ -12,10 +12,13 @@ namespace TinyAgent.Tests;
 /// failures in the room: forgetting to append the model's own turn, sending tool
 /// results under the wrong role, and never terminating.
 ///
-/// They run against the REFERENCE loop, because the starter's is a stub. Once
-/// you have written yours, point them at it the same way as the tool tests:
-///     TINY_AGENT_IMPL=starter dotnet test --filter AgentLoop
-/// (they'll fail until step 1 is done — that's the point).
+/// They run against <b>your</b> loop, via the same TINY_AGENT_IMPL switch the
+/// tool tests use (see <see cref="Impl"/>), so they are red until step 1 is
+/// done — that's the point. To watch them green against the worked solution:
+///     TINY_AGENT_IMPL=reference dotnet test --filter AgentLoop
+///
+/// The tools they call are always the reference ones: these tests are about the
+/// loop, and should not go red because step 2 is still unwritten.
 /// </remarks>
 public sealed class AgentLoopTests : IDisposable
 {
@@ -40,7 +43,7 @@ public sealed class AgentLoopTests : IDisposable
         using var client = new GeminiClient("test-key", http);
 
         var tools = new Reference.ReferenceTools(_sandbox);
-        var final = await Reference.Agent.RunAsync(
+        var final = await AgentFactory.RunAsync(
             "do the thing", tools, client, model: "fake-model",
             cancellationToken: TestContext.Current.CancellationToken);
 
@@ -142,7 +145,7 @@ public sealed class AgentLoopTests : IDisposable
         using var client = new GeminiClient("test-key", http);
 
         var tools = new Reference.ReferenceTools(_sandbox);
-        var final = await Reference.Agent.RunAsync(
+        var final = await AgentFactory.RunAsync(
             "loop forever", tools, client, model: "fake-model", maxTurns: 3,
             cancellationToken: TestContext.Current.CancellationToken);
 

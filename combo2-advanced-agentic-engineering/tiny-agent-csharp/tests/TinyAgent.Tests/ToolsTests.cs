@@ -7,7 +7,7 @@ namespace TinyAgent.Tests;
 /// The contract your tool implementations must satisfy.
 /// </summary>
 /// <remarks>
-/// These 13 tests ARE the spec — read them before you write anything. They are
+/// These 15 tests ARE the spec — read them before you write anything. They are
 /// also a preview of M11: notice that each one names a behaviour and asserts on
 /// it, rather than checking the implementation.
 ///
@@ -18,6 +18,7 @@ public sealed class ToolsTests : IDisposable
 {
     private readonly string _sandbox;
     private readonly ITools _tools;
+    private readonly List<string> _outsideFiles = [];
 
     public ToolsTests()
     {
@@ -36,9 +37,37 @@ public sealed class ToolsTests : IDisposable
     public void Dispose()
     {
         if (Directory.Exists(_sandbox)) Directory.Delete(_sandbox, recursive: true);
+        foreach (var target in _outsideFiles) File.Delete(target);
     }
 
     private string Read(string relative) => File.ReadAllText(Path.Combine(_sandbox, relative));
+
+    /// <summary>
+    /// Create a symlink, or report that the OS wouldn't allow it — Windows needs
+    /// developer mode or admin rights. The escape tests below skip there rather
+    /// than fail for a reason that has nothing to do with your code.
+    /// </summary>
+    private static bool TrySymlink(string target, string linkPath)
+    {
+        try
+        {
+            File.CreateSymbolicLink(linkPath, target);
+            return true;
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or PlatformNotSupportedException)
+        {
+            return false;
+        }
+    }
+
+    /// <summary>A file outside the sandbox, cleaned up with the fixture.</summary>
+    private string MakeOutsideFile(string tag)
+    {
+        var target = Path.Combine(Path.GetTempPath(), $"tiny-agent-outside-{tag}-{Guid.NewGuid():N}.txt");
+        File.WriteAllText(target, "secret\n");
+        _outsideFiles.Add(target);
+        return target;
+    }
 
     // ---- ReadFile -----------------------------------------------------------
 
@@ -75,6 +104,22 @@ public sealed class ToolsTests : IDisposable
     {
         // The guard. If this ever goes green by accident, the sandbox is broken.
         var result = _tools.ReadFile("../outside.txt");
+        Assert.StartsWith("ERROR:", result);
+        Assert.Contains("outside", result);
+    }
+
+    [Fact]
+    public void ReadFile_SymlinkEscapeAttempt()
+    {
+        // The second guard, and the subtler one. Path.GetFullPath is textual, so
+        // a symlink *inside* the sandbox pointing anywhere on disk passes a
+        // textual containment check — and then File.ReadAllText follows it.
+        // PathSandbox resolves the real path before deciding, which is why
+        // calling it is not optional.
+        var outside = MakeOutsideFile("read");
+        if (!TrySymlink(outside, Path.Combine(_sandbox, "link.txt"))) return;
+
+        var result = _tools.ReadFile("link.txt");
         Assert.StartsWith("ERROR:", result);
         Assert.Contains("outside", result);
     }
@@ -152,5 +197,16 @@ public sealed class ToolsTests : IDisposable
         var original = Read("hello.txt");
         _tools.EditFile("hello.txt", "nope", "yep");
         Assert.Equal(original, Read("hello.txt"));
+    }
+
+    [Fact]
+    public void EditFile_WillNotWriteThroughSymlinkOutOfSandbox()
+    {
+        var outside = MakeOutsideFile("edit");
+        if (!TrySymlink(outside, Path.Combine(_sandbox, "link.txt"))) return;
+
+        var result = _tools.EditFile("link.txt", "secret", "pwned");
+        Assert.StartsWith("ERROR:", result);
+        Assert.Equal("secret\n", File.ReadAllText(outside));
     }
 }

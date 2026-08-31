@@ -5,8 +5,8 @@ import path from "node:path";
 import type { GenerateContentResponse, GoogleGenAI } from "@google/genai";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { runAgent } from "../src/reference/agent.js";
 import { ReferenceTools } from "../src/reference/tools.js";
+import { selectRunAgent } from "./impl.js";
 
 /**
  * The loop's contract, tested offline against a canned model.
@@ -18,10 +18,17 @@ import { ReferenceTools } from "../src/reference/tools.js";
  * They need no API key and cost nothing — a stubbed `generateContent` replays
  * scripted turns and records what the loop sent back.
  *
- * They run against the REFERENCE loop, because the starter's is a stub. Once you
- * have written yours, swap the import at the top to `../src/starter/agent.js`
- * and watch them go green.
+ * They run against **your** loop, via the same `TINY_AGENT_IMPL` switch the tool
+ * tests use (see `tests/impl.ts`), so they are red until you have written step 1.
+ * To watch them green against the worked solution:
+ *
+ *     npm run test:reference
+ *
+ * The tools they call are always the reference ones: these tests are about the
+ * loop, and should not go red because step 2 is still unwritten.
  */
+
+const runAgent = selectRunAgent();
 
 /** A canned model that replays scripted turns and records every request. */
 function fakeGemini(turns: GenerateContentResponse[]) {
