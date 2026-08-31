@@ -97,16 +97,20 @@ fi
 if [ "$FAILED" -eq 0 ]; then
     echo
     echo "Calling Gemini to confirm the key works..."
+    # tsx compiles -e snippets as CJS, which forbids top-level await —
+    # hence the async IIFE.
     if npx --no-install tsx -e "
 import { GoogleGenAI } from '@google/genai';
-const ai = new GoogleGenAI({ apiKey: process.env.GOOGLE_API_KEY });
-const res = await ai.models.generateContent({
-  model: process.env.GEMINI_MODEL || 'gemini-3.1-flash-lite',
-  contents: 'Reply with exactly one word: ready',
-});
-const text = (res.text ?? '').trim().toLowerCase();
-console.log('Gemini replied:', JSON.stringify(text));
-if (!text.includes('ready')) { throw new Error('unexpected reply: ' + text); }
+(async () => {
+  const ai = new GoogleGenAI({ apiKey: process.env.GOOGLE_API_KEY });
+  const res = await ai.models.generateContent({
+    model: process.env.GEMINI_MODEL || 'gemini-3.1-flash-lite',
+    contents: 'Reply with exactly one word: ready',
+  });
+  const text = (res.text ?? '').trim().toLowerCase();
+  console.log('Gemini replied:', JSON.stringify(text));
+  if (!text.includes('ready')) { throw new Error('unexpected reply: ' + text); }
+})();
 " 2>&1; then
         pass "Gemini call succeeded"
     else
