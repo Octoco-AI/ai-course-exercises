@@ -7,7 +7,7 @@
 ## Task conventions
 
 - **Size**: each task is ~1–2 days. If larger, split. If smaller, combine.
-- **Done-when**: each task has an explicit acceptance criterion. "Works on my machine" is not a criterion; a passing test or a running deployment is.
+- **Done-when**: each task has an explicit, observable check. "Works on my machine" is not a check; a passing test or a running deployment is.
 - **Dependencies**: if a task requires another to be complete, note `depends-on: #N`. Tasks with no dependencies are ready to start.
 - **Owner**: to be filled in at sprint planning, not here.
 
@@ -27,7 +27,7 @@
 
 ## 2. Add the eval set foundation
 
-**Description**: create `tests/evals/` with 30 seed eval cases mirroring the spec's acceptance criteria. DeepEval configured. `pytest tests/evals/` runs (will fail against the stub — expected).
+**Description**: create `tests/evals/` with 30 seed eval cases mirroring the spec's scenarios and CE checks. DeepEval configured. `pytest tests/evals/` runs (will fail against the stub — expected).
 
 **Done-when**: `deepeval test run tests/evals/` executes and produces a results report. CI workflow `.github/workflows/evals.yml` is drafted (runs on PR).
 

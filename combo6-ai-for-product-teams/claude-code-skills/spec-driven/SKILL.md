@@ -52,14 +52,14 @@ The feature slug is the feature name, lowercased, with spaces replaced by hyphen
 
 ---
 
-## Phase 2 — Specify (the user story)
+## Phase 2 — Specify (the requirement)
 
-**Purpose**: capture WHAT the feature does, with measurable acceptance criteria that include AI-specific uncertainty.
+**Purpose**: capture WHAT the feature does, as an observable requirement with scenarios that prove it, plus the four extras that carry AI-specific uncertainty.
 
 **Do:**
 1. Read the constitution from Phase 1 to ground your work in the project's rules.
-2. Draft a user story using the four-extras pattern from `templates/spec-template.md`:
-   - **Traditional**: As a [user], I want [feature], so that [benefit].
+2. Draft a requirement using the four-extras pattern from `templates/spec-template.md`:
+   - **Requirement**: The system SHALL [observable behaviour], with at least one Given/When/Then scenario that exercises rather than restates it.
    - **Performance thresholds**: accuracy, latency, confidence.
    - **Graceful degradation**: fallback behaviours, partial results, human-handoff.
    - **Learning expectations**: feedback signals, adaptation timeline, personalisation scope.
@@ -126,7 +126,7 @@ The feature slug is the feature name, lowercased, with spaces replaced by hyphen
 Summarise what exists after this session:
 
 - `./.claude/CLAUDE.md` with the project constitution
-- `./.claude/specs/<feature-slug>.md` — user story + clarifications
+- `./.claude/specs/<feature-slug>.md` — requirement + scenarios + clarifications
 - `./.claude/plans/<feature-slug>.md` — technical plan
 - `./.claude/tasks/<feature-slug>.md` — actionable tasks
 

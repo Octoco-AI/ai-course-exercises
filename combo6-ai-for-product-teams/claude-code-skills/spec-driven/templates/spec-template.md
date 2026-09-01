@@ -4,16 +4,30 @@
 
 ---
 
-## Traditional user story
+## The requirement
 
-> As a [user / role],
-> I want [feature],
-> So that [benefit].
+One observable behaviour, with a strength word (SHALL / SHOULD / MAY), proved by at
+least one scenario. If it needs three "and also" clauses, it is three requirements.
+
+> **Requirement:** The system SHALL [observable behaviour].
+>
+> **Scenario: [names the case]**
+> Given [precondition]
+> When [action]
+> Then [observable outcome]
 
 Example:
-> As a parent managing my child's ADHD,
-> I want video recommendations personalised to my family's current challenges,
-> So that I can quickly find relevant guidance without searching.
+> **Requirement:** The system SHALL recommend videos ranked by relevance to the
+> challenges the parent has flagged in the last 30 days.
+>
+> **Scenario: A newly flagged challenge changes the ranking**
+> Given a parent who has just flagged "bedtime routines"
+> When they open the recommendations tab
+> Then at least one bedtime-related video appears in the top three
+
+*Who wants this and why belongs in the feature's context, not in the requirement.
+A user story is a fine way to capture that; it is not the thing engineering builds
+against.*
 
 ---
 
@@ -61,9 +75,9 @@ Bugs AI systems have that traditional software doesn't.
 
 ---
 
-## Acceptance criteria (mapped to CE)
+## Checks (mapped to CE)
 
-These are the exact criteria that become continuous-evaluation gates in production. Every line here corresponds to a monitor in the CE pipeline.
+These are the exact checks that become continuous-evaluation gates in production. Every line here corresponds to a monitor in the CE pipeline.
 
 - [ ] Top-3 CTR >70% (primary eval, runs on every PR).
 - [ ] Recommendation latency p95 <500ms (perf eval, runs on canary).
