@@ -1,0 +1,77 @@
+# Canonical .gitignore for TypeScript/Node workshop example projects.
+#
+# Every Node-stack example under combo*/examples/typescript/ should use this as
+# a baseline. Update here first; sync downstream.
+#
+# To sync a project:
+#   cp _shared/node-project.gitignore.template <project>/.gitignore
+#
+# Synced from _shared/node-project.gitignore.template, EXCEPT the logs/ line
+# below is deliberately dropped (see the note in the logs section) and a db
+# block is added -- this repo's committed logs/*.log fixtures need to survive
+# both.
+
+# --- environment & secrets --------------------------------------------------
+.env
+.env.*
+!.env.example
+
+# --- dependencies -----------------------------------------------------------
+node_modules/
+.pnp
+.pnp.js
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+
+# --- build output -----------------------------------------------------------
+dist/
+build/
+out/
+*.tsbuildinfo
+
+# --- test output --------------------------------------------------------------
+coverage/
+.nyc_output/
+*.lcov
+
+# --- caches -----------------------------------------------------------------
+.cache/
+.vite/
+.eslintcache
+.npm/
+
+# --- logs -------------------------------------------------------------------
+# NOTE: logs/*.log ARE committed on purpose in this repo -- they are fixtures
+# for the debugging and microtooling modules. The house template ignores the
+# whole logs/ directory, which would also hide the fixtures from git (a
+# directory exclude stops git from descending into it at all, so a later
+# `!logs/app-*.log` negation could not undo it) -- so that line is dropped
+# here, not negated.
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+!logs/app-*.log
+
+# --- IDE / tooling ----------------------------------------------------------
+.vscode/
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
+
+# --- OS ---------------------------------------------------------------------
+.DS_Store
+Thumbs.db
+
+# --- workshop scratch -------------------------------------------------------
+# Attendees experiment inside the sample repo; don't fight them over it.
+scratch/
+
+# --- the sqlite database -----------------------------------------------------
+# The DB is generated (scripts/seedData.ts / the app on boot); never commit it.
+orderbase.db
+*.db
+*.sqlite3

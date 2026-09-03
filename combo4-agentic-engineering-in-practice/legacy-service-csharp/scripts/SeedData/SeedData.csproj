@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>SeedData</RootNamespace>
+    <AssemblyName>seed-data</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/LegacyService/LegacyService.csproj" />
+  </ItemGroup>
+</Project>
