@@ -6,7 +6,7 @@ This is the Codex sibling of `../claude-code-skills/`. Same five-phase disciplin
 
 ## Contents
 
-- **`spec-driven/SKILL.md`** — the main skill. Walks through constitution → specify → clarify → plan → tasks. Pauses between phases for review.
+- **`spec-driven/SKILL.md`** — the main skill. Walks through constitution → specify → clarify → plan → tasks. Pauses between phases for review. Starts from nothing.
 - **`spec-driven/templates/`** — reference templates loaded on demand by the skill:
   - `constitution-template.md` — what project rules look like.
   - `spec-template.md` — the four-extras pattern (thresholds / degradation / learning / failure modes).
@@ -15,6 +15,11 @@ This is the Codex sibling of `../claude-code-skills/`. Same five-phase disciplin
   - `tasks-template.md` — how to break a plan into mergeable tasks.
 - **`AGENTS.md.example`** — example project constitution (output of Phase 1).
 - **`agents/spec-driven.toml`** — optional sub-agent flavour of the same flow, for teams that want a declaratively pinned model / effort / sandbox. Not needed for the exercise.
+- **`spec-from-prd/SKILL.md`** — sibling skill. Starts from a product PRD (typically one drafted with Combo 7's `write-lean-prd` skill) instead of a cold start: intake → constitution → specify → clarify → plan → tasks. See `../claude-code-skills/README.md`'s *"`spec-driven` vs `spec-from-prd`"* table for when to reach for which — it applies unchanged here.
+- **`spec-from-prd/templates/`** — same shape as `spec-driven/templates/`, plus `prd-intake-checklist.md` and `prd-to-spec-map.md`. No `agents/spec-from-prd.toml` — the TOML sub-agent flavour isn't worth a fourth copy to keep in step for a variant this module only mentions in passing; use `spec-from-prd/SKILL.md` directly.
+
+There's no `spec-from-prd/example-prd.md` here — the sample PRD lives once, at
+`../claude-code-skills/example-prd.md`, and both skill directories point at it.
 
 ---
 
@@ -44,6 +49,19 @@ Anyone on the team with Codex CLI gets the skill when they clone the repo.
 ### Confirm it landed
 
 Start a Codex session and run `/skills`. `spec-driven` should be in the picker. If it isn't, the usual cause is a missing or malformed `name` in the frontmatter — see *Common failures* in `FACILITATOR.md`.
+
+### Also installing `spec-from-prd`
+
+Same commands, `spec-from-prd` in place of `spec-driven`:
+
+```bash
+mkdir -p ~/.codex/skills/spec-from-prd
+cp -r spec-from-prd/* ~/.codex/skills/spec-from-prd/
+```
+
+Run `/skills` and pick `spec-from-prd`, or describe the task in plain language — Codex
+matches on the `description`. It'll ask you to point at a PRD if you don't name one; try it
+against `../claude-code-skills/example-prd.md` first.
 
 ---
 
@@ -127,6 +145,7 @@ After editing, restart the Codex session — skills are read at startup.
 - **Not a code generator.** The skill deliberately does not write implementation code — Phase 5 outputs tasks, and a separate skill (or your manual review) drives implementation.
 - **Not a replacement for PM.** The skill helps structure thinking; it doesn't know your user research. The spec output should be reviewed by a human who knows the users.
 - **Not a silver bullet for non-determinism.** Writing a threshold in a spec doesn't make the AI meet it. Evals (M11 / M12) do.
+- **`spec-from-prd` is not `write-lean-prd`.** It consumes a PRD; it doesn't write one. If you need to draft the PRD itself, that's Combo 7's `write-lean-prd` skill — different audience, different artefact, different tool (it runs in claude.ai chat, not Codex CLI).
 
 ---
 
