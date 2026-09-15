@@ -1,0 +1,44 @@
+# --- environment & secrets --------------------------------------------------
+.env
+.env.*
+!.env.example
+
+# --- build output -----------------------------------------------------------
+target/
+*.class
+*.jar
+*.war
+*.ear
+hs_err_pid*
+replay_pid*
+
+# --- Maven wrapper jar is committed; leave .mvn/ alone ----------------------
+# Do NOT ignore .mvn/ — the wrapper lives there.
+
+# --- test output ------------------------------------------------------------
+.surefire-*
+TEST-*.xml
+coverage/
+jacoco.exec
+
+# --- IDE / tooling ----------------------------------------------------------
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+!.vscode/settings.json
+!.vscode/extensions.json
+.classpath
+.project
+.settings/
+.factorypath
+bin/
+out/
+
+# --- OS ---------------------------------------------------------------------
+.DS_Store
+Thumbs.db
+
+# --- workshop scratch -------------------------------------------------------
+scratch/
