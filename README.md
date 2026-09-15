@@ -17,6 +17,7 @@ course repo on every push to main; do not edit directly.
 - [`expense-categoriser-ts`](combo2-advanced-agentic-engineering/expense-categoriser-ts)
 - [`expense-categoriser`](combo2-advanced-agentic-engineering/expense-categoriser)
 - [`legacy-service-csharp`](combo2-advanced-agentic-engineering/legacy-service-csharp)
+- [`legacy-service-java`](combo2-advanced-agentic-engineering/legacy-service-java)
 - [`legacy-service-ts`](combo2-advanced-agentic-engineering/legacy-service-ts)
 - [`legacy-service`](combo2-advanced-agentic-engineering/legacy-service)
 - [`plan-execute-split`](combo2-advanced-agentic-engineering/plan-execute-split)
@@ -36,6 +37,7 @@ course repo on every push to main; do not edit directly.
 
 - [`claude-code-skills`](combo4-agentic-engineering-in-practice/claude-code-skills)
 - [`legacy-service-csharp`](combo4-agentic-engineering-in-practice/legacy-service-csharp)
+- [`legacy-service-java`](combo4-agentic-engineering-in-practice/legacy-service-java)
 - [`legacy-service-ts`](combo4-agentic-engineering-in-practice/legacy-service-ts)
 - [`legacy-service`](combo4-agentic-engineering-in-practice/legacy-service)
 - [`tiny-agent`](combo4-agentic-engineering-in-practice/tiny-agent)

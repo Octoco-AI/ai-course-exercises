@@ -1,0 +1,493 @@
+db ready at orderbase.db
+OrderBase v1.4.2 listening on 0.0.0.0:5057 (debug=true)
+2026-06-30 00:03:12 INFO ai.octoco.legacyservice.App GET /report 200 date=2026-06-30 orders=0 total=0.00
+2026-06-30 00:03:12 WARNING Monitor daily digest EMPTY for 2026-06-30 (expected>=8), retrying
+DEBUG: POST /orders payload={customer=Hooli, items=[{sku=SKU-0006, qty=3, unitPrice=7.25}]}
+2026-06-30 00:09:30 INFO ai.octoco.legacyservice.Orders order 00000041 created customer=Hooli items=1 total=21.75
+created order 00000041 total=21.75
+2026-06-30 00:09:30 INFO ai.octoco.legacyservice.App POST /orders 201 id=00000041 total=21.75
+2026-06-30 00:17:42 INFO ai.octoco.legacyservice.App GET /report 200 date=2026-06-30 orders=4 total=453.33
+DEBUG: POST /orders payload={customer=Vandelay, items=[{sku=SKU-0004, qty=1, unitPrice=4.95}]}
+2026-06-30 00:26:02 INFO ai.octoco.legacyservice.Orders order 00000042 created customer=Vandelay items=1 total=4.95
+created order 00000042 total=4.95
+2026-06-30 00:26:02 INFO ai.octoco.legacyservice.App POST /orders 201 id=00000042 total=4.95
+2026-06-30 00:31:40 INFO ai.octoco.legacyservice.App GET /report 200 date=2026-06-30 orders=0 total=0.00
+2026-06-30 00:32:22 INFO ai.octoco.legacyservice.App GET /orders/00000010 200 status=PAID
+2026-06-30 00:42:20 WARNING ai.octoco.legacyservice.Orders rejected order: discount_pct out of range
+2026-06-30 00:42:20 INFO ai.octoco.legacyservice.App POST /orders 400 error="discount_pct out of range"
+DEBUG: POST /orders payload={customer=Acme Ltd, items=[{sku=SKU-0008, qty=2, unitPrice=12.5}, {sku=SKU-0004, qty=2, unitPrice=4.95}]}
+2026-06-30 00:45:58 INFO ai.octoco.legacyservice.Orders order 00000043 created customer=Acme Ltd items=2 total=34.90
+created order 00000043 total=34.9
+2026-06-30 00:45:58 INFO ai.octoco.legacyservice.App POST /orders 201 id=00000043 total=34.90
+2026-06-30 00:48:11 INFO ai.octoco.legacyservice.App GET /orders 200 count=30
+2026-06-30 00:54:19 INFO ai.octoco.legacyservice.App GET /orders 200 count=35
+DEBUG: POST /orders payload={customer=Soylent Foods, items=[{sku=SKU-0002, qty=1, unitPrice=8.8}]}
+2026-06-30 00:57:18 INFO ai.octoco.legacyservice.Orders order 00000044 created customer=Soylent Foods items=1 total=8.80
+created order 00000044 total=8.8
+2026-06-30 00:57:18 INFO ai.octoco.legacyservice.App POST /orders 201 id=00000044 total=8.80
+DEBUG: POST /orders payload={customer=Soylent Foods, items=[{sku=SKU-0009, qty=3, unitPrice=8.8}]}
+2026-06-30 01:02:19 INFO ai.octoco.legacyservice.Orders order 00000045 created customer=Soylent Foods items=1 total=26.40
+created order 00000045 total=26.4
+2026-06-30 01:02:19 INFO ai.octoco.legacyservice.App POST /orders 201 id=00000045 total=26.40
+DEBUG: POST /orders payload={customer=Hooli, items=[{sku=SKU-0008, qty=1, unitPrice=7.25}, {sku=SKU-0008, qty=1, unitPrice=8.8}]}
+2026-06-30 01:12:13 INFO ai.octoco.legacyservice.Orders order 00000046 created customer=Hooli items=2 total=16.05
+created order 00000046 total=16.05
+2026-06-30 01:12:13 INFO ai.octoco.legacyservice.App POST /orders 201 id=00000046 total=16.05
+2026-06-30 01:15:33 WARNING ai.octoco.legacyservice.Orders rejected order: discount_pct out of range
+2026-06-30 01:15:33 INFO ai.octoco.legacyservice.App POST /orders 400 error="discount_pct out of range"
+2026-06-30 01:23:04 INFO ai.octoco.legacyservice.App GET /orders 200 count=48
+2026-06-30 01:31:15 INFO ai.octoco.legacyservice.App GET /orders 200 count=39
+2026-06-30 01:37:20 WARNING ai.octoco.legacyservice.Orders rejected order: customer is required
+2026-06-30 01:37:20 INFO ai.octoco.legacyservice.App POST /orders 400 error="customer is required"
+2026-06-30 01:39:44 WARNING ai.octoco.legacyservice.Orders rejected order: customer is required
+2026-06-30 01:39:44 INFO ai.octoco.legacyservice.App POST /orders 400 error="customer is required"
+DEBUG: POST /orders payload={customer=Acme Ltd, items=[{sku=SKU-0007, qty=1, unitPrice=19.99}, {sku=SKU-0006, qty=4, unitPrice=7.25}, {sku=SKU-0008, qty=2, unitPrice=12.5}]}
+2026-06-30 01:43:53 INFO ai.octoco.legacyservice.Orders order 00000047 created customer=Acme Ltd items=3 total=73.99
+created order 00000047 total=73.99
+2026-06-30 01:43:53 INFO ai.octoco.legacyservice.App POST /orders 201 id=00000047 total=73.99
+2026-06-30 01:46:20 INFO ai.octoco.legacyservice.App GET /orders/00000047 200 status=PAID
+2026-06-30 01:50:26 INFO ai.octoco.legacyservice.App GET /orders 200 count=50
+2026-06-30 01:58:48 INFO ai.octoco.legacyservice.App GET /orders/00000006 200 status=CANCELLED
+2026-06-30 02:03:07 INFO ai.octoco.legacyservice.App GET /orders/00000020 404
+DEBUG: POST /orders payload={customer=Globex, items=[{sku=SKU-0001, qty=4, unitPrice=12.5}, {sku=SKU-0004, qty=2, unitPrice=12.5}, {sku=SKU-0005, qty=4, unitPrice=7.25}]}
+2026-06-30 02:07:43 INFO ai.octoco.legacyservice.Orders order 00000048 created customer=Globex items=3 total=104.00
+created order 00000048 total=104.0
+2026-06-30 02:07:43 INFO ai.octoco.legacyservice.App POST /orders 201 id=00000048 total=104.00
+2026-06-30 02:13:57 INFO ai.octoco.legacyservice.App GET /orders/00000041 200 status=NEW
+2026-06-30 02:22:17 INFO ai.octoco.legacyservice.App GET /orders/00000019 200 status=NEW
+2026-06-30 02:28:26 INFO ai.octoco.legacyservice.App GET /orders/00000027 200 status=PAID
+2026-06-30 02:35:02 INFO ai.octoco.legacyservice.App GET /orders 200 count=45
+DEBUG: POST /orders payload={customer=Soylent Foods, items=[{sku=SKU-0001, qty=1, unitPrice=12.5}, {sku=SKU-0009, qty=2, unitPrice=8.8}]}
+2026-06-30 02:39:48 INFO ai.octoco.legacyservice.Orders order 00000049 created customer=Soylent Foods items=2 total=30.10
+created order 00000049 total=30.1
+2026-06-30 02:39:48 INFO ai.octoco.legacyservice.App POST /orders 201 id=00000049 total=30.10
+2026-06-30 02:42:57 WARNING ai.octoco.legacyservice.Orders rejected order: at least one item is required
+2026-06-30 02:42:57 INFO ai.octoco.legacyservice.App POST /orders 400 error="at least one item is required"
+2026-06-30 02:47:00 INFO ai.octoco.legacyservice.App GET /orders/00000006 200 status=NEW
+DEBUG: POST /orders payload={customer=Stark Supplies, items=[{sku=SKU-0008, qty=2, unitPrice=7.25}, {sku=SKU-0002, qty=1, unitPrice=12.5}]}
+2026-06-30 02:51:49 INFO ai.octoco.legacyservice.Orders order 00000050 created customer=Stark Supplies items=2 total=27.00
+created order 00000050 total=27.0
+2026-06-30 02:51:49 INFO ai.octoco.legacyservice.App POST /orders 201 id=00000050 total=27.00
+2026-06-30 02:57:16 WARNING ai.octoco.legacyservice.Orders rejected order: customer is required
+2026-06-30 02:57:16 INFO ai.octoco.legacyservice.App POST /orders 400 error="customer is required"
+2026-06-30 03:02:31 INFO ai.octoco.legacyservice.App GET /orders/00000044 200 status=SHIPPED
+2026-06-30 03:06:06 WARNING ai.octoco.legacyservice.Orders rejected order: at least one item is required
+2026-06-30 03:06:06 INFO ai.octoco.legacyservice.App POST /orders 400 error="at least one item is required"
+2026-06-30 03:11:55 INFO ai.octoco.legacyservice.App GET /orders 200 count=2
+2026-06-30 03:17:13 INFO ai.octoco.legacyservice.App GET /orders 200 count=15
+2026-06-30 03:20:15 INFO ai.octoco.legacyservice.App GET /orders/00000044 200 status=PAID
+2026-06-30 03:28:55 INFO ai.octoco.legacyservice.App GET /orders/00000050 200 status=CANCELLED
+DEBUG: POST /orders payload={customer=Initech, items=[{sku=SKU-0009, qty=2, unitPrice=8.8}, {sku=SKU-0001, qty=4, unitPrice=19.99}]}
+2026-06-30 03:34:28 INFO ai.octoco.legacyservice.Orders order 00000051 created customer=Initech items=2 total=97.56
+created order 00000051 total=97.56
+2026-06-30 03:34:28 INFO ai.octoco.legacyservice.App POST /orders 201 id=00000051 total=97.56
+2026-06-30 03:42:24 INFO ai.octoco.legacyservice.App GET /orders/00000031 200 status=NEW
+DEBUG: POST /orders payload={customer=Umbrella Co, items=[{sku=SKU-0008, qty=4, unitPrice=7.25}]}
+2026-06-30 03:44:57 INFO ai.octoco.legacyservice.Orders order 00000052 created customer=Umbrella Co items=1 total=29.00
+created order 00000052 total=29.0
+2026-06-30 03:44:57 INFO ai.octoco.legacyservice.App POST /orders 201 id=00000052 total=29.00
+2026-06-30 03:49:40 INFO ai.octoco.legacyservice.App GET /orders 200 count=33
+2026-06-30 03:54:43 INFO ai.octoco.legacyservice.App GET /orders 200 count=15
+2026-06-30 04:03:02 INFO ai.octoco.legacyservice.App GET /orders/00000049 200 status=CANCELLED
+2026-06-30 04:09:18 INFO ai.octoco.legacyservice.App GET /orders 200 count=1
+2026-06-30 04:12:20 INFO ai.octoco.legacyservice.App GET /orders/00000021 200 status=PAID
+2026-06-30 04:15:42 INFO ai.octoco.legacyservice.App GET /report 200 date=2026-06-30 orders=9 total=663.65
+DEBUG: POST /orders payload={customer=Globex, items=[{sku=SKU-0003, qty=2, unitPrice=12.5}, {sku=SKU-0005, qty=4, unitPrice=12.5}, {sku=SKU-0003, qty=4, unitPrice=8.8}]}
+2026-06-30 04:23:05 INFO ai.octoco.legacyservice.Orders order 00000053 created customer=Globex items=3 total=110.20
+created order 00000053 total=110.2
+2026-06-30 04:23:05 INFO ai.octoco.legacyservice.App POST /orders 201 id=00000053 total=110.20
+2026-06-30 04:26:03 WARNING ai.octoco.legacyservice.Orders rejected order: discount_pct out of range
+2026-06-30 04:26:03 INFO ai.octoco.legacyservice.App POST /orders 400 error="discount_pct out of range"
+2026-06-30 04:33:45 WARNING ai.octoco.legacyservice.Orders rejected order: at least one item is required
+2026-06-30 04:33:45 INFO ai.octoco.legacyservice.App POST /orders 400 error="at least one item is required"
+2026-06-30 04:39:16 INFO ai.octoco.legacyservice.App GET /report 200 date=2026-06-30 orders=11 total=449.49
+2026-06-30 04:46:44 INFO ai.octoco.legacyservice.App GET /orders 200 count=27
+2026-06-30 04:53:02 INFO ai.octoco.legacyservice.App GET /orders/00000049 200 status=SHIPPED
+2026-06-30 04:58:37 INFO ai.octoco.legacyservice.App GET /orders/00000022 200 status=SHIPPED
+2026-06-30 05:05:26 INFO ai.octoco.legacyservice.App GET /orders 200 count=47
+2026-06-30 05:08:26 INFO ai.octoco.legacyservice.App GET /orders/00000009 200 status=SHIPPED
+2026-06-30 05:11:07 INFO ai.octoco.legacyservice.App GET /orders/00000051 200 status=CANCELLED
+2026-06-30 05:13:34 INFO ai.octoco.legacyservice.App GET /orders/00000005 200 status=SHIPPED
+2026-06-30 05:17:13 INFO ai.octoco.legacyservice.App GET /orders 200 count=44
+2026-06-30 05:22:22 WARNING ai.octoco.legacyservice.Orders rejected order: at least one item is required
+2026-06-30 05:22:22 INFO ai.octoco.legacyservice.App POST /orders 400 error="at least one item is required"
+2026-06-30 05:29:22 INFO ai.octoco.legacyservice.App GET /report 200 date=2026-06-30 orders=13 total=1051.03
+DEBUG: POST /orders payload={customer=Initech, items=[{sku=SKU-0003, qty=1, unitPrice=12.5}]}
+2026-06-30 05:32:31 INFO ai.octoco.legacyservice.Orders order 00000054 created customer=Initech items=1 total=12.50
+created order 00000054 total=12.5
+2026-06-30 05:32:31 INFO ai.octoco.legacyservice.App POST /orders 201 id=00000054 total=12.50
+2026-06-30 05:34:50 INFO ai.octoco.legacyservice.App GET /orders 200 count=50
+DEBUG: POST /orders payload={customer=Hooli, items=[{sku=SKU-0003, qty=4, unitPrice=7.25}, {sku=SKU-0007, qty=1, unitPrice=4.95}]}
+2026-06-30 05:42:49 INFO ai.octoco.legacyservice.Orders order 00000055 created customer=Hooli items=2 total=33.95
+created order 00000055 total=33.95
+2026-06-30 05:42:49 INFO ai.octoco.legacyservice.App POST /orders 201 id=00000055 total=33.95
+2026-06-30 05:50:34 WARNING ai.octoco.legacyservice.Orders rejected order: customer is required
+2026-06-30 05:50:34 INFO ai.octoco.legacyservice.App POST /orders 400 error="customer is required"
+2026-06-30 05:57:54 INFO ai.octoco.legacyservice.App GET /orders/00000035 200 status=NEW
+2026-06-30 06:07:40 INFO ai.octoco.legacyservice.App GET /orders/00000040 200 status=PAID
+2026-06-30 06:11:27 INFO ai.octoco.legacyservice.App GET /orders/00000033 200 status=CANCELLED
+2026-06-30 06:13:55 INFO ai.octoco.legacyservice.App GET /report 200 date=2026-06-30 orders=4 total=1582.18
+2026-06-30 06:19:35 INFO ai.octoco.legacyservice.App GET /orders 200 count=34
+2026-06-30 06:26:05 INFO ai.octoco.legacyservice.App GET /orders 200 count=40
+2026-06-30 06:30:24 WARNING ai.octoco.legacyservice.Orders rejected order: at least one item is required
+2026-06-30 06:30:24 INFO ai.octoco.legacyservice.App POST /orders 400 error="at least one item is required"
+2026-06-30 06:36:06 INFO ai.octoco.legacyservice.App GET /orders 200 count=28
+2026-06-30 06:44:16 INFO ai.octoco.legacyservice.App GET /orders/00000024 200 status=PAID
+2026-06-30 06:50:32 INFO ai.octoco.legacyservice.App GET /orders/00000051 200 status=NEW
+2026-06-30 06:54:39 INFO ai.octoco.legacyservice.App GET /orders/00000009 404
+2026-06-30 07:03:02 INFO ai.octoco.legacyservice.App GET /orders/00000038 200 status=PAID
+DEBUG: POST /orders payload={customer=Vandelay, items=[{sku=SKU-0001, qty=3, unitPrice=7.25}, {sku=SKU-0004, qty=1, unitPrice=8.8}, {sku=SKU-0008, qty=3, unitPrice=8.8}]}
+2026-06-30 07:03:55 INFO ai.octoco.legacyservice.Orders order 00000056 created customer=Vandelay items=3 total=56.95
+created order 00000056 total=56.95
+2026-06-30 07:03:55 INFO ai.octoco.legacyservice.App POST /orders 201 id=00000056 total=56.95
+2026-06-30 07:04:46 INFO ai.octoco.legacyservice.App GET /orders/00000045 200 status=NEW
+2026-06-30 07:05:09 INFO ai.octoco.legacyservice.App GET /report 200 date=2026-06-30 orders=11 total=640.49
+2026-06-30 07:06:23 INFO ai.octoco.legacyservice.App GET /orders/00000050 200 status=SHIPPED
+2026-06-30 07:07:52 INFO ai.octoco.legacyservice.App GET /orders/00000047 200 status=CANCELLED
+DEBUG: POST /orders payload={customer=Hooli, items=[{sku=SKU-0001, qty=4, unitPrice=7.25}, {sku=SKU-0001, qty=3, unitPrice=4.95}]}
+2026-06-30 07:09:11 INFO ai.octoco.legacyservice.Orders order 00000057 created customer=Hooli items=2 total=43.85
+created order 00000057 total=43.85
+2026-06-30 07:09:11 INFO ai.octoco.legacyservice.App POST /orders 201 id=00000057 total=43.85
+DEBUG: POST /orders payload={customer=Hooli, items=[{sku=SKU-0003, qty=1, unitPrice=7.25}]}
+2026-06-30 07:09:30 INFO ai.octoco.legacyservice.Orders order 00000058 created customer=Hooli items=1 total=7.25
+created order 00000058 total=7.25
+2026-06-30 07:09:30 INFO ai.octoco.legacyservice.App POST /orders 201 id=00000058 total=7.25
+2026-06-30 07:10:01 INFO ai.octoco.legacyservice.App GET /orders/00000020 200 status=NEW
+DEBUG: POST /orders payload={customer=Wayne Retail, items=[{sku=SKU-0005, qty=4, unitPrice=7.25}]}
+2026-06-30 07:11:05 INFO ai.octoco.legacyservice.Orders order 00000059 created customer=Wayne Retail items=1 total=29.00
+created order 00000059 total=29.0
+2026-06-30 07:11:05 INFO ai.octoco.legacyservice.App POST /orders 201 id=00000059 total=29.00
+2026-06-30 07:12:25 INFO ai.octoco.legacyservice.App GET /orders/00000005 200 status=NEW
+2026-06-30 07:13:35 INFO ai.octoco.legacyservice.App GET /orders/00000002 200 status=SHIPPED
+2026-06-30 07:14:15 INFO ai.octoco.legacyservice.App GET /orders 200 count=23
+2026-06-30 07:15:43 INFO ai.octoco.legacyservice.App GET /orders/00000017 200 status=NEW
+2026-06-30 07:16:59 INFO ai.octoco.legacyservice.App GET /orders/00000040 200 status=NEW
+2026-06-30 07:18:00 INFO ai.octoco.legacyservice.App GET /orders/00000031 200 status=SHIPPED
+2026-06-30 07:19:09 INFO ai.octoco.legacyservice.App GET /orders/00000049 200 status=NEW
+2026-06-30 07:19:47 INFO ai.octoco.legacyservice.App GET /orders 200 count=14
+2026-06-30 07:20:25 INFO ai.octoco.legacyservice.App GET /orders/00000009 200 status=PAID
+2026-06-30 07:21:49 INFO ai.octoco.legacyservice.App GET /orders/00000009 200 status=NEW
+DEBUG: POST /orders payload={customer=Vandelay, items=[{sku=SKU-0004, qty=1, unitPrice=4.95}, {sku=SKU-0009, qty=3, unitPrice=19.99}]}
+2026-06-30 07:22:59 INFO ai.octoco.legacyservice.Orders order 00000060 created customer=Vandelay items=2 total=64.92
+created order 00000060 total=64.92
+2026-06-30 07:22:59 INFO ai.octoco.legacyservice.App POST /orders 201 id=00000060 total=64.92
+DEBUG: POST /orders payload={customer=Umbrella Co, items=[{sku=SKU-0008, qty=3, unitPrice=12.5}, {sku=SKU-0004, qty=4, unitPrice=4.95}]}
+2026-06-30 07:23:51 INFO ai.octoco.legacyservice.Orders order 00000061 created customer=Umbrella Co items=2 total=57.30
+created order 00000061 total=57.3
+2026-06-30 07:23:51 INFO ai.octoco.legacyservice.App POST /orders 201 id=00000061 total=57.30
+2026-06-30 07:24:47 INFO ai.octoco.legacyservice.App GET /orders/00000014 200 status=CANCELLED
+2026-06-30 07:25:26 INFO ai.octoco.legacyservice.App GET /orders/00000010 200 status=NEW
+2026-06-30 07:25:52 INFO ai.octoco.legacyservice.App GET /orders/00000051 200 status=CANCELLED
+2026-06-30 07:26:22 INFO ai.octoco.legacyservice.App GET /orders/00000040 200 status=CANCELLED
+2026-06-30 07:27:47 INFO ai.octoco.legacyservice.App GET /orders/00000028 200 status=SHIPPED
+2026-06-30 07:28:44 INFO ai.octoco.legacyservice.App GET /orders 200 count=4
+2026-06-30 07:29:59 INFO ai.octoco.legacyservice.App GET /orders/00000036 200 status=PAID
+2026-06-30 07:30:32 INFO ai.octoco.legacyservice.App GET /report 200 date=2026-06-30 orders=7 total=1575.63
+2026-06-30 07:31:17 INFO ai.octoco.legacyservice.App GET /orders 200 count=25
+2026-06-30 07:31:36 INFO ai.octoco.legacyservice.App GET /orders 200 count=7
+2026-06-30 07:32:05 INFO ai.octoco.legacyservice.App GET /report 200 date=2026-06-30 orders=7 total=1155.51
+DEBUG: POST /orders payload={customer=Acme Ltd, items=[{sku=SKU-0008, qty=4, unitPrice=8.8}]}
+2026-06-30 07:33:09 INFO ai.octoco.legacyservice.Orders order 00000062 created customer=Acme Ltd items=1 total=35.20
+created order 00000062 total=35.2
+2026-06-30 07:33:09 INFO ai.octoco.legacyservice.App POST /orders 201 id=00000062 total=35.20
+2026-06-30 07:33:50 INFO ai.octoco.legacyservice.App GET /orders/00000025 200 status=SHIPPED
+DEBUG: POST /orders payload={customer=Vandelay, items=[{sku=SKU-0005, qty=2, unitPrice=19.99}]}
+2026-06-30 07:34:09 INFO ai.octoco.legacyservice.Orders order 00000063 created customer=Vandelay items=1 total=39.98
+created order 00000063 total=39.98
+2026-06-30 07:34:09 INFO ai.octoco.legacyservice.App POST /orders 201 id=00000063 total=39.98
+2026-06-30 07:35:13 INFO ai.octoco.legacyservice.App GET /orders 200 count=5
+2026-06-30 07:36:08 WARNING ai.octoco.legacyservice.Orders rejected order: customer is required
+2026-06-30 07:36:08 INFO ai.octoco.legacyservice.App POST /orders 400 error="customer is required"
+2026-06-30 07:36:44 INFO ai.octoco.legacyservice.App GET /orders 200 count=26
+2026-06-30 07:38:10 INFO ai.octoco.legacyservice.App GET /orders/00000045 200 status=CANCELLED
+2026-06-30 07:38:29 INFO ai.octoco.legacyservice.App GET /orders/00000006 200 status=NEW
+DEBUG: POST /orders payload={customer=Stark Supplies, items=[{sku=SKU-0005, qty=4, unitPrice=7.25}, {sku=SKU-0001, qty=4, unitPrice=12.5}, {sku=SKU-0009, qty=2, unitPrice=4.95}]}
+2026-06-30 07:38:53 INFO ai.octoco.legacyservice.Orders order 00000064 created customer=Stark Supplies items=3 total=88.90
+created order 00000064 total=88.9
+2026-06-30 07:38:53 INFO ai.octoco.legacyservice.App POST /orders 201 id=00000064 total=88.90
+2026-06-30 07:40:05 INFO ai.octoco.legacyservice.App GET /report 200 date=2026-06-30 orders=7 total=805.92
+2026-06-30 07:40:59 INFO ai.octoco.legacyservice.App GET /orders 200 count=6
+2026-06-30 07:41:28 INFO ai.octoco.legacyservice.App GET /orders/00000002 200 status=SHIPPED
+2026-06-30 07:42:17 INFO ai.octoco.legacyservice.App GET /orders/00000025 200 status=CANCELLED
+2026-06-30 07:42:49 INFO ai.octoco.legacyservice.App GET /orders/00000054 200 status=CANCELLED
+2026-06-30 07:43:38 INFO ai.octoco.legacyservice.App GET /orders 200 count=36
+DEBUG: POST /orders payload={customer=Soylent Foods, items=[{sku=SKU-0004, qty=3, unitPrice=12.5}, {sku=SKU-0009, qty=3, unitPrice=8.8}, {sku=SKU-0008, qty=2, unitPrice=7.25}]}
+2026-06-30 07:44:19 INFO ai.octoco.legacyservice.Orders order 00000065 created customer=Soylent Foods items=3 total=78.40
+created order 00000065 total=78.4
+2026-06-30 07:44:19 INFO ai.octoco.legacyservice.App POST /orders 201 id=00000065 total=78.40
+DEBUG: POST /orders payload={customer=Hooli, items=[{sku=SKU-0004, qty=2, unitPrice=4.95}, {sku=SKU-0007, qty=3, unitPrice=8.8}, {sku=SKU-0001, qty=1, unitPrice=7.25}]}
+2026-06-30 07:45:39 INFO ai.octoco.legacyservice.Orders order 00000066 created customer=Hooli items=3 total=43.55
+created order 00000066 total=43.55
+2026-06-30 07:45:39 INFO ai.octoco.legacyservice.App POST /orders 201 id=00000066 total=43.55
+2026-06-30 07:46:29 INFO ai.octoco.legacyservice.App GET /orders/00000037 200 status=PAID
+2026-06-30 07:47:59 WARNING ai.octoco.legacyservice.Orders rejected order: discount_pct out of range
+2026-06-30 07:47:59 INFO ai.octoco.legacyservice.App POST /orders 400 error="discount_pct out of range"
+2026-06-30 07:48:33 INFO ai.octoco.legacyservice.App GET /orders 200 count=10
+2026-06-30 07:49:00 INFO ai.octoco.legacyservice.App GET /orders/00000035 200 status=NEW
+2026-06-30 07:50:17 INFO ai.octoco.legacyservice.App GET /orders 200 count=18
+2026-06-30 07:51:23 INFO ai.octoco.legacyservice.App GET /orders/00000035 200 status=SHIPPED
+DEBUG: POST /orders payload={customer=Initech, items=[{sku=SKU-0007, qty=3, unitPrice=8.8}, {sku=SKU-0004, qty=4, unitPrice=12.5}, {sku=SKU-0005, qty=3, unitPrice=7.25}]}
+2026-06-30 07:52:20 INFO ai.octoco.legacyservice.Orders order 00000067 created customer=Initech items=3 total=98.15
+created order 00000067 total=98.15
+2026-06-30 07:52:20 INFO ai.octoco.legacyservice.App POST /orders 201 id=00000067 total=98.15
+2026-06-30 07:53:33 INFO ai.octoco.legacyservice.App GET /orders/00000030 404
+2026-06-30 07:54:52 INFO ai.octoco.legacyservice.App GET /orders/00000020 404
+2026-06-30 07:56:10 INFO ai.octoco.legacyservice.App GET /orders/00000052 200 status=PAID
+2026-06-30 07:57:28 INFO ai.octoco.legacyservice.App GET /orders 200 count=44
+2026-06-30 07:58:22 INFO ai.octoco.legacyservice.App GET /orders/00000054 200 status=PAID
+2026-06-30 07:58:39 WARNING ai.octoco.legacyservice.Orders rejected order: at least one item is required
+2026-06-30 07:58:39 INFO ai.octoco.legacyservice.App POST /orders 400 error="at least one item is required"
+2026-06-30 07:59:24 INFO ai.octoco.legacyservice.App GET /report 200 date=2026-06-30 orders=10 total=1089.15
+2026-06-30 07:59:43 INFO ai.octoco.legacyservice.App GET /orders/00000026 200 status=SHIPPED
+2026-06-30 08:00:13 INFO ai.octoco.legacyservice.App GET /orders 200 count=13
+2026-06-30 08:00:57 WARNING ai.octoco.legacyservice.Orders rejected order: customer is required
+2026-06-30 08:00:57 INFO ai.octoco.legacyservice.App POST /orders 400 error="customer is required"
+2026-06-30 08:01:32 INFO ai.octoco.legacyservice.App GET /report 200 date=2026-06-30 orders=10 total=1330.50
+2026-06-30 08:01:57 WARNING ai.octoco.legacyservice.Orders rejected order: customer is required
+2026-06-30 08:01:57 INFO ai.octoco.legacyservice.App POST /orders 400 error="customer is required"
+DEBUG: POST /orders payload={customer=Wayne Retail, items=[{sku=SKU-0003, qty=2, unitPrice=19.99}, {sku=SKU-0003, qty=3, unitPrice=7.25}, {sku=SKU-0006, qty=2, unitPrice=7.25}]}
+2026-06-30 08:02:47 INFO ai.octoco.legacyservice.Orders order 00000068 created customer=Wayne Retail items=3 total=76.23
+created order 00000068 total=76.23
+2026-06-30 08:02:47 INFO ai.octoco.legacyservice.App POST /orders 201 id=00000068 total=76.23
+2026-06-30 08:03:57 INFO ai.octoco.legacyservice.App GET /orders/00000062 200 status=NEW
+2026-06-30 08:04:26 INFO ai.octoco.legacyservice.App GET /orders 200 count=22
+2026-06-30 08:05:43 INFO ai.octoco.legacyservice.App GET /orders 200 count=40
+DEBUG: POST /orders payload={customer=Stark Supplies, items=[{sku=SKU-0001, qty=4, unitPrice=4.95}, {sku=SKU-0009, qty=4, unitPrice=4.95}, {sku=SKU-0003, qty=1, unitPrice=7.25}]}
+2026-06-30 08:06:43 INFO ai.octoco.legacyservice.Orders order 00000069 created customer=Stark Supplies items=3 total=46.85
+created order 00000069 total=46.85
+2026-06-30 08:06:43 INFO ai.octoco.legacyservice.App POST /orders 201 id=00000069 total=46.85
+2026-06-30 08:07:08 INFO ai.octoco.legacyservice.App GET /orders/00000034 200 status=SHIPPED
+2026-06-30 08:08:07 INFO ai.octoco.legacyservice.App GET /orders/00000020 200 status=NEW
+2026-06-30 08:08:27 INFO ai.octoco.legacyservice.App GET /report 200 date=2026-06-30 orders=4 total=793.94
+2026-06-30 08:08:52 WARNING ai.octoco.legacyservice.Orders rejected order: at least one item is required
+2026-06-30 08:08:52 INFO ai.octoco.legacyservice.App POST /orders 400 error="at least one item is required"
+2026-06-30 08:09:24 INFO ai.octoco.legacyservice.App GET /orders/00000056 200 status=PAID
+2026-06-30 08:09:46 INFO ai.octoco.legacyservice.App GET /orders/00000026 404
+2026-06-30 08:10:21 INFO ai.octoco.legacyservice.App GET /orders 200 count=37
+2026-06-30 08:10:37 INFO ai.octoco.legacyservice.App GET /orders/00000018 200 status=PAID
+2026-06-30 08:10:56 INFO ai.octoco.legacyservice.App GET /orders/00000026 200 status=CANCELLED
+2026-06-30 08:11:25 INFO ai.octoco.legacyservice.App GET /orders/00000049 200 status=NEW
+2026-06-30 08:11:58 INFO ai.octoco.legacyservice.App GET /orders 200 count=39
+2026-06-30 08:12:05 INFO ai.octoco.legacyservice.App GET /report?date=2026-06-30 200 orders=9 total=1043.71
+DEBUG: POST /orders payload={customer=Stark Supplies, items=[{sku=SKU-0004, qty=3, unitPrice=12.5}, {sku=SKU-0007, qty=4, unitPrice=19.99}]}
+2026-06-30 08:12:56 INFO ai.octoco.legacyservice.Orders order 00000070 created customer=Stark Supplies items=2 total=117.46
+created order 00000070 total=117.46
+2026-06-30 08:12:56 INFO ai.octoco.legacyservice.App POST /orders 201 id=00000070 total=117.46
+2026-06-30 08:13:33 INFO ai.octoco.legacyservice.App GET /orders 200 count=18
+2026-06-30 08:14:28 INFO ai.octoco.legacyservice.App GET /orders/00000010 200 status=NEW
+2026-06-30 08:15:00 INFO ai.octoco.legacyservice.App GET /orders/00000057 200 status=PAID
+2026-06-30 08:16:00 WARNING ai.octoco.legacyservice.Orders rejected order: customer is required
+2026-06-30 08:16:00 INFO ai.octoco.legacyservice.App POST /orders 400 error="customer is required"
+2026-06-30 08:16:55 INFO ai.octoco.legacyservice.App GET /orders/00000005 200 status=NEW
+DEBUG: POST /orders payload={customer=Wayne Retail, items=[{sku=SKU-0007, qty=3, unitPrice=7.25}, {sku=SKU-0006, qty=2, unitPrice=12.5}]}
+2026-06-30 08:17:15 INFO ai.octoco.legacyservice.Orders order 00000071 created customer=Wayne Retail items=2 total=46.75
+created order 00000071 total=46.75
+2026-06-30 08:17:15 INFO ai.octoco.legacyservice.App POST /orders 201 id=00000071 total=46.75
+2026-06-30 08:18:06 INFO ai.octoco.legacyservice.App GET /report 200 date=2026-06-30 orders=4 total=306.00
+2026-06-30 08:18:40 INFO ai.octoco.legacyservice.App GET /orders 200 count=4
+2026-06-30 08:19:35 INFO ai.octoco.legacyservice.App GET /report 200 date=2026-06-30 orders=5 total=709.12
+2026-06-30 08:20:39 INFO ai.octoco.legacyservice.App GET /orders/00000001 404
+2026-06-30 08:21:29 INFO ai.octoco.legacyservice.App GET /orders/00000051 200 status=CANCELLED
+DEBUG: POST /orders payload={customer=Hooli, items=[{sku=SKU-0007, qty=3, unitPrice=19.99}, {sku=SKU-0002, qty=4, unitPrice=7.25}, {sku=SKU-0004, qty=4, unitPrice=4.95}]}
+2026-06-30 08:22:12 INFO ai.octoco.legacyservice.Orders order 00000072 created customer=Hooli items=3 total=108.77
+created order 00000072 total=108.77
+2026-06-30 08:22:12 INFO ai.octoco.legacyservice.App POST /orders 201 id=00000072 total=108.77
+2026-06-30 08:23:37 INFO ai.octoco.legacyservice.App GET /orders/00000070 200 status=PAID
+2026-06-30 08:24:31 INFO ai.octoco.legacyservice.App GET /orders/00000014 200 status=SHIPPED
+2026-06-30 08:25:22 WARNING ai.octoco.legacyservice.Orders rejected order: discount_pct out of range
+2026-06-30 08:25:22 INFO ai.octoco.legacyservice.App POST /orders 400 error="discount_pct out of range"
+2026-06-30 08:26:43 INFO ai.octoco.legacyservice.App GET /orders 200 count=23
+DEBUG: POST /orders payload={customer=Initech, items=[{sku=SKU-0008, qty=2, unitPrice=4.95}, {sku=SKU-0001, qty=1, unitPrice=7.25}]}
+2026-06-30 08:27:48 INFO ai.octoco.legacyservice.Orders order 00000073 created customer=Initech items=2 total=17.15
+created order 00000073 total=17.15
+2026-06-30 08:27:48 INFO ai.octoco.legacyservice.App POST /orders 201 id=00000073 total=17.15
+DEBUG: POST /orders payload={customer=Vandelay, items=[{sku=SKU-0009, qty=4, unitPrice=12.5}, {sku=SKU-0009, qty=3, unitPrice=8.8}, {sku=SKU-0005, qty=2, unitPrice=8.8}]}
+2026-06-30 08:28:54 INFO ai.octoco.legacyservice.Orders order 00000074 created customer=Vandelay items=3 total=94.00
+created order 00000074 total=94.0
+2026-06-30 08:28:54 INFO ai.octoco.legacyservice.App POST /orders 201 id=00000074 total=94.00
+2026-06-30 08:30:10 INFO ai.octoco.legacyservice.App GET /orders 200 count=12
+2026-06-30 08:30:46 INFO ai.octoco.legacyservice.App GET /orders/00000068 200 status=SHIPPED
+2026-06-30 08:31:40 INFO ai.octoco.legacyservice.App GET /orders/00000061 200 status=NEW
+2026-06-30 08:32:38 INFO ai.octoco.legacyservice.App GET /orders/00000047 200 status=PAID
+2026-06-30 08:32:57 INFO ai.octoco.legacyservice.App GET /orders 200 count=20
+2026-06-30 08:34:24 INFO ai.octoco.legacyservice.App GET /orders/00000019 200 status=PAID
+2026-06-30 08:35:49 INFO ai.octoco.legacyservice.App GET /orders/00000074 200 status=PAID
+DEBUG: POST /orders payload={customer=Globex, items=[{sku=SKU-0005, qty=4, unitPrice=19.99}, {sku=SKU-0007, qty=3, unitPrice=19.99}, {sku=SKU-0007, qty=1, unitPrice=19.99}]}
+2026-06-30 08:36:06 INFO ai.octoco.legacyservice.Orders order 00000075 created customer=Globex items=3 total=159.92
+created order 00000075 total=159.92
+2026-06-30 08:36:06 INFO ai.octoco.legacyservice.App POST /orders 201 id=00000075 total=159.92
+DEBUG: POST /orders payload={customer=Vandelay, items=[{sku=SKU-0003, qty=2, unitPrice=8.8}, {sku=SKU-0009, qty=4, unitPrice=4.95}]}
+2026-06-30 08:37:04 INFO ai.octoco.legacyservice.Orders order 00000076 created customer=Vandelay items=2 total=37.40
+created order 00000076 total=37.4
+2026-06-30 08:37:04 INFO ai.octoco.legacyservice.App POST /orders 201 id=00000076 total=37.40
+2026-06-30 08:37:55 INFO ai.octoco.legacyservice.App GET /orders/00000059 200 status=PAID
+2026-06-30 08:38:44 INFO ai.octoco.legacyservice.App GET /orders 200 count=7
+2026-06-30 08:40:00 INFO ai.octoco.legacyservice.App GET /orders/00000055 404
+2026-06-30 08:40:30 INFO ai.octoco.legacyservice.App GET /orders/00000047 200 status=CANCELLED
+2026-06-30 08:41:11 INFO ai.octoco.legacyservice.App GET /orders/00000039 200 status=CANCELLED
+2026-06-30 08:41:32 INFO ai.octoco.legacyservice.App GET /orders 200 count=15
+DEBUG: POST /orders payload={customer=Soylent Foods, items=[{sku=SKU-0002, qty=2, unitPrice=7.25}, {sku=SKU-0009, qty=3, unitPrice=12.5}, {sku=SKU-0001, qty=2, unitPrice=7.25}]}
+2026-06-30 08:42:11 INFO ai.octoco.legacyservice.Orders order 00000077 created customer=Soylent Foods items=3 total=66.50
+created order 00000077 total=66.5
+2026-06-30 08:42:11 INFO ai.octoco.legacyservice.App POST /orders 201 id=00000077 total=66.50
+2026-06-30 08:43:36 INFO ai.octoco.legacyservice.App GET /orders 200 count=45
+2026-06-30 08:44:39 INFO ai.octoco.legacyservice.App GET /orders 200 count=1
+DEBUG: POST /orders payload={customer=Globex, items=[{sku=SKU-0007, qty=2, unitPrice=19.99}, {sku=SKU-0001, qty=1, unitPrice=7.25}, {sku=SKU-0006, qty=2, unitPrice=7.25}]}
+2026-06-30 08:45:50 INFO ai.octoco.legacyservice.Orders order 00000078 created customer=Globex items=3 total=61.73
+created order 00000078 total=61.73
+2026-06-30 08:45:50 INFO ai.octoco.legacyservice.App POST /orders 201 id=00000078 total=61.73
+2026-06-30 08:47:11 INFO ai.octoco.legacyservice.App GET /report 200 date=2026-06-30 orders=12 total=1382.65
+2026-06-30 08:47:49 INFO ai.octoco.legacyservice.App GET /orders 200 count=7
+2026-06-30 08:48:28 INFO ai.octoco.legacyservice.App GET /report 200 date=2026-06-30 orders=7 total=1324.69
+DEBUG: POST /orders payload={customer=Acme Ltd, items=[{sku=SKU-0003, qty=3, unitPrice=7.25}, {sku=SKU-0006, qty=3, unitPrice=7.25}, {sku=SKU-0002, qty=1, unitPrice=12.5}]}
+2026-06-30 08:49:12 INFO ai.octoco.legacyservice.Orders order 00000079 created customer=Acme Ltd items=3 total=56.00
+created order 00000079 total=56.0
+2026-06-30 08:49:12 INFO ai.octoco.legacyservice.App POST /orders 201 id=00000079 total=56.00
+DEBUG: POST /orders payload={customer=Hooli, items=[{sku=SKU-0009, qty=2, unitPrice=19.99}]}
+2026-06-30 08:50:35 INFO ai.octoco.legacyservice.Orders order 00000080 created customer=Hooli items=1 total=39.98
+created order 00000080 total=39.98
+2026-06-30 08:50:35 INFO ai.octoco.legacyservice.App POST /orders 201 id=00000080 total=39.98
+2026-06-30 08:51:43 WARNING ai.octoco.legacyservice.Orders rejected order: at least one item is required
+2026-06-30 08:51:43 INFO ai.octoco.legacyservice.App POST /orders 400 error="at least one item is required"
+2026-06-30 08:52:49 INFO ai.octoco.legacyservice.App GET /orders/00000019 200 status=CANCELLED
+2026-06-30 08:53:11 WARNING ai.octoco.legacyservice.Orders rejected order: customer is required
+2026-06-30 08:53:11 INFO ai.octoco.legacyservice.App POST /orders 400 error="customer is required"
+2026-06-30 08:54:27 INFO ai.octoco.legacyservice.App GET /orders/00000070 200 status=PAID
+2026-06-30 08:55:02 INFO ai.octoco.legacyservice.App GET /orders/00000080 200 status=SHIPPED
+2026-06-30 08:56:29 INFO ai.octoco.legacyservice.App GET /report 200 date=2026-06-30 orders=8 total=1148.00
+DEBUG: POST /orders payload={customer=Wayne Retail, items=[{sku=SKU-0004, qty=2, unitPrice=7.25}, {sku=SKU-0002, qty=2, unitPrice=8.8}]}
+2026-06-30 08:56:53 INFO ai.octoco.legacyservice.Orders order 00000081 created customer=Wayne Retail items=2 total=32.10
+created order 00000081 total=32.1
+2026-06-30 08:56:53 INFO ai.octoco.legacyservice.App POST /orders 201 id=00000081 total=32.10
+2026-06-30 08:58:22 WARNING ai.octoco.legacyservice.Orders rejected order: discount_pct out of range
+2026-06-30 08:58:22 INFO ai.octoco.legacyservice.App POST /orders 400 error="discount_pct out of range"
+2026-06-30 08:59:46 INFO ai.octoco.legacyservice.App GET /orders/00000014 200 status=PAID
+2026-06-30 09:01:12 INFO ai.octoco.legacyservice.App GET /report 200 date=2026-06-30 orders=10 total=1328.25
+DEBUG: POST /orders payload={customer=Wayne Retail, items=[{sku=SKU-0007, qty=1, unitPrice=19.99}, {sku=SKU-0008, qty=2, unitPrice=19.99}, {sku=SKU-0009, qty=4, unitPrice=12.5}]}
+2026-06-30 09:02:29 INFO ai.octoco.legacyservice.Orders order 00000082 created customer=Wayne Retail items=3 total=109.97
+created order 00000082 total=109.97
+2026-06-30 09:02:29 INFO ai.octoco.legacyservice.App POST /orders 201 id=00000082 total=109.97
+2026-06-30 09:02:53 INFO ai.octoco.legacyservice.App GET /orders/00000046 200 status=CANCELLED
+2026-06-30 09:04:04 INFO ai.octoco.legacyservice.App GET /orders/00000008 200 status=SHIPPED
+2026-06-30 09:04:58 INFO ai.octoco.legacyservice.App GET /orders/00000040 200 status=SHIPPED
+2026-06-30 09:06:21 INFO ai.octoco.legacyservice.App GET /orders/00000047 200 status=PAID
+2026-06-30 09:07:26 INFO ai.octoco.legacyservice.App GET /orders/00000006 200 status=SHIPPED
+DEBUG: POST /orders payload={customer=Stark Supplies, items=[{sku=SKU-0007, qty=2, unitPrice=8.8}, {sku=SKU-0005, qty=4, unitPrice=7.25}, {sku=SKU-0001, qty=4, unitPrice=7.25}]}
+2026-06-30 09:08:46 INFO ai.octoco.legacyservice.Orders order 00000083 created customer=Stark Supplies items=3 total=75.60
+created order 00000083 total=75.6
+2026-06-30 09:08:46 INFO ai.octoco.legacyservice.App POST /orders 201 id=00000083 total=75.60
+2026-06-30 09:09:36 INFO ai.octoco.legacyservice.App GET /orders 200 count=34
+2026-06-30 09:10:23 INFO ai.octoco.legacyservice.App GET /orders/00000028 200 status=NEW
+DEBUG: POST /orders payload={customer=Hooli, items=[{sku=SKU-0005, qty=3, unitPrice=12.5}]}
+2026-06-30 09:11:44 INFO ai.octoco.legacyservice.Orders order 00000084 created customer=Hooli items=1 total=37.50
+created order 00000084 total=37.5
+2026-06-30 09:11:44 INFO ai.octoco.legacyservice.App POST /orders 201 id=00000084 total=37.50
+DEBUG: POST /orders payload={customer=Globex, items=[{sku=SKU-0004, qty=1, unitPrice=8.8}, {sku=SKU-0006, qty=1, unitPrice=8.8}]}
+2026-06-30 09:12:22 INFO ai.octoco.legacyservice.Orders order 00000085 created customer=Globex items=2 total=17.60
+created order 00000085 total=17.6
+2026-06-30 09:12:22 INFO ai.octoco.legacyservice.App POST /orders 201 id=00000085 total=17.60
+2026-06-30 09:13:07 INFO ai.octoco.legacyservice.App GET /orders/00000068 200 status=SHIPPED
+2026-06-30 09:14:30 INFO ai.octoco.legacyservice.App GET /orders 200 count=49
+2026-06-30 09:15:05 INFO ai.octoco.legacyservice.App GET /orders 200 count=12
+2026-06-30 09:16:19 INFO ai.octoco.legacyservice.App GET /orders/00000074 200 status=SHIPPED
+2026-06-30 09:17:48 INFO ai.octoco.legacyservice.App GET /report 200 date=2026-06-30 orders=9 total=444.67
+2026-06-30 09:19:02 INFO ai.octoco.legacyservice.App GET /orders/00000002 404
+2026-06-30 09:19:32 INFO ai.octoco.legacyservice.App GET /orders/00000028 200 status=PAID
+DEBUG: POST /orders payload={customer=Globex, items=[{sku=SKU-0009, qty=3, unitPrice=12.5}, {sku=SKU-0009, qty=3, unitPrice=8.8}, {sku=SKU-0006, qty=4, unitPrice=8.8}]}
+2026-06-30 09:20:14 INFO ai.octoco.legacyservice.Orders order 00000086 created customer=Globex items=3 total=99.10
+created order 00000086 total=99.1
+2026-06-30 09:20:14 INFO ai.octoco.legacyservice.App POST /orders 201 id=00000086 total=99.10
+2026-06-30 09:20:34 INFO ai.octoco.legacyservice.App GET /report 200 date=2026-06-30 orders=6 total=1353.38
+2026-06-30 09:21:10 INFO ai.octoco.legacyservice.App GET /orders 200 count=48
+2026-06-30 09:22:29 WARNING ai.octoco.legacyservice.Orders rejected order: customer is required
+2026-06-30 09:22:29 INFO ai.octoco.legacyservice.App POST /orders 400 error="customer is required"
+DEBUG: POST /orders payload={customer=Northwind Traders, items=[{sku=SKU-0007, qty=4, unitPrice=4.95}, {sku=SKU-0001, qty=2, unitPrice=12.5}]}
+2026-06-30 09:23:58 INFO ai.octoco.legacyservice.Orders order 00000087 created customer=Northwind Traders items=2 total=44.80
+created order 00000087 total=44.8
+2026-06-30 09:23:58 INFO ai.octoco.legacyservice.App POST /orders 201 id=00000087 total=44.80
+2026-06-30 09:25:09 INFO ai.octoco.legacyservice.App GET /orders/00000043 200 status=CANCELLED
+2026-06-30 09:25:47 INFO ai.octoco.legacyservice.App GET /orders/00000006 200 status=NEW
+2026-06-30 09:26:31 INFO ai.octoco.legacyservice.App GET /orders 200 count=13
+2026-06-30 09:27:26 INFO ai.octoco.legacyservice.App GET /orders 200 count=31
+2026-06-30 09:28:49 INFO ai.octoco.legacyservice.App GET /orders 200 count=43
+DEBUG: POST /orders payload={customer=Initech, items=[{sku=SKU-0009, qty=1, unitPrice=19.99}]}
+2026-06-30 09:29:56 INFO ai.octoco.legacyservice.Orders order 00000088 created customer=Initech items=1 total=19.99
+created order 00000088 total=19.99
+2026-06-30 09:29:56 INFO ai.octoco.legacyservice.App POST /orders 201 id=00000088 total=19.99
+2026-06-30 09:30:15 INFO ai.octoco.legacyservice.App GET /orders/00000002 200 status=CANCELLED
+2026-06-30 09:30:46 INFO ai.octoco.legacyservice.App GET /orders/00000044 200 status=SHIPPED
+2026-06-30 09:31:39 INFO ai.octoco.legacyservice.App GET /orders/00000036 200 status=SHIPPED
+2026-06-30 09:32:37 INFO ai.octoco.legacyservice.App GET /orders 200 count=13
+2026-06-30 09:33:28 INFO ai.octoco.legacyservice.App GET /orders 200 count=4
+2026-06-30 09:34:53 INFO ai.octoco.legacyservice.App GET /orders/00000055 200 status=PAID
+DEBUG: POST /orders payload={customer=Soylent Foods, items=[{sku=SKU-0006, qty=1, unitPrice=19.99}, {sku=SKU-0006, qty=1, unitPrice=4.95}]}
+2026-06-30 09:35:26 INFO ai.octoco.legacyservice.Orders order 00000089 created customer=Soylent Foods items=2 total=24.94
+created order 00000089 total=24.94
+2026-06-30 09:35:26 INFO ai.octoco.legacyservice.App POST /orders 201 id=00000089 total=24.94
+2026-06-30 09:36:37 INFO ai.octoco.legacyservice.App GET /orders/00000038 200 status=SHIPPED
+DEBUG: POST /orders payload={customer=Vandelay, items=[{sku=SKU-0008, qty=1, unitPrice=4.95}, {sku=SKU-0001, qty=3, unitPrice=12.5}]}
+2026-06-30 09:37:10 INFO ai.octoco.legacyservice.Orders order 00000090 created customer=Vandelay items=2 total=42.45
+created order 00000090 total=42.45
+2026-06-30 09:37:10 INFO ai.octoco.legacyservice.App POST /orders 201 id=00000090 total=42.45
+2026-06-30 09:38:36 INFO ai.octoco.legacyservice.App GET /orders/00000028 200 status=PAID
+2026-06-30 09:39:39 INFO ai.octoco.legacyservice.App GET /orders 200 count=14
+2026-06-30 09:40:41 INFO ai.octoco.legacyservice.App GET /orders/00000034 200 status=NEW
+2026-06-30 09:41:24 INFO ai.octoco.legacyservice.App GET /orders/00000063 200 status=CANCELLED
+2026-06-30 09:41:54 WARNING ai.octoco.legacyservice.Orders rejected order: customer is required
+2026-06-30 09:41:54 INFO ai.octoco.legacyservice.App POST /orders 400 error="customer is required"
+2026-06-30 09:43:20 INFO ai.octoco.legacyservice.App GET /orders/00000052 200 status=SHIPPED
+2026-06-30 09:43:49 INFO ai.octoco.legacyservice.App GET /orders/00000022 200 status=NEW
+DEBUG: POST /orders payload={customer=Acme Ltd, items=[{sku=SKU-0003, qty=3, unitPrice=8.8}, {sku=SKU-0004, qty=3, unitPrice=8.8}]}
+2026-06-30 09:45:13 INFO ai.octoco.legacyservice.Orders order 00000091 created customer=Acme Ltd items=2 total=52.80
+created order 00000091 total=52.8
+2026-06-30 09:45:13 INFO ai.octoco.legacyservice.App POST /orders 201 id=00000091 total=52.80
+2026-06-30 09:46:10 INFO ai.octoco.legacyservice.App GET /orders 200 count=40
+2026-06-30 09:47:25 INFO ai.octoco.legacyservice.App GET /orders 200 count=47
+2026-06-30 09:47:45 WARNING ai.octoco.legacyservice.Orders rejected order: customer is required
+2026-06-30 09:47:45 INFO ai.octoco.legacyservice.App POST /orders 400 error="customer is required"
+DEBUG: POST /orders payload={customer=Vandelay, items=[{sku=SKU-0007, qty=1, unitPrice=12.5}, {sku=SKU-0005, qty=3, unitPrice=19.99}]}
+2026-06-30 09:48:19 INFO ai.octoco.legacyservice.Orders order 00000092 created customer=Vandelay items=2 total=72.47
+created order 00000092 total=72.47
+2026-06-30 09:48:19 INFO ai.octoco.legacyservice.App POST /orders 201 id=00000092 total=72.47
+2026-06-30 09:48:38 INFO ai.octoco.legacyservice.App GET /orders/00000017 200 status=PAID
+DEBUG: POST /orders payload={customer=Hooli, items=[{sku=SKU-0006, qty=1, unitPrice=19.99}]}
+2026-06-30 09:49:40 INFO ai.octoco.legacyservice.Orders order 00000093 created customer=Hooli items=1 total=19.99
+created order 00000093 total=19.99
+2026-06-30 09:49:40 INFO ai.octoco.legacyservice.App POST /orders 201 id=00000093 total=19.99
+2026-06-30 09:50:20 INFO ai.octoco.legacyservice.App GET /orders/00000052 200 status=PAID
+2026-06-30 09:50:39 INFO ai.octoco.legacyservice.App GET /orders/00000077 404
+2026-06-30 09:51:57 INFO ai.octoco.legacyservice.App GET /orders/00000091 200 status=SHIPPED
+2026-06-30 09:52:35 INFO ai.octoco.legacyservice.App GET /report 200 date=2026-06-30 orders=10 total=896.03
+DEBUG: POST /orders payload={customer=Acme Ltd, items=[{sku=SKU-0001, qty=1, unitPrice=19.99}, {sku=SKU-0005, qty=3, unitPrice=12.5}]}
+2026-06-30 09:54:01 INFO ai.octoco.legacyservice.Orders order 00000094 created customer=Acme Ltd items=2 total=57.49
+created order 00000094 total=57.49
+2026-06-30 09:54:01 INFO ai.octoco.legacyservice.App POST /orders 201 id=00000094 total=57.49
+2026-06-30 09:54:52 INFO ai.octoco.legacyservice.App GET /orders/00000054 200 status=NEW
+2026-06-30 09:55:20 INFO ai.octoco.legacyservice.App GET /orders/00000018 200 status=CANCELLED
+2026-06-30 09:56:11 INFO ai.octoco.legacyservice.App GET /report 200 date=2026-06-30 orders=12 total=1018.01
+2026-06-30 09:57:31 INFO ai.octoco.legacyservice.App GET /orders/00000027 200 status=SHIPPED
+2026-06-30 09:58:51 INFO ai.octoco.legacyservice.App GET /orders 200 count=32
+2026-06-30 10:00:02 INFO ai.octoco.legacyservice.App GET /orders/00000019 200 status=CANCELLED
+2026-06-30 10:01:13 INFO ai.octoco.legacyservice.App GET /orders/00000089 200 status=NEW
+DEBUG: POST /orders payload={customer=Vandelay, items=[{sku=SKU-0007, qty=3, unitPrice=12.5}, {sku=SKU-0009, qty=2, unitPrice=19.99}, {sku=SKU-0008, qty=3, unitPrice=19.99}]}
+2026-06-30 10:02:21 INFO ai.octoco.legacyservice.Orders order 00000095 created customer=Vandelay items=3 total=137.45
+created order 00000095 total=137.45
+2026-06-30 10:02:21 INFO ai.octoco.legacyservice.App POST /orders 201 id=00000095 total=137.45
+2026-06-30 10:02:59 WARNING ai.octoco.legacyservice.Orders rejected order: at least one item is required
+2026-06-30 10:02:59 INFO ai.octoco.legacyservice.App POST /orders 400 error="at least one item is required"
+DEBUG: POST /orders payload={customer=Wayne Retail, items=[{sku=SKU-0009, qty=2, unitPrice=4.95}]}
+2026-06-30 10:04:16 INFO ai.octoco.legacyservice.Orders order 00000096 created customer=Wayne Retail items=1 total=9.90
+created order 00000096 total=9.9
+2026-06-30 10:04:16 INFO ai.octoco.legacyservice.App POST /orders 201 id=00000096 total=9.90
+2026-06-30 10:04:41 INFO ai.octoco.legacyservice.App GET /orders 200 count=33
+2026-06-30 10:05:48 INFO ai.octoco.legacyservice.App GET /orders 200 count=21
+2026-06-30 10:06:17 INFO ai.octoco.legacyservice.App GET /orders/00000090 200 status=PAID
+2026-06-30 10:06:37 INFO ai.octoco.legacyservice.App GET /orders/00000053 200 status=SHIPPED
+2026-06-30 10:07:28 INFO ai.octoco.legacyservice.App GET /orders/00000036 200 status=NEW
+DEBUG: POST /orders payload={customer=Soylent Foods, items=[{sku=SKU-0002, qty=2, unitPrice=19.99}, {sku=SKU-0007, qty=4, unitPrice=7.25}]}
+2026-06-30 10:08:07 INFO ai.octoco.legacyservice.Orders order 00000097 created customer=Soylent Foods items=2 total=68.98
+created order 00000097 total=68.98
+2026-06-30 10:08:07 INFO ai.octoco.legacyservice.App POST /orders 201 id=00000097 total=68.98
+2026-06-30 10:08:33 INFO ai.octoco.legacyservice.App GET /orders/00000081 404
+2026-06-30 23:50:05 INFO ai.octoco.legacyservice.Reconcile reconcile_day start date=2026-06-30
+2026-06-30 23:50:08 WARNING ai.octoco.legacyservice.Reconcile total mismatch order=00000021 stored=89.95 recomputed=89.96 delta=0.01
