@@ -1,0 +1,72 @@
+# Synced from _shared/java-project.gitignore.template
+# Canonical .gitignore for Java/Maven workshop example projects.
+#
+# Every Java-stack example under combo*/examples/java/ should use this as a
+# baseline. Update here first; sync downstream.
+#
+# To sync a project:
+#   cp _shared/java-project.gitignore.template <project>/.gitignore
+#
+# IMPORTANT: do NOT ignore .mvn/ or mvnw / mvnw.cmd -- the committed Maven
+# wrapper must reach attendees (JDK only; no system Maven required).
+
+# --- environment & secrets --------------------------------------------------
+.env
+.env.*
+!.env.example
+
+# --- Maven / Gradle build output --------------------------------------------
+target/
+build/
+out/
+.gradle/
+**/build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# --- package artefacts ------------------------------------------------------
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+*.zip
+*.tar
+*.tar.gz
+*.rar
+hs_err_pid*
+replay_pid*
+
+# Keep wrapper jars: they live under .mvn/wrapper/ and must stay tracked.
+!.mvn/wrapper/maven-wrapper.jar
+
+# --- test / coverage output -------------------------------------------------
+.jacoco/
+jacoco.exec
+*.exec
+test-output/
+surefire-reports/
+failsafe-reports/
+
+# --- IDE / tooling ----------------------------------------------------------
+.idea/
+*.iml
+*.iws
+*.ipr
+.project
+.classpath
+.settings/
+.factorypath
+.vscode/
+!.vscode/settings.json
+!.vscode/extensions.json
+*.swp
+*~
+
+# --- OS ---------------------------------------------------------------------
+.DS_Store
+Thumbs.db
+
+# --- workshop scratch -------------------------------------------------------
+# Attendees experiment inside the sample repo; don't fight them over it.
+scratch/

@@ -15,6 +15,7 @@ course repo on every push to main; do not edit directly.
 - [`expense-categoriser-csharp`](combo2-advanced-agentic-engineering/expense-categoriser-csharp)
 - [`expense-categoriser-ts`](combo2-advanced-agentic-engineering/expense-categoriser-ts)
 - [`expense-categoriser`](combo2-advanced-agentic-engineering/expense-categoriser)
+- [`java`](combo2-advanced-agentic-engineering/java)
 - [`legacy-service-csharp`](combo2-advanced-agentic-engineering/legacy-service-csharp)
 - [`legacy-service-ts`](combo2-advanced-agentic-engineering/legacy-service-ts)
 - [`legacy-service`](combo2-advanced-agentic-engineering/legacy-service)
