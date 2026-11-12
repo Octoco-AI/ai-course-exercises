@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "zabbix": {
+      "type": "http",
+      "url": "${ZABBIX_MCP_URL}",
+      "headers": {
+        "Authorization": "Bearer ${ZABBIX_API_TOKEN}"
+      }
+    }
+  }
+}

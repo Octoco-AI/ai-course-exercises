@@ -59,3 +59,11 @@ course repo on every push to main; do not edit directly.
 
 - [`claude-code-skills`](combo6-ai-for-product-teams/claude-code-skills)
 
+## combo8-agentic-devops
+
+- [`ops-starter-kit`](combo8-agentic-devops/ops-starter-kit)
+
+## combo9-security-assessments
+
+- [`assessment-practice-app`](combo9-security-assessments/assessment-practice-app)
+

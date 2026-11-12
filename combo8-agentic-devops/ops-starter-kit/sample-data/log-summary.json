@@ -1,0 +1,78 @@
+{
+  "_about": "Synthetic. The shape an Elasticsearch aggregation returns: counts per hour and per message category, never raw log lines. Produced by the query in 'request'. Hosts are under example.internal; everything is invented.",
+  "request": {
+    "index": "logs-orders-*",
+    "body": {
+      "size": 0,
+      "track_total_hits": true,
+      "query": {
+        "bool": {
+          "filter": [
+            { "term": { "service.name": "orders-api" } },
+            { "terms": { "log.level": ["ERROR", "WARN"] } },
+            { "range": { "@timestamp": { "gte": "2026-10-14T10:00:00Z", "lt": "2026-10-14T15:00:00Z" } } }
+          ]
+        }
+      },
+      "aggs": {
+        "per_hour": {
+          "date_histogram": { "field": "@timestamp", "fixed_interval": "1h" },
+          "aggs": { "by_category": { "terms": { "field": "error.type", "size": 5 } } }
+        },
+        "top_categories": { "categorize_text": { "field": "message", "size": 6 } }
+      }
+    }
+  },
+  "took": 412,
+  "timed_out": false,
+  "hits": { "total": { "value": 48211, "relation": "eq" } },
+  "aggregations": {
+    "per_hour": {
+      "buckets": [
+        { "key_as_string": "2026-10-14T10:00:00.000Z", "doc_count": 61, "by_category": { "buckets": [
+          { "key": "PaymentsTimeoutException", "doc_count": 38 },
+          { "key": "OptimisticLockingFailureException", "doc_count": 23 } ] } },
+        { "key_as_string": "2026-10-14T11:00:00.000Z", "doc_count": 74, "by_category": { "buckets": [
+          { "key": "PaymentsTimeoutException", "doc_count": 44 },
+          { "key": "OptimisticLockingFailureException", "doc_count": 30 } ] } },
+        { "key_as_string": "2026-10-14T12:00:00.000Z", "doc_count": 69, "by_category": { "buckets": [
+          { "key": "PaymentsTimeoutException", "doc_count": 41 },
+          { "key": "OptimisticLockingFailureException", "doc_count": 28 } ] } },
+        { "key_as_string": "2026-10-14T13:00:00.000Z", "doc_count": 3127, "by_category": { "buckets": [
+          { "key": "SQLTransientConnectionException", "doc_count": 2214 },
+          { "key": "PSQLException", "doc_count": 801 },
+          { "key": "PaymentsTimeoutException", "doc_count": 72 },
+          { "key": "OptimisticLockingFailureException", "doc_count": 40 } ] } },
+        { "key_as_string": "2026-10-14T14:00:00.000Z", "doc_count": 44880, "by_category": { "buckets": [
+          { "key": "SQLTransientConnectionException", "doc_count": 30102 },
+          { "key": "PSQLException", "doc_count": 14512 },
+          { "key": "PaymentsTimeoutException", "doc_count": 191 },
+          { "key": "OptimisticLockingFailureException", "doc_count": 75 } ] } }
+      ]
+    },
+    "top_categories": {
+      "buckets": [
+        { "doc_count": 32316, "key": "HikariPool-1 Connection is not available request timed out after ms total active idle waiting", "regex": ".*?HikariPool-1.+?Connection.+?is.+?not.+?available.*?" },
+        { "doc_count": 11027, "key": "FATAL sorry too many clients already", "regex": ".*?FATAL.+?sorry.+?too.+?many.+?clients.+?already.*?" },
+        { "doc_count": 4286, "key": "FATAL remaining connection slots are reserved for non-replication superuser connections", "regex": ".*?FATAL.+?remaining.+?connection.+?slots.*?" },
+        { "doc_count": 386, "key": "Upstream payments-api timeout after ms", "regex": ".*?Upstream.+?payments-api.+?timeout.*?" },
+        { "doc_count": 196, "key": "Optimistic locking failed for order version", "regex": ".*?Optimistic.+?locking.+?failed.*?" }
+      ]
+    }
+  },
+  "daily_warnings_by_category": {
+    "_about": "A second aggregation over 2026-10-05 to 2026-10-14, WARN only, per day. Note the leak warnings stop the day leak detection was switched off — absence of a warning is not absence of a leak.",
+    "buckets": [
+      { "day": "2026-10-05", "HikariPool leak detection triggered": 14, "Slow query > 2s": 22 },
+      { "day": "2026-10-06", "HikariPool leak detection triggered": 0, "Slow query > 2s": 25 },
+      { "day": "2026-10-07", "HikariPool leak detection triggered": 0, "Slow query > 2s": 21 },
+      { "day": "2026-10-08", "HikariPool leak detection triggered": 0, "Slow query > 2s": 27 },
+      { "day": "2026-10-09", "HikariPool leak detection triggered": 0, "Slow query > 2s": 24 },
+      { "day": "2026-10-10", "HikariPool leak detection triggered": 0, "Slow query > 2s": 9 },
+      { "day": "2026-10-11", "HikariPool leak detection triggered": 0, "Slow query > 2s": 8 },
+      { "day": "2026-10-12", "HikariPool leak detection triggered": 0, "Slow query > 2s": 26 },
+      { "day": "2026-10-13", "HikariPool leak detection triggered": 0, "Slow query > 2s": 29 },
+      { "day": "2026-10-14", "HikariPool leak detection triggered": 0, "Slow query > 2s": 41 }
+    ]
+  }
+}

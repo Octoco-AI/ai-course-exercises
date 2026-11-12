@@ -1,0 +1,61 @@
+{
+  "mcpServers": {
+    "zabbix": {
+      "type": "http",
+      "url": "${ZABBIX_MCP_URL}",
+      "headers": {
+        "Authorization": "Bearer ${ZABBIX_API_TOKEN}"
+      }
+    },
+    "elastic": {
+      "type": "http",
+      "url": "${KIBANA_URL}/api/agent_builder/mcp",
+      "headers": {
+        "Authorization": "ApiKey ${ELASTIC_MCP_API_KEY}"
+      }
+    },
+    "argocd": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "argocd-mcp@0.9.0",
+        "stdio"
+      ],
+      "env": {
+        "ARGOCD_BASE_URL": "${ARGOCD_BASE_URL}",
+        "ARGOCD_API_TOKEN": "${ARGOCD_API_TOKEN}",
+        "MCP_READ_ONLY": "true"
+      }
+    },
+    "kubernetes": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "kubernetes-mcp-server@0.1.2",
+        "--config",
+        "${KUBE_MCP_CONFIG}"
+      ],
+      "env": {
+        "KUBECONFIG": "${OPS_READER_KUBECONFIG}"
+      }
+    },
+    "grafana": {
+      "command": "uvx",
+      "args": [
+        "mcp-grafana@2.2.0",
+        "--disable-write"
+      ],
+      "env": {
+        "GRAFANA_URL": "${GRAFANA_URL}",
+        "GRAFANA_SERVICE_ACCOUNT_TOKEN": "${GRAFANA_SERVICE_ACCOUNT_TOKEN}"
+      }
+    },
+    "gitlab": {
+      "type": "http",
+      "url": "${GITLAB_URL}/api/v4/mcp",
+      "headers": {
+        "X-Gitlab-Enabled-Mcp-Server-Toolsets": "meta,core,merge_requests,repository,ci"
+      }
+    }
+  }
+}

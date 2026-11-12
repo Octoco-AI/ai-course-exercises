@@ -1,0 +1,139 @@
+# Trigger proposal as code — Zabbix template (YAML export format).
+#
+# What it adds: preventative triggers for PostgreSQL session exhaustion, the
+# alarm class from sample-data/. It does NOT collect anything new. Each item is
+# a CALCULATED item that reads an item your existing PostgreSQL template
+# already collects on the same host (the `//key` form means "this host").
+# Link this template to the same hosts as your PostgreSQL template.
+#
+# How it ships: as a draft MR to the repo that holds your Zabbix templates,
+# imported by a human or by your existing pipeline after review. An agent
+# never imports it through the API.
+#
+# Replace before use:
+#   <UPSTREAM_TOTAL_KEY>, <UPSTREAM_IDLE_IN_TX_KEY>  the keys your template uses.
+#     The defaults below (pgsql.connections.total / .idle_in_transaction) match
+#     the sample data. VERIFY: confirm the exact keys in your PostgreSQL
+#     template (Data collection → Templates → Items) before importing.
+#   Macro values  set per host where the database differs.
+#
+# VERIFY: written in the 7.0 export format. Zabbix imports older export
+# versions, but confirm on your Zabbix version (incl. 8.0) with an import
+# preview before merging.
+zabbix_export:
+  version: '7.0'
+  template_groups:
+    - uuid: 2583b2c1f5744297b320ac97d1b4f683
+      name: Templates/Databases
+  templates:
+    - uuid: aeaa29761078420187fc143fcb40335f
+      template: 'Preventative PostgreSQL sessions'
+      name: 'Preventative PostgreSQL sessions'
+      description: |
+        Leading-indicator triggers for session exhaustion. Proposed by the
+        preventative-alarms workflow after an incident review; see the MR that
+        introduced this template for the back-test and the noise estimate.
+      groups:
+        - name: Templates/Databases
+      items:
+        - uuid: d43c28c7bc6d4678afc1be0f94460645
+          name: 'Preventative: sessions in idle-in-transaction state'
+          type: CALCULATED
+          key: preventative.pg.idle_in_tx
+          delay: 1m
+          value_type: FLOAT
+          params: 'last(//pgsql.connections.idle_in_transaction)'   # <UPSTREAM_IDLE_IN_TX_KEY>
+          description: 'Sessions holding an open transaction while doing nothing. The slow signal: it climbs for days before exhaustion.'
+          tags:
+            - tag: component
+              value: sessions
+          triggers:
+            - uuid: 43ea62adbb274b008323e3d865e6bc0d
+              expression: 'min(/Preventative PostgreSQL sessions/preventative.pg.idle_in_tx,30m)>{$PG.IDLE_IN_TX.EARLY}'
+              name: 'PostgreSQL: {ITEM.LASTVALUE1} sessions idle in transaction for 30m (early warning)'
+              priority: WARNING
+              description: 'Leading indicator. Goes to the agent-visible channel for the daily digest; does not page. See 02-alarms/alarm-channels.md.'
+              manual_close: 'YES'
+              tags:
+                - tag: audience
+                  value: agent
+                - tag: class
+                  value: db-session-exhaustion
+            - uuid: 83815ea024654fe1a913c151bac9cde8
+              expression: 'min(/Preventative PostgreSQL sessions/preventative.pg.idle_in_tx,2h)>{$PG.IDLE_IN_TX.TICKET}'
+              name: 'PostgreSQL: {ITEM.LASTVALUE1} sessions idle in transaction for 2h'
+              priority: AVERAGE
+              description: 'Sustained leak. Opens a ticket for the owning team during working hours; does not page.'
+              tags:
+                - tag: audience
+                  value: human
+                - tag: route
+                  value: ticket
+                - tag: class
+                  value: db-session-exhaustion
+        - uuid: 51d4ce32b64d47e1b5685902071ab54c
+          name: 'Preventative: total sessions'
+          type: CALCULATED
+          key: preventative.pg.sessions_total
+          delay: 1m
+          value_type: FLOAT
+          params: 'last(//pgsql.connections.total)'   # <UPSTREAM_TOTAL_KEY>
+          tags:
+            - tag: component
+              value: sessions
+          triggers:
+            - uuid: c911ea887ba4499388294310bf1298b4
+              expression: 'min(/Preventative PostgreSQL sessions/preventative.pg.sessions_total,10m)>{$PG.SESSIONS.LIMIT}*{$PG.SESSIONS.HEADROOM.PCT}/100'
+              name: 'PostgreSQL: sessions above {$PG.SESSIONS.HEADROOM.PCT}% of usable for 10m'
+              priority: HIGH
+              description: 'Headroom gone. Pages on-call. Replaces a 95%-for-30m trigger that fired 20 minutes before impact.'
+              tags:
+                - tag: audience
+                  value: human
+                - tag: route
+                  value: page
+                - tag: class
+                  value: db-session-exhaustion
+        - uuid: b0851be8f21f4e9b9a7edb15fbef96e3
+          name: 'Preventative: daily peak of total sessions'
+          type: CALCULATED
+          key: preventative.pg.sessions_peak_1d
+          delay: 1h
+          value_type: FLOAT
+          params: 'max(//pgsql.connections.total,1d)'   # <UPSTREAM_TOTAL_KEY>
+          description: 'Rolling 24h maximum. Forecasting on the peak, not the raw series, keeps the daily load curve from fooling the linear fit.'
+          tags:
+            - tag: component
+              value: sessions
+          triggers:
+            - uuid: fafed41f607e4438a9831e2a113e86f6
+              expression: 'timeleft(/Preventative PostgreSQL sessions/preventative.pg.sessions_peak_1d,7d,{$PG.SESSIONS.LIMIT})<{$PG.SESSIONS.FORECAST.SECONDS}'
+              name: 'PostgreSQL: daily session peak forecast to reach the limit within 7 days'
+              priority: AVERAGE
+              description: 'Trend forecast over the last 7 days of daily peaks. Opens a ticket. timeleft() returns a very large number when the trend is flat or falling, so this stays quiet then.'
+              tags:
+                - tag: audience
+                  value: human
+                - tag: route
+                  value: ticket
+                - tag: class
+                  value: db-session-exhaustion
+      macros:
+        - macro: '{$PG.MAX_CONNECTIONS}'
+          value: '300'
+          description: '<PLACEHOLDER> SHOW max_connections on this database.'
+        - macro: '{$PG.SESSIONS.LIMIT}'
+          value: '297'
+          description: '<PLACEHOLDER> max_connections minus superuser_reserved_connections.'
+        - macro: '{$PG.SESSIONS.HEADROOM.PCT}'
+          value: '85'
+          description: 'Page when sustained sessions pass this share of the usable limit.'
+        - macro: '{$PG.IDLE_IN_TX.EARLY}'
+          value: '20'
+          description: '<PLACEHOLDER> Back-test against your own history: 30 days of normal should fire this zero times.'
+        - macro: '{$PG.IDLE_IN_TX.TICKET}'
+          value: '50'
+          description: '<PLACEHOLDER> Sustained level that warrants a ticket.'
+        - macro: '{$PG.SESSIONS.FORECAST.SECONDS}'
+          value: '604800'
+          description: 'Forecast horizon in seconds (7 days).'

@@ -1,0 +1,56 @@
+diff --git a/charts/orders-api/values-prod.yaml b/charts/orders-api/values-prod.yaml
+index 4f1c2ab..9be07d3 100644
+--- a/charts/orders-api/values-prod.yaml
++++ b/charts/orders-api/values-prod.yaml
+@@ -1,9 +1,9 @@
+ # orders-api — production values (synthetic sample for the ops starter kit)
+ # Database: ordersdb on db01.example.internal, max_connections = 300
+ image:
+   repository: registry.example.internal/orders/orders-api
+-  tag: "2.13.4"
++  tag: "2.14.0"
+   pullPolicy: IfNotPresent
+ 
+ replicaCount: 4
+ 
+@@ -11,31 +11,36 @@ autoscaling:
+   enabled: true
+   minReplicas: 4
+-  maxReplicas: 6
++  maxReplicas: 10
+   targetCPUUtilizationPercentage: 70
+ 
+ resources:
+   requests:
+     cpu: 500m
+     memory: 768Mi
+   limits:
+-    memory: 1Gi
++    memory: 1536Mi
+ 
+ database:
+   host: db01.example.internal
+   port: 5432
+   name: ordersdb
+   existingSecret: orders-api-db
+   hikari:
+-    maximumPoolSize: 10
++    maximumPoolSize: 30
+     minimumIdle: 10
+     connectionTimeoutMs: 30000
+     maxLifetimeMs: 1800000
+-    leakDetectionThresholdMs: 60000
++    leakDetectionThresholdMs: 0
+ 
++features:
++  csvExport:
++    enabled: true
++    batchSize: 5000
++
+ probes:
+   readiness:
+     path: /actuator/health/readiness
+     periodSeconds: 10
+   liveness:
+     path: /actuator/health/liveness
+     periodSeconds: 20

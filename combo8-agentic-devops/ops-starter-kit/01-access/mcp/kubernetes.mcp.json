@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "kubernetes": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "kubernetes-mcp-server@0.1.2",
+        "--config",
+        "${KUBE_MCP_CONFIG}"
+      ],
+      "env": {
+        "KUBECONFIG": "${OPS_READER_KUBECONFIG}"
+      }
+    }
+  }
+}

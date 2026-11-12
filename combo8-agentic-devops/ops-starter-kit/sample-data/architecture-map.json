@@ -1,0 +1,27 @@
+{
+  "_about": "Synthetic architecture map, in the node/edge shape most graph databases and CMDBs can export. Load only the neighbourhood of the affected service — see 03-triage/prompts/load-architecture-map.md.",
+  "exported_at": "2026-09-20T08:00:00Z",
+  "source": "<GRAPH_DB_OR_CMDB_NAME> export (synthetic)",
+  "nodes": [
+    { "id": "lb01", "kind": "LoadBalancer", "name": "lb01.example.internal", "owner": "network" },
+    { "id": "ingress", "kind": "Ingress", "name": "ingress-nginx", "cluster": "k8s-prod.example.internal", "owner": "platform" },
+    { "id": "orders-api", "kind": "Deployment", "name": "orders-api", "namespace": "orders", "cluster": "k8s-prod.example.internal", "gitops": "argocd:orders-api-prod", "owner": "orders-team" },
+    { "id": "payments-api", "kind": "Deployment", "name": "payments-api", "namespace": "payments", "cluster": "k8s-prod.example.internal", "gitops": "argocd:payments-api-prod", "owner": "payments-team" },
+    { "id": "ordersdb", "kind": "PostgreSQL", "name": "ordersdb", "host": "db01.example.internal", "max_connections": 300, "owner": "dba" },
+    { "id": "reporting-batch", "kind": "CronJob", "name": "reporting-batch", "host": "batch01.example.internal", "owner": "data-team" },
+    { "id": "node-03", "kind": "Node", "name": "k8s-node-03.example.internal", "cluster": "k8s-prod.example.internal", "owner": "platform" },
+    { "id": "elk", "kind": "LogStore", "name": "logs.example.internal", "owner": "platform" },
+    { "id": "zabbix", "kind": "Monitoring", "name": "zabbix.example.internal", "owner": "platform" }
+  ],
+  "edges": [
+    { "from": "lb01", "to": "ingress", "type": "ROUTES_TO" },
+    { "from": "ingress", "to": "orders-api", "type": "ROUTES_TO" },
+    { "from": "orders-api", "to": "payments-api", "type": "CALLS", "protocol": "https" },
+    { "from": "orders-api", "to": "ordersdb", "type": "READS_WRITES", "pool": "HikariCP" },
+    { "from": "reporting-batch", "to": "ordersdb", "type": "READS", "schedule": "*/15 * * * *" },
+    { "from": "orders-api", "to": "node-03", "type": "SCHEDULED_ON", "note": "some replicas" },
+    { "from": "orders-api", "to": "elk", "type": "SHIPS_LOGS_TO" },
+    { "from": "zabbix", "to": "ordersdb", "type": "MONITORS" },
+    { "from": "zabbix", "to": "node-03", "type": "MONITORS" }
+  ]
+}

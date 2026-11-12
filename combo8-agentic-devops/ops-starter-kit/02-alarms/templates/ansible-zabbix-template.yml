@@ -1,0 +1,44 @@
+# Trigger proposal as code — Ansible variant.
+#
+# For teams that manage Zabbix configuration with Ansible rather than by
+# importing exports by hand. It imports the same template file that sits next
+# to it, so there is one source of truth for the triggers.
+#
+# Where it goes: a role or playbook in your config repo, e.g.
+#   roles/zabbix_templates/tasks/preventative_pg_sessions.yml
+# with the template file in roles/zabbix_templates/files/.
+#
+# How it ships: the agent opens a DRAFT MR adding these two files. The MR
+# pipeline runs the playbook with --check --diff against a non-production
+# Zabbix if you have one. A human merges; your normal deploy job applies it.
+# The agent never runs this playbook.
+#
+# Needs: the community.zabbix collection.
+#   ansible-galaxy collection install community.zabbix
+# VERIFY: parameter names below follow the community.zabbix zabbix_template
+# module docs (template_yaml, httpapi connection). Pin the collection version
+# you test with in requirements.yml.
+#
+# Replace before use: <ZABBIX_FQDN>, and the vault variable holding a token for
+# a Zabbix user that may edit templates (this is the deploy pipeline's
+# credential, never the agent's read-only one).
+
+- name: Import the preventative PostgreSQL sessions template
+  community.zabbix.zabbix_template:
+    template_yaml: "{{ lookup('file', 'zabbix-template-db-sessions.yaml') }}"
+    state: present
+  vars:
+    ansible_network_os: community.zabbix.zabbix
+    ansible_connection: httpapi
+    ansible_httpapi_port: 443
+    ansible_httpapi_use_ssl: true
+    ansible_httpapi_validate_certs: true
+    ansible_host: <ZABBIX_FQDN>                       # e.g. zabbix.example.internal
+    ansible_zabbix_auth_key: "{{ vault_zabbix_deploy_token }}"
+  tags: [zabbix, alarms]
+
+# Linking the template to hosts is deliberately left to the playbook that
+# already manages your hosts' template links (community.zabbix.zabbix_host or
+# your inventory-driven role). Add 'Preventative PostgreSQL sessions' to the
+# same host group or host list that carries your PostgreSQL template, in the
+# same MR, so the reviewer sees both the triggers and where they apply.

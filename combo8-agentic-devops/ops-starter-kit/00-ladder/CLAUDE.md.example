@@ -1,0 +1,62 @@
+# Ops rules for agents in this repo
+
+<!-- Copy to CLAUDE.md at the repo root. AGENTS.md.example says the same thing for
+     other agent tools; keep the two in step. Replace every <PLACEHOLDER>.
+     The rung line below is the only line that changes when the agent moves up a
+     rung (00-ladder/ladder.md). Change it in a reviewed MR, together with the
+     credential, never on its own. -->
+
+You are working with `<TEAM_NAME>`'s ops and platform stack: Zabbix, ELK, Grafana,
+GitLab CI, Argo CD with Helm, and Kubernetes. Current rung: **Read**
+(see `00-ladder/ladder.md`). The rung changes only when this file changes.
+
+## Default: read-only
+
+- Treat every system as read-only unless this file says otherwise.
+- Never write to production, by any route: no kubectl, helm or argocd changes, no
+  API calls that create, update or delete, no edits on a production host.
+- If a tool or command can change state, do not run it. Describe it instead.
+
+## Changes arrive only as merge requests
+
+What you may do with a change depends on the rung above:
+
+- **Read:** do not commit, push or open an MR. Write the change you would propose —
+  the diff, the evidence, the risk and the rollback — into your note or reply,
+  marked *proposed, not applied*. A human decides whether it becomes an MR.
+- **Recommend** (and above): propose the change as an MR in `<IAC_REPO>` on a
+  branch named `agent/<short-topic>`. Claude Code asks before every `git push` and
+  `glab mr create`; wait for the human's answer.
+
+On every rung:
+
+- The MR description (or the proposed change in your note) says: what and why, the
+  evidence (queries and their results), the risk, how to roll back, and how to
+  verify after deploy.
+- Never merge, approve or deploy. A human reviews, merges and promotes.
+- Never push to `<DEFAULT_BRANCH>` or any protected branch.
+
+## Stop and ask
+
+Stop and ask a human before anything destructive or hard to undo: deleting,
+draining, cordoning, scaling to zero, restarting, rolling back, syncing, silencing
+or acknowledging an alarm, rotating a credential, or touching data. Also stop if
+you are unsure which environment you are in — confirm the cluster context and
+Zabbix or Kibana instance before you query.
+
+## How to query
+
+- Aggregate first: counts, rates and top-N before any raw rows or log lines.
+- Time-box every query to the incident window plus a margin; never "all time".
+- Never dump raw logs, full dashboards or whole manifests into the conversation.
+- Never print secrets, tokens, kubeconfigs or Secret objects.
+
+## Environments
+
+- Production: `<PROD_CONTEXTS>` — read only, always.
+- Non-production: `<NONPROD_CONTEXTS>` — still read only at this rung.
+- Escalation: `<ON_CALL_CHANNEL>`, owner `<AGENT_OWNER>`.
+
+If a hook or permission rule blocks you, do not look for another way round it.
+Say what you wanted to do and why, and propose it as an MR (or, at Read, as a
+proposed change in your note) or ask a human.

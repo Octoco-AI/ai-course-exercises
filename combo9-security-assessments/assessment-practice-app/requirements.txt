@@ -1,0 +1,8 @@
+# Pinned runtime dependencies for the container image (see Dockerfile).
+# Local development installs from pyproject.toml instead.
+click==8.1.3
+flask==2.2.2
+itsdangerous==2.1.2
+jinja2==3.1.2
+markupsafe==2.1.1
+werkzeug==2.2.2

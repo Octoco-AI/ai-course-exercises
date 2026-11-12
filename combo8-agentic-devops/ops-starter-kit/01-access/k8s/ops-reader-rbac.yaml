@@ -1,0 +1,92 @@
+# Read-only identity for agents: the `ops-reader` ServiceAccount.
+#
+#   kubectl apply -f ops-reader-rbac.yaml        # a HUMAN applies this, once per cluster
+#   kubectl create token ops-reader -n ops-agents --duration=8h
+#
+# What it can do: get/list/watch most namespaced resources (the built-in `view`
+# ClusterRole, which excludes Secrets, pods/exec, pods/portforward and any write),
+# plus get/list/watch on nodes, persistent volumes, storage classes and metrics.
+# What it cannot do: change anything, read Secrets, exec into pods.
+#
+# To limit it to some namespaces, delete the ClusterRoleBinding `ops-reader-view`
+# and create one RoleBinding per namespace that references ClusterRole `view`
+# (an example is commented out at the bottom).
+#
+# Prove it before you hand the token to an agent (see ../token-checklist.md):
+#   kubectl auth can-i --list --as=system:serviceaccount:ops-agents:ops-reader
+#   kubectl auth can-i delete pods -A --as=system:serviceaccount:ops-agents:ops-reader   # must print "no"
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ops-agents
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: ops-reader
+  namespace: ops-agents
+  labels:
+    app.kubernetes.io/part-of: ops-agents
+  annotations:
+    ops-agents/owner: "<AGENT_OWNER>"
+    ops-agents/rung: "read"
+automountServiceAccountToken: false
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: ops-reader-view
+subjects:
+  - kind: ServiceAccount
+    name: ops-reader
+    namespace: ops-agents
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: view
+---
+# `view` covers namespaced resources only. Triage also needs a few cluster-scoped
+# reads. Nothing here grants a write verb.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: ops-reader-cluster-scoped
+rules:
+  - apiGroups: [""]
+    resources: ["nodes", "persistentvolumes", "namespaces"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["storage.k8s.io"]
+    resources: ["storageclasses"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["metrics.k8s.io"]
+    resources: ["pods", "nodes"]
+    verbs: ["get", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: ops-reader-cluster-scoped
+subjects:
+  - kind: ServiceAccount
+    name: ops-reader
+    namespace: ops-agents
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: ops-reader-cluster-scoped
+# ---
+# # Per-namespace alternative to ops-reader-view. Repeat per namespace.
+# apiVersion: rbac.authorization.k8s.io/v1
+# kind: RoleBinding
+# metadata:
+#   name: ops-reader-view
+#   namespace: <NAMESPACE>
+# subjects:
+#   - kind: ServiceAccount
+#     name: ops-reader
+#     namespace: ops-agents
+# roleRef:
+#   apiGroup: rbac.authorization.k8s.io
+#   kind: ClusterRole
+#   name: view

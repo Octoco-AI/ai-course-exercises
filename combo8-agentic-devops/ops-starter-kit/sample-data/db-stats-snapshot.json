@@ -1,0 +1,25 @@
+{
+  "_about": "Synthetic. A pg_stat_activity snapshot aggregated by application and state, taken 2026-10-14T14:10Z on db01.example.internal. Produced by the 'sessions by application and state' query in 02-alarms/prompts/db-stats.md. The query text column is deliberately excluded.",
+  "taken_at": "2026-10-14T14:10:00Z",
+  "database": "ordersdb",
+  "settings": {
+    "max_connections": 300,
+    "superuser_reserved_connections": 3,
+    "idle_in_transaction_session_timeout": "0",
+    "statement_timeout": "0"
+  },
+  "sessions_by_application_and_state": [
+    { "application_name": "orders-api", "state": "active", "sessions": 81, "oldest_xact_age": "00:00:41" },
+    { "application_name": "orders-api", "state": "idle", "sessions": 96, "oldest_xact_age": null },
+    { "application_name": "orders-api", "state": "idle in transaction", "sessions": 108, "oldest_xact_age": "4 days 03:12:09" },
+    { "application_name": "reporting-batch", "state": "active", "sessions": 6, "oldest_xact_age": "00:03:55" },
+    { "application_name": "reporting-batch", "state": "idle", "sessions": 3, "oldest_xact_age": null },
+    { "application_name": "zabbix-agent2", "state": "active", "sessions": 1, "oldest_xact_age": "00:00:00" },
+    { "application_name": "zabbix-agent2", "state": "idle", "sessions": 2, "oldest_xact_age": null }
+  ],
+  "total_sessions": 297,
+  "idle_in_transaction_by_wait_event": [
+    { "wait_event_type": "Client", "wait_event": "ClientRead", "sessions": 108 }
+  ],
+  "locks_waiting": 0
+}

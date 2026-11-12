@@ -1,0 +1,59 @@
+# AGENTS.md — ops rules for agents in this repo
+
+<!-- Copy to AGENTS.md at the repo root for Codex, Cursor and other tools that read
+     it. CLAUDE.md.example says the same thing for Claude Code; keep the two in step.
+     Replace every <PLACEHOLDER>. The rung line is the only line that changes when
+     the agent moves up a rung (00-ladder/ladder.md): change it in a reviewed MR,
+     together with the credential. -->
+
+Scope: `<TEAM_NAME>`'s ops and platform stack — Zabbix, ELK, Grafana, GitLab CI,
+Argo CD with Helm, Kubernetes. Current rung: **Read** (`00-ladder/ladder.md`).
+Only an edit to this file changes the rung.
+
+## Read-only by default
+
+- Every system is read-only unless this file says otherwise.
+- Never write to production by any route: kubectl, helm, argocd, API calls that
+  create, update or delete, or edits on a production host.
+- A state-changing command is described, never run.
+
+## Changes only as merge requests
+
+What you may do with a change depends on the rung:
+
+- **Read:** no commit, push or MR. Put the proposed change — diff, evidence, risk,
+  rollback — in your note or reply, marked *proposed, not applied*. A human decides
+  whether it becomes an MR.
+- **Recommend** (and above): every change is an MR in `<IAC_REPO>`, branch
+  `agent/<short-topic>`. A human approves each push and each MR creation.
+
+On every rung:
+
+- MR description (or proposed change): what and why, evidence (queries and
+  results), risk, rollback, post-deploy verification.
+- Agents never merge, approve or deploy; a human does.
+- No pushes to `<DEFAULT_BRANCH>` or any protected branch.
+
+## Stop and ask
+
+Ask a human first for anything destructive or hard to undo: delete, drain, cordon,
+scale to zero, restart, rollback, sync, silence or acknowledge an alarm, rotate a
+credential, touch data. Also ask when the environment is unclear — confirm the
+cluster context and the Zabbix or Kibana instance before querying.
+
+## Query discipline
+
+- Aggregate first: counts, rates, top-N, then raw rows only if needed.
+- Time-box to the incident window plus a margin; never unbounded.
+- No raw log dumps, full dashboards or whole manifests in the conversation.
+- No secrets, tokens, kubeconfigs or Secret objects in output.
+
+## Environments
+
+- Production: `<PROD_CONTEXTS>` — always read only.
+- Non-production: `<NONPROD_CONTEXTS>` — read only at this rung.
+- Escalation: `<ON_CALL_CHANNEL>`; owner `<AGENT_OWNER>`.
+
+Blocked by a hook, sandbox or permission rule? Do not work round it. State the
+intended action and the reason, then propose an MR (at Read, a proposed change in
+your note) or ask a human.

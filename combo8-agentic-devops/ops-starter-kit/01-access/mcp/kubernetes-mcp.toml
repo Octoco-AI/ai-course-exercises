@@ -1,0 +1,24 @@
+# Configuration for containers/kubernetes-mcp-server, loaded with --config.
+# kubernetes.mcp.json passes this file's ABSOLUTE path in ${KUBE_MCP_CONFIG}.
+#
+# These switches are best-effort guardrails, as the project's own docs say. The
+# boundary that holds is the identity in ${OPS_READER_KUBECONFIG}: the ops-reader
+# ServiceAccount bound to the built-in `view` ClusterRole (../k8s/ops-reader-rbac.yaml).
+#
+# VERIFY: keys checked against docs/configuration.md on the project's main branch
+# (Nov 2026). Re-check them for the version pinned in kubernetes.mcp.json.
+
+# Register only tools annotated readOnlyHint=true (lists, gets, logs, top).
+read_only = true
+
+# Belt and braces: also drop destructive tools if read_only is ever turned off.
+disable_destructive = true
+
+# core = pods, resources, events, nodes; config = contexts; helm = helm_list etc.
+toolsets = ["core", "config", "helm"]
+
+# Never return Secrets, even if someone later widens the RBAC by mistake.
+[[denied_resources]]
+group = ""
+version = "v1"
+kind = "Secret"
