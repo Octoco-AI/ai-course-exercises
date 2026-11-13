@@ -56,6 +56,43 @@
       "headers": {
         "X-Gitlab-Enabled-Mcp-Server-Toolsets": "meta,core,merge_requests,repository,ci"
       }
+    },
+    "cloudwatch": {
+      "command": "uvx",
+      "args": [
+        "awslabs.cloudwatch-mcp-server@0.3.1"
+      ],
+      "env": {
+        "AWS_PROFILE": "${AWS_OPS_READER_PROFILE}",
+        "AWS_REGION": "${AWS_REGION}",
+        "FASTMCP_LOG_LEVEL": "ERROR"
+      }
+    },
+    "gcp": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@google-cloud/observability-mcp@0.2.3"
+      ],
+      "env": {
+        "GOOGLE_APPLICATION_CREDENTIALS": "${GCP_OPS_READER_ADC}",
+        "GOOGLE_CLOUD_PROJECT": "${GCP_PROJECT}"
+      }
+    },
+    "sentry": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@sentry/mcp-server@0.49.0",
+        "mcp",
+        "--skills",
+        "inspect",
+        "--org",
+        "${SENTRY_ORG}"
+      ],
+      "env": {
+        "SENTRY_AUTH_TOKEN": "${SENTRY_AUTH_TOKEN}"
+      }
     }
   }
 }

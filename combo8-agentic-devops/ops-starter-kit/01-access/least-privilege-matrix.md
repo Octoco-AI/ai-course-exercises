@@ -35,6 +35,14 @@ control, so that row is weaker than the others. That is a known, written-down
 gap — which is the point of the matrix. A service-account version of the same
 agent would use a Reporter-only bot user instead and close it.
 
+The same agent on a cloud estate adds rows like these:
+
+| Agent | Rung | System | Acts as | Credential and where it lives | Can see | Can do | Explicitly cannot | Enforced by | Owner | Next review |
+|---|---|---|---|---|---|---|---|---|---|---|
+| ops-reader | Read | AWS `<ACCOUNTS>` | Role `ops-reader`, via IAM Identity Center | SSO session, 8 h, in the CLI cache → `AWS_OPS_READER_PROFILE` | Resource metadata; CloudWatch metrics and alarms; Logs Insights on `<LOG_GROUP_PREFIX>*` | Describe, list, get; Logs Insights queries | Any write; S3 objects; secret values; assume other roles | C (`ViewOnlyAccess` + inline policy), D, H | `<OWNER>` | `<DATE>` |
+| ops-reader | Read | Google Cloud `<PROJECTS>` | Service account `ops-reader`, impersonated by the engineer | Impersonated ADC, 1 h → `GCP_OPS_READER_ADC` | Logs, metrics, alert policies, error groups, traces; Cloud Run and Cloud SQL config | List, describe, read | Any write; secret versions; access tokens; private (Data Access) logs | C (viewer roles), D, H | `<OWNER>` | `<DATE>` |
+| ops-reader | Read | Sentry `<ORG>` | The engineer's user | User auth token, read scopes, rotated every `<90_DAYS>` → `SENTRY_AUTH_TOKEN` | Issues, events, traces, releases in `<PROJECTS>` | Search and read | Resolve, assign, comment; alert rules; Seer | C (token scopes), S (`--skills inspect`), D | `<OWNER>` | `<DATE>` |
+
 ## Your agents
 
 | Agent | Rung | System | Acts as | Credential and where it lives | Can see | Can do | Explicitly cannot | Enforced by | Owner | Next review |

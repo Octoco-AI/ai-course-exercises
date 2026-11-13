@@ -264,3 +264,149 @@ agent's identity **cannot** merge it or approve it.
 and revokes the old one; or create a new token, swap, and revoke the old one in
 *User settings → Access tokens*. OAuth sessions are revoked under *User settings →
 Applications*.
+
+---
+
+## AWS — read-only role through IAM Identity Center or an assumed role
+
+AWS has hundreds of services and no single "read-only" switch on the client. The
+role's IAM policy is the whole boundary; `READ_OPERATIONS_ONLY`, the deny rules
+and the hook only catch mistakes early.
+
+**Create**
+
+- [ ] A permission set (IAM Identity Center) or IAM role `ops-reader` in
+  `<ACCOUNTS>`, with:
+  - AWS managed policy **`ViewOnlyAccess`** — lists and describes resources
+    without reading data (no `s3:GetObject`, no `secretsmanager:GetSecretValue`);
+  - an inline policy for the analysis calls `ViewOnlyAccess` leaves out, scoped to
+    the log groups you name:
+
+    ```json
+    {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Sid": "MetricsAndAlarms",
+          "Effect": "Allow",
+          "Action": ["cloudwatch:GetMetricData", "cloudwatch:GetMetricStatistics", "cloudwatch:ListMetrics",
+                     "cloudwatch:DescribeAlarms", "cloudwatch:DescribeAlarmHistory"],
+          "Resource": "*"
+        },
+        {
+          "Sid": "LogsInsightsOnNamedGroups",
+          "Effect": "Allow",
+          "Action": ["logs:StartQuery", "logs:GetQueryResults", "logs:StopQuery", "logs:DescribeLogGroups",
+                     "logs:DescribeQueryDefinitions", "logs:ListLogAnomalyDetectors", "logs:ListAnomalies",
+                     "logs:FilterLogEvents", "logs:GetLogEvents"],
+          "Resource": ["arn:aws:logs:<REGION>:<ACCOUNT_ID>:log-group:<LOG_GROUP_PREFIX>*"]
+        }
+      ]
+    }
+    ```
+
+    VERIFY: `logs:DescribeLogGroups` and `logs:GetQueryResults` do not support
+    resource-level scoping on every account; if a call is denied, move those two to
+    a statement with `"Resource": "*"` rather than widening the log-group list.
+  - session duration ≤ `<8_HOURS>`.
+- [ ] **Not** `ReadOnlyAccess`: it includes `s3:GetObject`, `dynamodb:Scan` and
+  other data reads an ops agent does not need.
+- [ ] Per engineer: a named CLI profile, signed in with `aws sso login --profile
+  ops-reader-<ACCOUNT>`. No long-lived access keys. → `AWS_OPS_READER_PROFILE`.
+- [ ] Unattended: a role assumed through OIDC from CI (see `04-pipeline/`), never
+  an access key in a variable.
+
+**Prove the write is denied**
+
+```bash
+export AWS_PROFILE=$AWS_OPS_READER_PROFILE
+aws sts get-caller-identity                                             # shows the ops-reader role
+aws cloudwatch describe-alarms --state-value ALARM --max-items 1        # works
+aws ec2 stop-instances --instance-ids <ANY_INSTANCE_ID> --dry-run       # must be UnauthorizedOperation
+aws iam simulate-principal-policy --policy-source-arn <OPS_READER_ROLE_ARN> \
+  --action-names ecs:UpdateService cloudwatch:SetAlarmState rds:RebootDBInstance secretsmanager:GetSecretValue \
+  --query 'EvaluationResults[].[EvalActionName,EvalDecision]' --output table   # every row implicitDeny
+```
+
+`--dry-run` makes EC2 check the permission without acting; the simulator does the
+same for any action, without calling the service at all. A human runs both: the
+simulator needs `iam:SimulatePrincipalPolicy`, which the agent's role should not have.
+
+**Rotate**: Identity Center sessions expire on their own. To cut access at once,
+remove the user's assignment to the permission set; existing sessions end at
+their expiry, so keep the duration short.
+
+---
+
+## Google Cloud — viewer service account, used by impersonation
+
+**Create**
+
+- [ ] A service account `ops-reader@<PROJECT_ID>.iam.gserviceaccount.com` with
+  only the viewer roles the agent needs, on `<PROJECTS>`:
+  `roles/logging.viewer` (not `privateLogViewer`: that adds Data Access audit
+  logs), `roles/monitoring.viewer`, `roles/errorreporting.viewer`,
+  `roles/cloudtrace.user` (VERIFY: on your org it grants read access to traces;
+  there is no narrower trace role), and per service `roles/run.viewer`,
+  `roles/cloudsql.viewer`, `roles/container.viewer` as needed.
+- [ ] **Not** `roles/viewer`: it is project-wide and grows with every new API.
+- [ ] **No key file.** Grant each engineer `roles/iam.serviceAccountTokenCreator`
+  on that one service account, and have them build impersonated credentials:
+
+  ```bash
+  gcloud auth application-default login \
+    --impersonate-service-account=ops-reader@<PROJECT_ID>.iam.gserviceaccount.com
+  ```
+
+  → `GCP_OPS_READER_ADC` = the path the command prints. The audit log shows both
+  the engineer and the service account.
+- [ ] Organisation policy `iam.disableServiceAccountKeyCreation` on, if you can.
+
+**Prove the write is denied**
+
+```bash
+SA=ops-reader@<PROJECT_ID>.iam.gserviceaccount.com
+gcloud logging read 'severity>=ERROR' --freshness=1h --limit=1 --project <PROJECT_ID> --impersonate-service-account=$SA   # works
+gcloud logging metrics create agent-write-test --log-filter='severity>=ERROR' \
+  --project <PROJECT_ID> --impersonate-service-account=$SA                                          # must be PERMISSION_DENIED
+gcloud run services update <ANY_SERVICE> --region <REGION> --update-labels=agent-write-test=1 \
+  --project <PROJECT_ID> --impersonate-service-account=$SA                                          # must be PERMISSION_DENIED
+```
+
+**Rotate**: impersonated credentials last an hour and refresh from the engineer's
+own login. To revoke one person, remove their Token Creator binding; to revoke
+everyone, disable the service account.
+
+---
+
+## Sentry — read-scoped user auth token
+
+**Create**
+
+- [ ] *User settings → Personal Tokens* (User Auth Tokens): a token named
+  `agent-readonly-<NAME>` with **only** `org:read`, `project:read`, `team:read`,
+  `event:read`. No `:write` or `:admin` scope. → `SENTRY_AUTH_TOKEN`.
+- [ ] Start the MCP server with `--skills inspect` (already in
+  `mcp/sentry.mcp.json`): `triage` and `project-management` tools update issues
+  and alert rules, and `seer` starts an AI analysis that Sentry bills for.
+- [ ] Limit it to one organisation: `SENTRY_ORG` in the template, or
+  `<org>/<project>` to pin a single project.
+- [ ] Self-hosted: `SENTRY_HOST=sentry.example.internal` in the server's `env`.
+- [ ] Organisation auth tokens (`sntrys_…`) are for CI release uploads. Do not
+  give one to an agent.
+- [ ] Check *Security & Privacy → Data Scrubber* is on: events carry request
+  data and user context, and everything the token can read can reach the model.
+
+**Prove the write is denied**
+
+```bash
+S=https://sentry.io/api/0          # or https://sentry.example.internal/api/0
+curl -s -H "Authorization: Bearer $SENTRY_AUTH_TOKEN" "$S/organizations/<ORG>/projects/" | head -c 200   # works
+curl -s -o /dev/null -w '%{http_code}\n' -XPUT -H "Authorization: Bearer $SENTRY_AUTH_TOKEN" \
+  -H "Content-Type: application/json" -d '{"status":"resolved"}' \
+  "$S/organizations/<ORG>/issues/?id=<ANY_ISSUE_ID>"                                                      # must be 403
+```
+
+**Rotate**: create a new token, swap the secret, delete the old one under
+*Personal Tokens*. Sentry user tokens do not expire on their own: put the
+rotation date in the matrix.

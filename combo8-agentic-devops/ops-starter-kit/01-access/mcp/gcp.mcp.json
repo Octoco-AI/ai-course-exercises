@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "gcp": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@google-cloud/observability-mcp@0.2.3"
+      ],
+      "env": {
+        "GOOGLE_APPLICATION_CREDENTIALS": "${GCP_OPS_READER_ADC}",
+        "GOOGLE_CLOUD_PROJECT": "${GCP_PROJECT}"
+      }
+    }
+  }
+}

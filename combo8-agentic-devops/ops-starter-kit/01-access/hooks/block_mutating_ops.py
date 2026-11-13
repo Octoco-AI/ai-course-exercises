@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""PreToolUse hook: keep an agent's kubectl, helm and argocd use read-only.
+"""PreToolUse hook: keep an agent's kubectl, helm, argocd, aws, gcloud and gsutil use read-only.
 
 Claude Code runs this before every Bash tool call (see
 ../settings/settings.example.json for the wiring). It reads the hook payload
@@ -23,24 +23,38 @@ Design choices, in order of importance:
    and ``nohup`` are looked through; ``tmux``/``screen`` and ``at`` are denied
    when they carry a governed binary, and ``tmux send-keys``/``screen -X stuff``
    are denied outright, because typed keystrokes cannot be checked.
-3. **Fail closed.** If the command mentions kubectl, helm or argocd and the hook
-   cannot parse it (unbalanced quotes, the command name is a variable, a brace
-   expansion or a glob, an inline Python, Perl or awk script, a shell or
-   ``source`` fed from a pipe or a process substitution), the call is denied.
-   A command name that is a brace expansion or glob which could expand to
-   kubectl, helm or argocd is denied even when the line never names them. If
-   the payload itself is not valid JSON and mentions those binaries, it is
-   denied.
+3. **Fail closed.** If the command mentions a governed binary (kubectl, helm,
+   argocd, aws, gcloud, gsutil) and the hook cannot parse it (unbalanced
+   quotes, the command name is a variable, a brace expansion or a glob, an
+   inline Python, Perl or awk script, a shell or ``source`` fed from a pipe or
+   a process substitution), the call is denied. A command name that is a brace
+   expansion or glob which could expand to a governed binary is denied even
+   when the line never names one. If the payload itself is not valid JSON and
+   mentions those binaries, it is denied.
 4. **No credential output, no arbitrary executables.** ``kubectl config view``
    is denied (``--raw`` and ``--flatten`` print credentials; use
    ``config current-context`` or ``config get-contexts``), and so is Helm's
    ``--post-renderer`` on every verb, because it runs an executable of the
-   caller's choosing.
+   caller's choosing. The cloud CLIs follow the same rule: reads that print a
+   secret or a token (``aws secretsmanager get-secret-value``,
+   ``aws ecr get-login-password``, ``gcloud auth print-access-token``,
+   ``gcloud secrets versions access``, ``gcloud container clusters
+   get-credentials``) are denied although they are "reads".
+
+The cloud CLIs have hundreds of services, so their allowlist is by verb
+shape rather than by name: an ``aws`` operation is read-only when it starts
+``describe-``, ``list-``, ``get-`` and the like; a ``gcloud`` command is
+read-only when its verb is ``list``, ``describe``, ``read`` and the like.
+Everything else, including verbs the hook has never seen, is denied. One
+limit: gcloud's group names and verbs cannot be told apart from the text, so
+the first recognised word decides. An unknown write verb followed by a resource
+literally named ``list`` would pass. The viewer role is the boundary there.
 
 What this hook is NOT: a security boundary on its own. It checks the command
 text the agent writes. A script file the agent runs (``./scripts/fix.sh``)
 is not opened. The real boundary is the credential: a view-role
-ServiceAccount, a read-only Argo CD account, a read-only token (see
+ServiceAccount, a read-only Argo CD account, an IAM role or Google service
+account with viewer permissions only, a read-only token (see
 ../token-checklist.md). This hook is the layer that stops an honest mistake
 before it reaches the API and tells the agent what to do instead.
 
@@ -65,8 +79,12 @@ from typing import List, Optional, Tuple
 KUBECTL_NAMES = {"kubectl", "k", "kubecolor", "oc", "kubectl.exe"}
 HELM_NAMES = {"helm", "helm3", "helm.exe"}
 ARGOCD_NAMES = {"argocd", "argocd.exe"}
+AWS_NAMES = {"aws", "aws.exe"}
+GCLOUD_NAMES = {"gcloud", "gcloud.cmd"}
+GSUTIL_NAMES = {"gsutil", "gsutil.cmd"}
 
-GOVERNED_NAMES = KUBECTL_NAMES | HELM_NAMES | ARGOCD_NAMES
+GOVERNED_NAMES = (KUBECTL_NAMES | HELM_NAMES | ARGOCD_NAMES
+                  | AWS_NAMES | GCLOUD_NAMES | GSUTIL_NAMES)
 # `k` is kubectl only as the command word. In argument position
 # (`docker exec box k bash`) it is just a letter.
 GOVERNED_ARG_NAMES = GOVERNED_NAMES - {"k"}
@@ -77,7 +95,7 @@ KUBECTL_HOSTS = {"microk8s", "k3s", "k0s"}
 # Used only for fail-closed decisions on text we cannot parse.
 # Case-insensitive so that `$KUBECTL delete ...` counts as a mention.
 MENTION_RE = re.compile(
-    r"(?<![\w.])(kubectl|kubecolor|helm3?|argocd|oc)(?![\w-])"
+    r"(?<![\w.])(kubectl|kubecolor|helm3?|argocd|oc|aws|gcloud|gsutil)(?![\w-])"
     r"|(?:^|[\s;&|(`'\"])k(?=\s)",
     re.IGNORECASE,
 )
@@ -178,6 +196,72 @@ ARGOCD_VALUE_FLAGS = {
 }
 
 # --------------------------------------------------------------------------
+# aws (AWS CLI v2): `aws [global options] <service> <operation> [args]`
+# --------------------------------------------------------------------------
+
+AWS_READ_PREFIXES = (
+    "describe-", "list-", "get-", "lookup-", "search-", "filter-",
+    "batch-get-", "batch-describe-", "simulate-",
+)
+# Reads that do not follow the naming pattern, per service.
+AWS_READ_OPS = {
+    "logs": {"start-query", "stop-query", "tail"},
+    "s3": {"ls"},
+    "configure": {"list", "list-profiles"},
+}
+AWS_READ_ANY = {"help", "wait"}
+# Reads that print a secret or a credential. Denied although they look like reads.
+AWS_CREDENTIAL_MARKERS = ("secret-value", "password", "token", "credentials")
+AWS_VALUE_FLAGS = {
+    "--profile", "--region", "--output", "--query", "--endpoint-url", "--color",
+    "--ca-bundle", "--cli-read-timeout", "--cli-connect-timeout",
+    "--cli-binary-format",
+}
+
+# --------------------------------------------------------------------------
+# gcloud: `gcloud [release track] <group> [<group> ...] <verb> [args]`
+# --------------------------------------------------------------------------
+
+GCLOUD_RELEASE_TRACKS = {"alpha", "beta", "preview"}
+GCLOUD_READ_TOP = {"version", "help", "info", "topic", "cheat-sheet"}
+GCLOUD_READ_VERBS = {
+    "list", "describe", "read", "tail", "log", "ls", "cat", "du", "get-value",
+    "get-iam-policy", "analyze-iam-policy", "search-all-resources",
+    "search-all-iam-policies",
+}
+GCLOUD_READ_PREFIXES = ("list-", "describe-", "get-", "search-")
+# Reads that print a secret or a credential, or write one to disk.
+GCLOUD_CREDENTIAL_VERBS = {"access", "get-credentials", "configure-docker"}
+GCLOUD_CREDENTIAL_PREFIXES = ("print-",)
+# Known writes. Used to stop the scan at the verb, so a resource called `list`
+# after `delete` cannot make the command look like a read. Anything the hook
+# does not recognise is denied anyway. The first command word is a group, never
+# the verb, so groups such as `gcloud run` and `gcloud deploy` are not caught.
+GCLOUD_MUTATING_VERBS = {
+    "create", "delete", "update", "set", "unset", "patch", "apply", "deploy", "ssh",
+    "scp", "start", "stop", "restart", "reset", "resize", "suspend", "resume",
+    "import", "export", "cp", "mv", "rm", "rsync", "write", "enable", "disable",
+    "add", "remove", "submit", "cancel", "rollback", "execute", "call", "invoke",
+    "connect", "decrypt", "encrypt", "sign", "activate", "login", "logout",
+    "revoke", "attach", "detach", "move", "upload", "init", "install",
+    "replace", "promote", "failover", "restore", "clone", "run",
+}
+GCLOUD_MUTATING_PREFIXES = (
+    "add-", "remove-", "set-", "create-", "delete-", "update-", "enable-",
+    "disable-", "reset-", "deploy-", "import-", "export-", "generate-",
+    "start-", "stop-", "bulk-", "attach-", "detach-", "resume-", "suspend-",
+)
+GCLOUD_VALUE_FLAGS = {
+    "--project", "--account", "--configuration", "--format", "--verbosity",
+    "--impersonate-service-account", "--billing-project", "--flags-file",
+    "--filter", "--limit", "--page-size", "--sort-by", "--region", "--zone",
+    "--location", "--freshness", "--order", "--trace-token",
+}
+
+GSUTIL_READ_VERBS = {"ls", "cat", "du", "stat", "version", "help", "hash"}
+GSUTIL_VALUE_FLAGS = {"-o", "-h", "-u"}
+
+# --------------------------------------------------------------------------
 # Shell structure
 # --------------------------------------------------------------------------
 
@@ -225,7 +309,7 @@ ASSIGNMENT_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*\+?=")
 
 MAX_DEPTH = 6
 REMEDY = (
-    "This agent is read-only against the cluster and GitOps tooling. "
+    "This agent is read-only against the cluster, the cloud accounts and the GitOps tooling. "
     "Propose the change as a merge request in the IaC/config repo, "
     "or ask a human to run it."
 )
@@ -233,7 +317,7 @@ REMEDY = (
 
 _UNRESOLVED_SCRIPT = (
     "The script passed to a shell or eval is built by a command substitution in a "
-    "line that mentions kubectl, helm or argocd, so the hook cannot see what runs. "
+    "line that mentions kubectl, helm, argocd, aws, gcloud or gsutil, so the hook cannot see what runs. "
     "Run the command directly."
 )
 
@@ -730,6 +814,46 @@ def check_argocd(name: str, args: List[str]) -> Optional[str]:
     return f"`{name} {group}` is not on this hook's read-only allowlist. {REMEDY}"
 
 
+def check_aws(name: str, args: List[str]) -> Optional[str]:
+    pos = _positionals(args, AWS_VALUE_FLAGS)
+    if len(pos) < 2 or pos[0] == "help" or pos[1] in {"help", "wait"}:
+        return None  # `aws --version`, `aws logs`, `aws logs help`, `aws ec2 wait ...`
+    service, op = pos[0], pos[1]
+    if any(m in op for m in AWS_CREDENTIAL_MARKERS) or (
+        service == "ssm" and any(a.startswith("--with-decryption") for a in args)
+    ):
+        return (f"`{name} {service} {op}` prints a secret or a credential into the agent's "
+                "context. Ask a human to read it, or use the metadata call "
+                "(`describe-secret`, `get-parameter` without decryption).")
+    if op.startswith(AWS_READ_PREFIXES) or op in AWS_READ_OPS.get(service, set()):
+        return None
+    return f"`{name} {service} {op}` is not a read-only AWS operation. {REMEDY}"
+
+
+def check_gcloud(name: str, args: List[str]) -> Optional[str]:
+    pos = _positionals(args, GCLOUD_VALUE_FLAGS)
+    if pos and pos[0] in GCLOUD_RELEASE_TRACKS:
+        pos = pos[1:]
+    if not pos or pos[0] in GCLOUD_READ_TOP:
+        return None
+    for word in pos[1:]:
+        if word in GCLOUD_CREDENTIAL_VERBS or word.startswith(GCLOUD_CREDENTIAL_PREFIXES):
+            return (f"`{name} {' '.join(pos[:pos.index(word) + 1])}` prints or stores a secret "
+                    "or a credential. Ask a human to run it.")
+        if word in GCLOUD_READ_VERBS or word.startswith(GCLOUD_READ_PREFIXES):
+            return None
+        if word in GCLOUD_MUTATING_VERBS or word.startswith(GCLOUD_MUTATING_PREFIXES):
+            return f"`{name} {' '.join(pos[:pos.index(word) + 1])}` changes cloud state. {REMEDY}"
+    return f"`{name} {' '.join(pos[:3])}` is not on this hook's read-only allowlist. {REMEDY}"
+
+
+def check_gsutil(name: str, args: List[str]) -> Optional[str]:
+    pos = _positionals(args, GSUTIL_VALUE_FLAGS)
+    if not pos or pos[0] in GSUTIL_READ_VERBS:
+        return None
+    return f"`{name} {pos[0]}` is not a read-only gsutil command. {REMEDY}"
+
+
 def check_simple(words: List[str], raw: str, depth: int) -> Optional[str]:
     words, reason = _strip_wrappers(words, depth)
     if reason or not words:
@@ -740,7 +864,7 @@ def check_simple(words: List[str], raw: str, depth: int) -> Optional[str]:
     if "$" in words[0] or "(...)" in words[0]:
         if mentions_governed_binary(raw):
             return ("The command name is a variable or substitution in a line that "
-                    "mentions kubectl, helm or argocd, so the hook cannot tell what runs. "
+                    "mentions kubectl, helm, argocd, aws, gcloud or gsutil, so the hook cannot tell what runs. "
                     "Write the command out literally.")
         return None
 
@@ -751,7 +875,7 @@ def check_simple(words: List[str], raw: str, depth: int) -> Optional[str]:
         if governed or mentions_governed_binary(raw):
             return ("The command name is a brace expansion or glob"
                     + (f" that could expand to `{governed[0]}`" if governed else
-                       " in a line that mentions kubectl, helm or argocd")
+                       " in a line that mentions kubectl, helm, argocd, aws, gcloud or gsutil")
                     + ", so the hook cannot tell what runs. Write the command name out literally.")
         for name in _could_match(words[0], _SPECIAL_NAMES):
             reason = check_simple([name] + args, raw, depth + 1)
@@ -772,6 +896,12 @@ def check_simple(words: List[str], raw: str, depth: int) -> Optional[str]:
         return check_helm(head, args)
     if head in ARGOCD_NAMES:
         return check_argocd(head, args)
+    if head in AWS_NAMES:
+        return check_aws(head, args)
+    if head in GCLOUD_NAMES:
+        return check_gcloud(head, args)
+    if head in GSUTIL_NAMES:
+        return check_gsutil(head, args)
 
     if head in SHELLS:
         for idx, w in enumerate(args):
@@ -786,7 +916,7 @@ def check_simple(words: List[str], raw: str, depth: int) -> Optional[str]:
         # `bash -s arg`) or from a process substitution (`bash <(...)`).
         if (not operands or reads_stdin or _unseen_script(operands[:1])) and mentions_governed_binary(raw):
             return ("A shell reading commands from a pipe, heredoc or process substitution "
-                    "in a line that mentions kubectl, helm or argocd cannot be checked. "
+                    "in a line that mentions kubectl, helm, argocd, aws, gcloud or gsutil cannot be checked. "
                     "Run the command directly.")
         return None  # a script file: not opened (see module docstring)
 
@@ -794,7 +924,7 @@ def check_simple(words: List[str], raw: str, depth: int) -> Optional[str]:
         # `source <(echo kubectl delete pod x)`, `... | source /dev/stdin`.
         if _unseen_script(args[:1]) and mentions_governed_binary(raw):
             return ("`source` of a process substitution or stdin in a line that mentions "
-                    "kubectl, helm or argocd cannot be checked. Run the command directly.")
+                    "kubectl, helm, argocd, aws, gcloud or gsutil cannot be checked. Run the command directly.")
         return None  # a script file: not opened (see module docstring)
 
     if head in DETACHED_RUNNERS:
@@ -803,7 +933,7 @@ def check_simple(words: List[str], raw: str, depth: int) -> Optional[str]:
                     "where the hook cannot check it. Run the command directly.")
         if mentions_governed_binary(raw):
             return (f"`{head}` runs its command later or in another terminal, where the hook "
-                    "cannot check it, in a line that mentions kubectl, helm or argocd. "
+                    "cannot check it, in a line that mentions kubectl, helm, argocd, aws, gcloud or gsutil. "
                     "Run the command directly.")
         return None
 
@@ -829,7 +959,7 @@ def check_simple(words: List[str], raw: str, depth: int) -> Optional[str]:
                     and re.search(r"[A-Za-z0-9]", _basename(w))
                     and _could_match(w, GOVERNED_ARG_NAMES | KUBECTL_HOSTS)):
                 return (f"`{head}` runs `{w}`, a glob or brace expansion that could expand to "
-                        "kubectl, helm or argocd. Write the command name out literally.")
+                        "kubectl, helm, argocd, aws, gcloud or gsutil. Write the command name out literally.")
         return None
 
     if head == "ssh":
@@ -848,7 +978,7 @@ def check_simple(words: List[str], raw: str, depth: int) -> Optional[str]:
         if mentions_governed_binary(" ".join(args)) or (
             not [a for a in args if not a.startswith("-")] and mentions_governed_binary(raw)
         ):
-            return (f"An inline {head} script that mentions kubectl, helm or argocd cannot "
+            return (f"An inline {head} script that mentions kubectl, helm, argocd, aws, gcloud or gsutil cannot "
                     "be checked. Run the command directly so the hook can read it.")
         return None
 
@@ -863,7 +993,7 @@ def analyse(command: str, depth: int = 0) -> Optional[str]:
         commands, nested = split_commands(command)
     except ParseError as exc:
         if mentions_governed_binary(command):
-            return f"Could not parse the command ({exc}) and it mentions kubectl, helm or argocd. Fail closed."
+            return f"Could not parse the command ({exc}) and it mentions kubectl, helm, argocd, aws, gcloud or gsutil. Fail closed."
         return None
     for inner in nested:
         reason = analyse(inner, depth + 1)
@@ -881,7 +1011,7 @@ def decide(payload_text: str) -> Optional[str]:
         payload = json.loads(payload_text)
     except ValueError:
         if mentions_governed_binary(payload_text):
-            return "Hook payload was not valid JSON and mentions kubectl, helm or argocd. Fail closed."
+            return "Hook payload was not valid JSON and mentions kubectl, helm, argocd, aws, gcloud or gsutil. Fail closed."
         return None
     if not isinstance(payload, dict) or payload.get("tool_name") != "Bash":
         return None

@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "cloudwatch": {
+      "command": "uvx",
+      "args": [
+        "awslabs.cloudwatch-mcp-server@0.3.1"
+      ],
+      "env": {
+        "AWS_PROFILE": "${AWS_OPS_READER_PROFILE}",
+        "AWS_REGION": "${AWS_REGION}",
+        "FASTMCP_LOG_LEVEL": "ERROR"
+      }
+    }
+  }
+}

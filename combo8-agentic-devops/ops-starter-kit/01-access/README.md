@@ -1,7 +1,7 @@
 # 01-access — safe, read-only access to the ops stack (M61)
 
-Give an agent eyes on Zabbix, Elastic, Argo CD, Kubernetes, Grafana and GitLab
-without giving it hands. Work through it in this order; each step assumes the
+Give an agent eyes on Zabbix, Elastic, Argo CD, Kubernetes, Grafana, GitLab,
+AWS, Google Cloud and Sentry without giving it hands. Work through it in this order; each step assumes the
 one before.
 
 | Step | File | What you do | Who |
@@ -27,7 +27,7 @@ Prompt text (`CLAUDE.md`, skill bodies) states intent. It is not on this list.
 python3 -m unittest -v hooks/test_block_mutating_ops.py
 ```
 
-Then, in a Claude Code session in the target repo: `/mcp` should list the six
-servers as connected, `/permissions` should show the deny rules, and asking the
+Then, in a Claude Code session in the target repo: `/mcp` should list the
+servers you copied as connected, `/permissions` should show the deny rules, and asking the
 agent to "restart the api deployment" should end with a hook message pointing at
 a merge request rather than a restart.

@@ -1,14 +1,15 @@
 ---
 name: app-investigator
 description: Read-only investigator for the application layer of an incident — deployments, recent releases and syncs, configuration and Helm values, pod health, error categories in logs. Given a case file, it returns competing application-layer hypotheses with evidence for and against, citing each query. Use it from the incident-triage skill, in parallel with network-investigator and db-investigator. It never changes anything and never proposes fixes.
-# Allowlist. MCP server names (kubernetes, argocd, elastic, grafana) must match the keys in your .mcp.json.
+# Allowlist. MCP server names (kubernetes, argocd, elastic, grafana, sentry, cloudwatch, gcp) must match the keys in your .mcp.json.
+# Tools of a server you do not run are simply absent; delete them once you know which you use.
 # Deliberately absent: pod and workload log tools (log-dump risk) and every write tool.
 # VERIFY: tool names against the MCP server versions you run (`/mcp` lists them).
 # VERIFY: the Elastic Agent Builder MCP tool names were not confirmed. The wildcard relies on the
 #   API key being read-only and index-scoped, and on the deny rules in .claude/settings.json
 #   (from 01-access/settings/) that remove Elastic's write-capable tools. Deny rules win over
 #   this allowlist. Replace the wildcard with explicit names once `/mcp` shows them.
-tools: Read, Grep, Glob, mcp__kubernetes__pods_list_in_namespace, mcp__kubernetes__pods_get, mcp__kubernetes__pods_top, mcp__kubernetes__events_list, mcp__kubernetes__resources_list, mcp__kubernetes__resources_get, mcp__argocd__list_applications, mcp__argocd__get_application, mcp__argocd__get_application_events, mcp__argocd__get_application_resource_tree, mcp__argocd__get_application_managed_resources, mcp__argocd__get_resource_events, mcp__grafana__query_prometheus, mcp__grafana__query_loki_stats, mcp__grafana__query_loki_patterns, mcp__elastic__*
+tools: Read, Grep, Glob, mcp__kubernetes__pods_list_in_namespace, mcp__kubernetes__pods_get, mcp__kubernetes__pods_top, mcp__kubernetes__events_list, mcp__kubernetes__resources_list, mcp__kubernetes__resources_get, mcp__argocd__list_applications, mcp__argocd__get_application, mcp__argocd__get_application_events, mcp__argocd__get_application_resource_tree, mcp__argocd__get_application_managed_resources, mcp__argocd__get_resource_events, mcp__grafana__query_prometheus, mcp__grafana__query_loki_stats, mcp__grafana__query_loki_patterns, mcp__elastic__*, mcp__sentry__search_issues, mcp__sentry__get_issue_details, mcp__sentry__get_issue_tag_values, mcp__sentry__get_event_stacktrace, mcp__sentry__find_releases, mcp__sentry__get_release_details, mcp__sentry__get_trace_details, mcp__cloudwatch__get_active_alarms, mcp__cloudwatch__get_alarm_history, mcp__cloudwatch__get_metric_data, mcp__cloudwatch__analyze_log_group, mcp__cloudwatch__execute_log_insights_query, mcp__cloudwatch__get_logs_insight_query_results, mcp__gcp__list_group_stats, mcp__gcp__list_time_series, mcp__gcp__list_log_entries, mcp__gcp__list_traces, mcp__gcp__get_trace
 model: sonnet
 ---
 

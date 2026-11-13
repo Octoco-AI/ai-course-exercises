@@ -39,7 +39,7 @@ cp -r spec-driven/* ~/.codex/skills/spec-driven/
 ```bash
 cd /path/to/your/project
 mkdir -p .codex/skills/spec-driven
-cp -r /path/to/workshop/examples/codex-skills/spec-driven/* .codex/skills/spec-driven/
+cp -r /path/to/ai-course-exercises/combo2-advanced-agentic-engineering/codex-skills/spec-driven/* .codex/skills/spec-driven/
 git add .codex/skills/spec-driven
 git commit -m "Add spec-driven skill"
 ```

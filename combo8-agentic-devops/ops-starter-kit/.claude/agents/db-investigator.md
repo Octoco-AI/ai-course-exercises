@@ -1,11 +1,12 @@
 ---
 name: db-investigator
 description: Read-only investigator for the database layer of an incident — sessions and connection limits, idle-in-transaction sessions, locks, slow queries, replication, storage. Given a case file, it returns competing database-layer hypotheses with evidence for and against, citing each query. Use it from the incident-triage skill, in parallel with network-investigator and app-investigator. It has no database connection, never changes anything and never proposes fixes.
-# Allowlist. MCP server names (zabbix, grafana) must match the keys in your .mcp.json.
+# Allowlist. MCP server names (zabbix, grafana, cloudwatch, gcp) must match the keys in your .mcp.json.
+# For RDS or Cloud SQL, the managed metrics (DatabaseConnections, num_backends) come through cloudwatch or gcp.
 # There is deliberately no SQL tool here: point-in-time SQL is run by a human with
 # 02-alarms/prompts/db-stats.md and pasted into the case file in aggregated form.
 # VERIFY: tool names against the MCP server versions you run (`/mcp` lists them).
-tools: Read, Grep, Glob, mcp__zabbix__host_get, mcp__zabbix__item_get, mcp__zabbix__trigger_get, mcp__zabbix__problem_get, mcp__zabbix__history_get, mcp__grafana__query_prometheus, mcp__grafana__search_dashboards, mcp__grafana__get_dashboard_by_uid
+tools: Read, Grep, Glob, mcp__zabbix__host_get, mcp__zabbix__item_get, mcp__zabbix__trigger_get, mcp__zabbix__problem_get, mcp__zabbix__history_get, mcp__grafana__query_prometheus, mcp__grafana__search_dashboards, mcp__grafana__get_dashboard_by_uid, mcp__cloudwatch__get_metric_data, mcp__cloudwatch__get_alarm_history, mcp__cloudwatch__analyze_metric, mcp__gcp__list_time_series, mcp__gcp__list_alert_policies
 model: sonnet
 ---
 

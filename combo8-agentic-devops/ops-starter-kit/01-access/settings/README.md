@@ -10,7 +10,7 @@ mkdir -p .claude/hooks
 cp <KIT_PATH>/01-access/settings/settings.example.json .claude/settings.json   # or merge into yours
 cp <KIT_PATH>/01-access/hooks/block_mutating_ops.py   .claude/hooks/
 chmod +x .claude/hooks/block_mutating_ops.py
-python3 -m unittest -v <KIT_PATH>/01-access/hooks/test_block_mutating_ops.py   # 14 tests, 170+ cases
+python3 -m unittest -v <KIT_PATH>/01-access/hooks/test_block_mutating_ops.py   # 14 tests, 240+ cases
 ```
 
 Commit `.claude/settings.json` so the whole team inherits it. Per-engineer
@@ -21,12 +21,12 @@ overrides go in `.claude/settings.local.json`, which is gitignored. Run
 
 | Block | What it does |
 |---|---|
-| `permissions.deny` — `Bash(...)` | Mutating `kubectl`, `helm`, `argocd`, `terraform`/`tofu` verbs; force-pushes and pushes to `main`/`master`; `glab mr merge`/`approve`. A deny rule is absolute: no prompt, no override by an allow rule. |
-| `permissions.deny` — `mcp__...` | Every write tool of the six MCP servers, by name, so that a server started without its read-only switch still cannot write through Claude Code. |
-| `permissions.deny` — `Read(...)` | Kubeconfigs, Argo CD CLI config, `.env` files, keys and `secrets/` directories stay out of the agent's context. The last rule keeps the agent out of the sample incident's answer key (`sample-data/answer-key/`); delete it when you delete `sample-data/`. |
+| `permissions.deny` — `Bash(...)` | Mutating `kubectl`, `helm`, `argocd`, `terraform`/`tofu`, `aws`, `gcloud` and `gsutil` verbs, and the cloud CLIs' secret reads; force-pushes and pushes to `main`/`master`; `glab mr merge`/`approve`. A deny rule is absolute: no prompt, no override by an allow rule. |
+| `permissions.deny` — `mcp__...` | Every write tool of the nine MCP servers, by name, so that a server started without its read-only switch still cannot write through Claude Code. |
+| `permissions.deny` — `Read(...)` | Kubeconfigs, Argo CD CLI config, AWS credentials, gcloud and Sentry CLI config, `.env` files, keys and `secrets/` directories stay out of the agent's context. The last rule keeps the agent out of the sample incident's answer key (`sample-data/answer-key/`); delete it when you delete `sample-data/`. |
 | `permissions.ask` | `git push`, `glab mr create`, `glab ci run`/`retry`, `glab api`, `ansible-playbook`, `terraform plan` — allowed only with a human saying yes each time. |
 | `disableBypassPermissionsMode` | Nobody can start this project in `bypassPermissions` mode and skip all of the above. |
-| `enabledMcpjsonServers` | Approves the six servers from the project `.mcp.json` without a prompt. Remove any you do not use. |
+| `enabledMcpjsonServers` | Approves the nine servers from the project `.mcp.json` without a prompt. Remove any you do not use. |
 | `hooks.PreToolUse` | Runs `block_mutating_ops.py` before every Bash call. |
 
 ## Why both deny rules and a hook
@@ -44,13 +44,19 @@ They catch different things.
   `bash -c`, `eval`, `find -exec`, `setsid`, `script` and aliases (`k` only as
   the command word), and **allowlists** read verbs — anything it does not
   recognise is denied. It fails closed when it cannot parse a command that
-  mentions kubectl, helm or argocd, or cannot see what will run: a command name
+  mentions kubectl, helm, argocd, aws, gcloud or gsutil, or cannot see what will run: a command name
   built by a brace expansion or glob (`{kubectl,delete,pod,x}`,
   `/usr/local/bin/kubec*l`), `source <(…)`, a shell fed from a pipe, inline
   Python, Perl or awk, and `tmux`/`screen`/`at`. It also denies
   `kubectl config view` (with `--raw` or `--flatten` it prints credentials; use
   `config current-context` or `config get-contexts`) and Helm's
   `--post-renderer` on every verb, because it runs an executable.
+- **For `aws`, `gcloud` and `gsutil`** the hook allowlists by verb shape, because
+  the CLIs have hundreds of services: `aws <service> describe-*|list-*|get-*…`,
+  `gcloud … list|describe|read|…`. It denies reads that print a secret or token
+  (`get-secret-value`, `--with-decryption`, `get-login-password`,
+  `gcloud auth print-*`, `secrets versions access`, `get-credentials`) even
+  though they are reads.
 
 Neither replaces the credential. A script file the agent runs is not opened by
 either layer; a view-role ServiceAccount stops it anyway.
@@ -73,7 +79,7 @@ When the agent may draft MRs, change only these, in a reviewed MR to this file:
    **Recommend**. At Read the rules file tells the agent to describe changes, not
    push them (`00-ladder/ladder.md`).
 
-Nothing in the cluster, Argo CD or Helm rules changes on rung 2. Changes reach the
+Nothing in the cluster, cloud, Argo CD or Helm rules changes on rung 2. Changes reach the
 cluster only by merge and GitOps.
 
 ## Extending the hook

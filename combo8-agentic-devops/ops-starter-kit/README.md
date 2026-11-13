@@ -1,6 +1,6 @@
 # Ops starter kit — agentic DevOps
 
-A kit for ops and platform teams that run monitoring (Zabbix, Grafana), logs (ELK), CI (GitLab), GitOps (Argo CD and Helm) and Kubernetes, and want agents to help without handing them the keys. There is no lab: copy the kit into your own repository, replace the `<PLACEHOLDER>` values and adapt it. Everything here is meant to be used, not just read.
+A kit for ops and platform teams that run monitoring (Zabbix, Grafana), logs (ELK), CI (GitLab), GitOps (Argo CD and Helm), Kubernetes, cloud accounts (AWS, Google Cloud) and error tracking (Sentry), and want agents to help without handing them the keys. `starter-prompts.md` has copy-paste prompts for each of those tools, one per step of the day, and a recipe for porting the kit to a tool it does not ship. There is no lab: copy the kit into your own repository, replace the `<PLACEHOLDER>` values and adapt it. Everything here is meant to be used, not just read.
 
 ## The model: read → recommend → act
 
@@ -26,12 +26,13 @@ At rung 1 the rules file tells the agent to *describe* a change rather than open
 | Module | Directory | What you take home |
 |---|---|---|
 | **m60** The read, recommend, act ladder | `00-ladder/` | `ladder.md` (the one-pager), `delegation-buckets.md` (which ops work to delegate, review or keep), `CLAUDE.md.example` and `AGENTS.md.example` (the ops rules file: read-only by default, changes only as MRs, never write to production, stop and ask on anything destructive) |
-| **m61** Safe access to the ops stack | `01-access/`, `.claude/skills/ops-*` | Read-only MCP templates for Zabbix, Elastic, Argo CD, Kubernetes, Grafana and GitLab (`mcp/`); deny rules for write tools (`settings/`); a PreToolUse hook that blocks mutating `kubectl`, `helm` and `argocd` verbs, with tests (`hooks/`); a view-role ServiceAccount (`k8s/`); the least-privilege matrix and token checklist; one skill per tool (`ops-zabbix`, `ops-elastic`, `ops-argocd`, `ops-kubernetes`, `ops-grafana`, `ops-gitlab`) on how to query it and what not to do |
-| **m62** Observability gaps to preventative alarms | `02-alarms/`, `.claude/skills/preventative-alarms/` | The preventative-alarms skill (window → aggregate → compare → propose → draft MR); query prompts for Zabbix history, ELK aggregations and DB stats; trigger proposals as code (Zabbix template, Ansible task, Grafana alert rules); the alarm-noise review; human-visible versus agent-visible channels; an aggregation and back-test tool |
+| **m61** Safe access to the ops stack | `01-access/`, `.claude/skills/ops-*` | Read-only MCP templates for Zabbix, Elastic, Argo CD, Kubernetes, Grafana, GitLab, AWS CloudWatch, Google Cloud observability and Sentry (`mcp/`); deny rules for write tools (`settings/`); a PreToolUse hook that blocks mutating `kubectl`, `helm`, `argocd`, `aws`, `gcloud` and `gsutil` commands and cloud secret reads, with tests (`hooks/`); a view-role ServiceAccount (`k8s/`); the least-privilege matrix and token checklist; one skill per tool (`ops-zabbix`, `ops-elastic`, `ops-argocd`, `ops-kubernetes`, `ops-grafana`, `ops-gitlab`, `ops-aws`, `ops-gcp`, `ops-sentry`) on how to query it and what not to do |
+| **m62** Observability gaps to preventative alarms | `02-alarms/`, `.claude/skills/preventative-alarms/` | The preventative-alarms skill (window → aggregate → compare → propose → draft MR); query prompts for Zabbix history, ELK aggregations, CloudWatch Logs Insights, Google Cloud Monitoring and Logging, Sentry error trends and DB stats; trigger proposals as code (Zabbix template, Ansible task, Grafana alert rules, Terraform for CloudWatch alarms, Cloud Monitoring alert policies and Sentry issue alerts); the alarm-noise review; human-visible versus agent-visible channels; an aggregation and back-test tool |
 | **m63** Cross-stack incident triage | `03-triage/`, `.claude/skills/incident-triage/`, `.claude/agents/` | Three read-only investigator sub-agents (network, app, DB) and the orchestrating triage skill; triage-note and runbook templates; a prompt for loading an architecture map as context |
 | **m64** Agents in the pipeline | `04-pipeline/`, `.claude/skills/mr-review/`, `.claude/skills/helm-diff-review/` | A GitLab CI diagnose-failed-job stage (Claude Code headless, read-only tools, masked or OIDC credentials, no deploy rights); MR review and Helm diff review skills; a read-only Argo CD sync and drift check; an npm and Maven dependency-check prompt; the GitOps-engine caveat |
 | **m65** Semi-self-healing, safely | `05-self-heal/` | Self-heal policy template with a worked example (a log volume filling up); the ops destructive-actions list; an agent inventory entry template with examples. Design only |
 | **m66** Team playbook | `06-playbook/` | A one-page team playbook with a "next 30 days — three actions" block and an adoption checklist for every item in this kit |
+| — | `starter-prompts.md` | Per-tool starting points: what the kit has for each tool, prompts for first read, refused write, alarms, triage, pipeline and self-heal candidates, and how to port the kit to another tool |
 | — | `sample-data/` | One synthetic incident (database sessions exhausted after days of a slowly rising signal), so every workflow can be tried without a live stack. Its `answer-key/` is for marking runs, never for an agent |
 
 ## Install into your repository
@@ -74,7 +75,7 @@ Then, in Claude Code, run `/mcp` and check that every server is connected and sh
 | Guardrail | Enforced by |
 |---|---|
 | Read-only by default | The **tokens** (`01-access/token-checklist.md`), MCP servers in read-only mode, and sub-agent tool allowlists |
-| No mutating `kubectl`, `helm`, `argocd` | Deny rules in `.claude/settings.json` and the PreToolUse hook (`01-access/hooks/`) |
+| No mutating `kubectl`, `helm`, `argocd`, `aws`, `gcloud`, `gsutil`; no cloud secret reads | Deny rules in `.claude/settings.json` and the PreToolUse hook (`01-access/hooks/`) |
 | No acknowledging or silencing alarms | Zabbix and Grafana write tools denied, read-only monitoring users |
 | Changes only as MRs | Agent Git identities cannot merge or push to protected branches. `git push` and MR creation are `ask`, never `allow` |
 | No deploy rights in CI | The diagnose job declares no `environment:`, runs on a non-production runner, and holds a Reporter-level token (`04-pipeline/`) |

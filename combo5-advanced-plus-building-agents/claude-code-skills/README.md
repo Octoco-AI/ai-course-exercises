@@ -33,7 +33,7 @@ Invoke in any Claude Code session: `/spec-driven "<feature name>"`.
 ```bash
 cd /path/to/your/project
 mkdir -p .claude/skills/spec-driven
-cp -r /path/to/workshop/examples/claude-code-skills/spec-driven/* .claude/skills/spec-driven/
+cp -r /path/to/ai-course-exercises/combo5-advanced-plus-building-agents/claude-code-skills/spec-driven/* .claude/skills/spec-driven/
 git add .claude/skills/spec-driven
 git commit -m "Add spec-driven skill"
 ```

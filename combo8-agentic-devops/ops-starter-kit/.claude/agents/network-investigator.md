@@ -1,9 +1,11 @@
 ---
 name: network-investigator
 description: Read-only investigator for the network layer of an incident — load balancers, ingress, nodes, DNS, connectivity, retransmits, network policies. Given a case file, it returns competing network-layer hypotheses with evidence for and against, citing each query. Use it from the incident-triage skill, in parallel with app-investigator and db-investigator. It never changes anything and never proposes fixes.
-# Allowlist. MCP server names (zabbix, kubernetes, grafana) must match the keys in your .mcp.json.
+# Allowlist. MCP server names (zabbix, kubernetes, grafana, cloudwatch, gcp) must match the keys in your .mcp.json.
+# On AWS or Google Cloud, load-balancer and NAT metrics (TargetResponseTime, HTTPCode_ELB_5XX_Count,
+# loadbalancing.googleapis.com/https/request_count) stand in for Zabbix interface items.
 # VERIFY: tool names against the MCP server versions you run (`/mcp` lists them).
-tools: Read, Grep, Glob, mcp__zabbix__host_get, mcp__zabbix__interface_get, mcp__zabbix__item_get, mcp__zabbix__trigger_get, mcp__zabbix__problem_get, mcp__zabbix__history_get, mcp__kubernetes__events_list, mcp__kubernetes__namespaces_list, mcp__kubernetes__nodes_top, mcp__kubernetes__nodes_stats_summary, mcp__kubernetes__resources_list, mcp__kubernetes__resources_get, mcp__grafana__query_prometheus, mcp__grafana__search_dashboards, mcp__grafana__get_dashboard_by_uid
+tools: Read, Grep, Glob, mcp__zabbix__host_get, mcp__zabbix__interface_get, mcp__zabbix__item_get, mcp__zabbix__trigger_get, mcp__zabbix__problem_get, mcp__zabbix__history_get, mcp__kubernetes__events_list, mcp__kubernetes__namespaces_list, mcp__kubernetes__nodes_top, mcp__kubernetes__nodes_stats_summary, mcp__kubernetes__resources_list, mcp__kubernetes__resources_get, mcp__grafana__query_prometheus, mcp__grafana__search_dashboards, mcp__grafana__get_dashboard_by_uid, mcp__cloudwatch__get_active_alarms, mcp__cloudwatch__get_metric_data, mcp__cloudwatch__analyze_metric, mcp__gcp__list_time_series
 model: sonnet
 ---
 

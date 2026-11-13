@@ -1,6 +1,6 @@
 # Read-only MCP server templates
 
-One `.mcp.json` per tool, plus `mcp.example.json` with all six. Copy the entries
+One `.mcp.json` per tool, plus `mcp.example.json` with all nine. Copy the entries
 you need into the `.mcp.json` at your repo root. Every credential arrives through
 `${ENV_VAR}` expansion — there is no literal token in any file here, and there
 must never be one in yours.
@@ -13,8 +13,12 @@ must never be one in yours.
 | `kubernetes.mcp.json` | `containers/kubernetes-mcp-server` | stdio via `npx` | `read_only = true` in `kubernetes-mcp.toml` |
 | `grafana.mcp.json` | `grafana/mcp-grafana` | stdio via `uvx` | `--disable-write` |
 | `gitlab.mcp.json` | GitLab built-in MCP server (`/api/v4/mcp`) | HTTP | None — toolset header narrows what is listed; the user's project role is the control |
+| `cloudwatch.mcp.json` | `awslabs.cloudwatch-mcp-server` (AWS Labs) | stdio via `uvx` | None needed — the server only reads (alarms, metrics, Logs Insights); the IAM role is the control |
+| `gcp.mcp.json` | `@google-cloud/observability-mcp` (Google, preview) | stdio via `npx` | None needed — the server only lists and reads (Logging, Monitoring, Trace, Error Reporting); the service account's viewer roles are the control |
+| `sentry.mcp.json` | `@sentry/mcp-server` (Sentry) | stdio via `npx` | `--skills inspect` — leaves out the `triage`, `project-management` and `seer` tools |
 
-The server keys (`zabbix`, `elastic`, `argocd`, `kubernetes`, `grafana`, `gitlab`)
+The server keys (`zabbix`, `elastic`, `argocd`, `kubernetes`, `grafana`, `gitlab`,
+`cloudwatch`, `gcp`, `sentry`)
 matter: Claude Code names tools `mcp__<key>__<tool>`, and the deny rules in
 `../settings/settings.example.json` and the `allowed-tools` lines in the
 `.claude/skills/ops-*` skills use those names. Rename a key and you must rename
@@ -38,6 +42,12 @@ Set these in the shell that starts Claude Code — from a secrets manager, a
 | `GRAFANA_URL` | `https://grafana.example.internal` | grafana |
 | `GRAFANA_SERVICE_ACCOUNT_TOKEN` | Viewer service-account token | grafana |
 | `GITLAB_URL` | `https://gitlab.example.internal` | gitlab |
+| `AWS_OPS_READER_PROFILE` | the named profile for the `ops-reader` role, e.g. `ops-reader-prod` | cloudwatch; also the `aws` CLI as `AWS_PROFILE` |
+| `AWS_REGION` | `eu-west-1` | cloudwatch |
+| `GCP_OPS_READER_ADC` | path to the impersonated application-default credentials file | gcp |
+| `GCP_PROJECT` | `demo-proj` | gcp |
+| `SENTRY_AUTH_TOKEN` | a user auth token with read scopes only | sentry |
+| `SENTRY_ORG` | your organisation slug; add `/<project>` in the template's args to pin one project | sentry |
 
 Claude Code deliberately expands some well-known credential variables (its own
 `ANTHROPIC_*` keys, cloud-provider tokens and a few others) to an empty string in a
@@ -80,6 +90,9 @@ tool; the third is the backstop.
 | Kubernetes | `ops-reader` ServiceAccount bound to `view` (`../k8s/ops-reader-rbac.yaml`) | `read_only = true`, `disable_destructive = true`, Secrets denied | Deny `mcp__kubernetes__resources_delete` and friends; hook blocks mutating `kubectl`/`helm` |
 | Grafana | Service account with the Viewer role | `--disable-write` | Deny `update_dashboard`, `alerting_rules_write` and the other write tools |
 | GitLab | Reporter role (rung 1); Developer with protected branches and required approvals (rung 2) | `X-Gitlab-Enabled-Mcp-Server-Toolsets` limits which tools are listed — not a permission | Deny `accept_merge_request`, `save_*`, `add_commit` and the other write tools |
+| AWS | `ops-reader` role: `ViewOnlyAccess` plus CloudWatch and Logs Insights reads on named log groups | The CloudWatch server has no write tools; for the general `awslabs.aws-api-mcp-server`, set `READ_OPERATIONS_ONLY=true` | Deny mutating `aws` verbs; hook allowlists `describe-`/`list-`/`get-` and blocks secret reads |
+| Google Cloud | `ops-reader` service account with viewer roles, by impersonation | The observability server has no write tools; for `gcloud-mcp`, an `allow` list in its config | Deny mutating `gcloud`/`gsutil` verbs; hook allowlists `list`/`describe`/`read` and blocks token printing |
+| Sentry | User auth token with `org:read`, `project:read`, `team:read`, `event:read` | `--skills inspect` | Deny `update_issue`, `add_issue_note`, the alert-rule and monitor tools, and Seer |
 
 ### Zabbix server-side snippet
 
@@ -134,6 +147,26 @@ shared host.
   but never let two engines manage the same resources. Point the agent at
   whichever engine owns the app you are asking about.
 
+### AWS, Google Cloud and Sentry notes
+
+- **AWS.** The CloudWatch server is the analysis server: alarms, metrics and Logs
+  Insights. For `describe-*` calls on ECS, RDS or EKS, the `aws` CLI under the hook is
+  enough. If you want one MCP server for every AWS API instead, use
+  `awslabs.aws-api-mcp-server` with `READ_OPERATIONS_ONLY=true`; its README says IAM
+  stays the primary control, and so does this kit.
+- **Google Cloud.** `@google-cloud/observability-mcp` is in preview and reads with
+  Application Default Credentials, which is why the template points
+  `GOOGLE_APPLICATION_CREDENTIALS` at impersonated credentials rather than your own
+  login. Google also hosts remote MCP endpoints (`https://logging.googleapis.com/mcp`,
+  `https://monitoring.googleapis.com/mcp`); they read as the signed-in identity, so the
+  same viewer-only rule applies. VERIFY which your organisation allows.
+- **Sentry.** There is no single read-only flag: `--skills inspect` is the switch.
+  The hosted server (`https://mcp.sentry.dev/mcp`) uses OAuth as you, with your
+  rights; prefer the local server with a read-scoped token. Some search tools call an
+  LLM to translate natural language and need a provider key on the server; without
+  one, give them Sentry search syntax. Sentry data includes request and user context:
+  check the data scrubber before an agent reads it.
+
 ## CLI or MCP?
 
 Both work. Pick per task, not per team.
@@ -159,3 +192,4 @@ production use. Marked `VERIFY:` where they appear.
 - VERIFY: that `kubernetes-mcp-server` honours `KUBECONFIG` from its environment (standard client-go behaviour). If not, set `kubeconfig = "<ABSOLUTE_PATH>"` in `kubernetes-mcp.toml`.
 - VERIFY: the package versions pinned here (`argocd-mcp@0.9.0`, `kubernetes-mcp-server@0.1.2`, `mcp-grafana@2.2.0`) were current in November 2026. Pin to the version you reviewed, not to `latest`.
 - VERIFY: whether GitLab's fine-grained personal access token can be limited to read-only MCP tools. Until you have confirmed it, treat the user's project role as the only server-side control.
+- VERIFY: the pins `awslabs.cloudwatch-mcp-server@0.3.1`, `@google-cloud/observability-mcp@0.2.3` and `@sentry/mcp-server@0.49.0` (current on 2026-11-13), and the tool names the `ops-aws`, `ops-gcp` and `ops-sentry` skills list. Sentry's server is pre-1.0 and renames tools between releases.

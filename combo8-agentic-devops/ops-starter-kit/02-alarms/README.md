@@ -6,11 +6,17 @@ After an incident, find the signal that moved first and propose an alarm on it, 
 |---|---|
 | `prompts/zabbix-history.md` | Query Zabbix history through the read-only MCP server: metadata first, then bucketed values |
 | `prompts/elk-aggregations.md` | Elasticsearch aggregations (query DSL and ES\|QL) with `size: 0`. Never raw logs |
+| `prompts/cloudwatch-logs-insights.md` | CloudWatch metric statistics and Logs Insights `stats` queries for an AWS-hosted service and RDS |
+| `prompts/gcp-logging-monitoring.md` | Cloud Monitoring aligned time series, Error Reporting groups and narrowed Cloud Logging counts for Cloud Run, GKE and Cloud SQL |
+| `prompts/sentry-error-trends.md` | Sentry issues per release and per day: new versus pre-existing, blast radius from tags |
 | `prompts/db-stats.md` | PostgreSQL (and MySQL) session and limit queries that aggregate in SQL and never select query text |
 | `prompts/alarm-noise-review.md` | Monthly review that classifies existing triggers into keep, tune, re-route or delete |
 | `templates/zabbix-template-db-sessions.yaml` | Trigger proposal as a Zabbix template: calculated items over your existing keys, sustained and forecast triggers, `audience` tags |
 | `templates/ansible-zabbix-template.yml` | The same template imported by Ansible (`community.zabbix`) |
 | `templates/grafana-alert-rule-db-sessions.json` | The same three rules as Grafana file-provisioned alert rules over postgres_exporter metrics |
+| `templates/cloudwatch-alarms-db-sessions.tf` | The same three rules as CloudWatch alarms on RDS (Terraform) |
+| `templates/gcp-alert-policy-db-sessions.tf` | The same three rules as Cloud Monitoring alert policies on Cloud SQL (Terraform) |
+| `templates/sentry-alert-new-issue-in-release.tf` | Sentry issue alerts: a new warning in the latest release (agent digest), an error burst (ticket) |
 | `alarm-channels.md` | Human-visible versus agent-visible channels, and how to route on the `audience` tag |
 | `tools/aggregate_metrics.py` | Buckets a long-format metrics CSV and back-tests a proposed threshold. Standard library only |
 | `tests/` | `python3 -m pytest 02-alarms/tests` |
